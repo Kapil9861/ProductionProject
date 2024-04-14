@@ -4,7 +4,7 @@ import 'package:sajilo_hisab/widgets/screens/about_us_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/game_rules.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
-import 'package:sajilo_hisab/widgets/screens/callBreak_points_calculator.dart';
+import 'package:sajilo_hisab/widgets/screens/call_break/callBreak_points_calculator.dart';
 import 'package:sajilo_hisab/widgets/screens/settings_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/help_screen.dart';
 
