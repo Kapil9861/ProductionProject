@@ -1,22 +1,21 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class MarriageHomeScreen extends StatefulWidget {
-  const MarriageHomeScreen({super.key});
+  const MarriageHomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<MarriageHomeScreen> createState() {
-    return _MarriageHomeScreenState();
-  }
+  State<MarriageHomeScreen> createState() => _MarriageHomeScreenState();
 }
 
 class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
   int numberOfFields = 0;
   List<String> fieldNames = [];
+  List<TextEditingController>? controllers;
+  List<FocusNode>? focusNodes;
 
   TextEditingController numberController = TextEditingController();
 
@@ -84,6 +83,45 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
     });
   }
 
+  void _showSnackBar(String message, int index) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    FocusScope.of(context).requestFocus(focusNodes![index]);
+  }
+
+  void _startCalculation() {
+    bool allFieldsFilled = true;
+    if (controllers != null && focusNodes != null) {
+      for (int i = 0; i < controllers!.length; i++) {
+        if (controllers![i].text.isEmpty) {
+          _showSnackBar('Player ${i + 1} name is empty', i);
+          allFieldsFilled = false;
+          break;
+        } else if (controllers![i].text.length < 3) {
+          _showSnackBar(
+              'Player ${i + 1} name must have 3 or more characters', i);
+          allFieldsFilled = false;
+          break;
+        }
+      }
+    } else {
+      allFieldsFilled = false;
+    }
+    if (allFieldsFilled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Success'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      // Add your logic for calculation or navigation here
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,14 +134,12 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    maxLength: 1, // Set maximum length to 1 digit
+                    maxLength: 1,
                     controller: numberController,
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter
-                          .digitsOnly, // Allow only digits
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'[1-6]')), // Allow only numbers from 1 to 6
+                      FilteringTextInputFormatter.digitsOnly,
+                      FilteringTextInputFormatter.allow(RegExp(r'[1-6]')),
                     ],
                     decoration: const InputDecoration(
                       labelText: 'Number Of Players (Min-2 Max-6)',
@@ -118,13 +154,21 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       checkPlayers();
-                      if (isPlayerCountGood == true) {
+                      if (isPlayerCountGood) {
                         setState(() {
                           numberOfFields =
                               int.tryParse(numberController.text) ?? 0;
                           fieldNames = List.generate(
                             numberOfFields,
                             (index) => 'Player ${index + 1} Name',
+                          );
+                          controllers = List.generate(
+                            numberOfFields,
+                            (index) => TextEditingController(),
+                          );
+                          focusNodes = List.generate(
+                            numberOfFields,
+                            (index) => FocusNode(),
                           );
                         });
                       }
@@ -139,20 +183,27 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
               child: ListView.builder(
                 itemCount: numberOfFields,
                 itemBuilder: (context, index) {
-                  return TextField(
-                    decoration: InputDecoration(
-                      labelText: fieldNames.isNotEmpty
-                          ? fieldNames[index]
-                          : 'Player${index + 1} Name',
-                    ),
-                  );
+                  if (controllers != null && focusNodes != null) {
+                    return TextField(
+                      controller: controllers![index],
+                      focusNode: focusNodes![index],
+                      maxLength: 15,
+                      decoration: InputDecoration(
+                        labelText: fieldNames.isNotEmpty
+                            ? fieldNames[index]
+                            : 'Player ${index + 1} Name',
+                      ),
+                    );
+                  } else {
+                    return SizedBox(); // Return an empty widget if lists are not initialized
+                  }
                 },
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 10),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _startCalculation,
                 child: const Text('Start Calculation'),
               ),
             ),
@@ -161,10 +212,4 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: MarriageHomeScreen(),
-  ));
 }
