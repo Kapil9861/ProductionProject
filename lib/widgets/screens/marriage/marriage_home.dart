@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sajilo_hisab/widgets/screens/marriage/marriage_points_calculator.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class MarriageHomeScreen extends StatefulWidget {
@@ -112,13 +113,17 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
       allFieldsFilled = false;
     }
     if (allFieldsFilled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Success'),
-          duration: Duration(seconds: 2),
+      List<String> playerNames = [];
+      for (int i = 0; i < controllers!.length; i++) {
+        playerNames.add(controllers![i].text);
+      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              MarriagePointsCalculator(playerNames: playerNames),
         ),
       );
-      // Add your logic for calculation or navigation here
     }
   }
 
@@ -195,16 +200,19 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                       ),
                     );
                   } else {
-                    return SizedBox(); // Return an empty widget if lists are not initialized
+                    return const SizedBox(); // Return an empty widget if lists are not initialized
                   }
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: ElevatedButton(
-                onPressed: _startCalculation,
-                child: const Text('Start Calculation'),
+            Visibility(
+              visible: controllers != null && focusNodes != null,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ElevatedButton(
+                  onPressed: _startCalculation,
+                  child: const Text('Start Calculator'),
+                ),
               ),
             ),
           ],
