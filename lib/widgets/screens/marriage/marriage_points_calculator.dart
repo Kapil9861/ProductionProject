@@ -47,7 +47,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   void _validateAmount() {
     setState(() {
-      if (_amountValue < 1000 && _amountValue > 0) {
+      if (_amountValue < 100000 && _amountValue > 0) {
         buttonText = "Game Running";
       }
     });
@@ -90,8 +90,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       child: TextFormField(
                         maxLength: 4,
                         decoration: const InputDecoration(
-                          hintText: "0.01-9999",
-                          errorText: "Amount Range 0.01 - 10000!",
+                          hintText: "0.01-99999",
+                          errorText: "Amount Range 0.01 - 99999!",
                         ),
                         controller: _amountController,
                       ),
@@ -114,7 +114,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.all(10),
                       child: Text('Enter Players Points and Notes:'),
                     ),
@@ -128,19 +128,31 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         border: TableBorder.all(),
                         children: [
                           TableRow(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                            ),
                             children: [
                               ...widget.playerNames.map((name) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Center(child: Text(name)),
+                                  child: Center(
+                                      child: Text(
+                                    name,
+                                    style: const TextStyle(color: Colors.white),
+                                  )),
                                 );
                               }).toList(),
-                              Center(
+                              const Center(
                                 child: Padding(
                                   padding: EdgeInsets.only(left: 10, top: 6),
                                   child: Text(
                                     "Seen/Unseen/Winner",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -150,6 +162,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                               i < widget.playerNames.length - 1;
                               i++)
                             TableRow(
+                              decoration: BoxDecoration(
+                                color: i % 2 == 0
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 79, 23, 135),
+                              ),
                               children: [
                                 ..._nameControllersList[i].map((controller) {
                                   return Padding(
