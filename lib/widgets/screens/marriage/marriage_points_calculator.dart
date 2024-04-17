@@ -15,15 +15,20 @@ class MarriagePointsCalculator extends StatefulWidget {
 class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final TextEditingController _notesController = TextEditingController();
   List<List<TextEditingController>> _nameControllersList = [];
-  TextEditingController _amountController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   String buttonText = "Start Calculation";
+  String winnerButton = "Didn't Win";
+  FocusNode amountNode = FocusNode();
+  List<FocusNode>? focusNodes;
+  final List<String> _playersResult = [];
+  final List<String> _winOrLoss = [];
 
-  String _playersResult = "Seen";
   double _amountValue = 0.0;
   @override
   void initState() {
     super.initState();
     _initializeNameControllers();
+    _initializePlayerResults();
   }
 
   void _initializeNameControllers() {
@@ -33,20 +38,53 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
-  void changeButtonState() {
+  void _initializePlayerResults() {
+    for (int index = 0; index < widget.playerNames.length; index++) {
+      _playersResult.add("Seen");
+      _winOrLoss.add("Didn't Win");
+    }
+  }
+
+  void changeSeenState(int index) {
     setState(() {
-      if (_playersResult == "Seen") {
-        _playersResult = "Unseen";
-      } else if (_playersResult == "Unseen") {
-        _playersResult = "Winner";
-      } else {
-        _playersResult = "Seen";
+      if (index >= 0 && index < _playersResult.length) {
+        if (_playersResult[index] == "Seen") {
+          _playersResult[index] = "Unseen";
+        } else if (_playersResult[index] == "Unseen") {
+          _playersResult[index] = "Dublee";
+        } else if (_playersResult[index] == "Dublee") {
+          _playersResult[index] = "Hold";
+        } else if (_playersResult[index] == "Hold") {
+          _playersResult[index] = "Seen";
+        }
+      }
+    });
+  }
+
+  void changeWinner(int index) {
+    setState(() {
+      if (index >= 0 && index < _playersResult.length) {
+        if (_winOrLoss[index] == "Didn't Win") {
+          _winOrLoss[index] = "Winner";
+          for (int i = 0; i < _playersResult.length; i++) {
+            if (i != index) {
+              _winOrLoss[i] = "Didn't Win";
+            }
+          }
+        } else {
+          _winOrLoss[index] = "Didn't Win";
+        }
       }
     });
   }
 
   void _validateAmount() {
     setState(() {
+      if (_amountController.text.isEmpty) {
+        FocusScope.of(context).requestFocus(amountNode);
+      } else {
+        _amountValue = double.parse(_amountController.text);
+      }
       if (_amountValue < 100000 && _amountValue > 0) {
         buttonText = "Game Running";
       }
@@ -61,6 +99,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController hello = TextEditingController();
     // Check if playerNames list is empty
     if (widget.playerNames.isEmpty || widget.playerNames.length < 2) {
       Navigator.of(context).push(
@@ -70,60 +109,134 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       );
     }
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Marriage Points Calculator'),
-        ),
-        body: Flex(
-          direction: Axis.vertical,
-          children: [
-            Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: TextFormField(
-                        maxLength: 4,
-                        decoration: const InputDecoration(
-                          hintText: "0.01-99999",
-                          errorText: "Amount Range 0.01 - 99999!",
-                        ),
-                        controller: _amountController,
+      appBar: AppBar(
+        title: const Text('Marriage Points Calculator'),
+      ),
+      body: Flex(
+        direction: Axis.vertical,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: TextFormField(
+                      focusNode: amountNode,
+                      maxLength: 4,
+                      decoration: const InputDecoration(
+                        hintText: "0.01-99999",
+                        errorText: "Amount Range 0.01 - 99999!",
                       ),
+                      controller: _amountController,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20, right: 10),
-                    child: CustomButton(
-                      onPressed: _validateAmount,
-                      buttonText: buttonText,
-                      width: 161,
-                      fontSize: 15,
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20, right: 10),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 2),
+                        child: CustomButton(
+                          onPressed: () {
+                            _validateAmount();
+                          },
+                          buttonText: buttonText,
+                          width: 161,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            Expanded(
-              flex: 8,
-              child: SingleChildScrollView(
+          ),
+          Expanded(
+            flex: 8,
+            child: SingleChildScrollView(
+              child: SizedBox(
                 child: Column(
                   children: [
+                    for (int i = 0; i < widget.playerNames.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 10, left: 10),
+                              child: SizedBox(
+                                width: 95,
+                                child: Text(
+                                  widget.playerNames[i],
+                                ),
+                              ),
+                            ),
+                            CustomButton(
+                              onPressed: () {
+                                changeWinner(i);
+                              },
+                              buttonText: _winOrLoss[i],
+                              fontSize: 13,
+                              width: 89,
+                            ),
+                            SizedBox(
+                              height: 20,
+                              width: 80,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: TextFormField(
+                                  controller: hello,
+                                  decoration: const InputDecoration(
+                                      helperText: "Points"),
+                                  maxLength: 3,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (text) {
+                                    print(text);
+                                  },
+                                ),
+                              ),
+                            ),
+                            CustomButton(
+                              onPressed: () {
+                                changeSeenState(i);
+                              },
+                              buttonText: _playersResult[i],
+                              fontSize: 13,
+                              width: 100,
+                            ),
+                          ],
+                        ),
+                      ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 10, right: 10, top: 10),
+                      child: CustomButton(
+                        onPressed: _submitData,
+                        buttonText: "Calulate",
+                      ),
+                    ),
                     const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text('Enter Players Points and Notes:'),
+                      padding: EdgeInsets.only(top: 10, right: 10, left: 10),
+                      child: Text(
+                        'Game Results:',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Table(
                         columnWidths: {
                           for (var i = 0; i < widget.playerNames.length; i++)
-                            i: FlexColumnWidth(1),
+                            i: const FlexColumnWidth(1),
                         },
                         border: TableBorder.all(),
                         children: [
@@ -148,7 +261,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 child: Padding(
                                   padding: EdgeInsets.only(left: 10, top: 6),
                                   child: Text(
-                                    "Seen/Unseen/Winner",
+                                    "EDIT",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -174,36 +287,23 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     child: TextField(controller: controller),
                                   );
                                 }).toList(),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    changeButtonState();
-                                  },
-                                  child: Text(
-                                    _playersResult,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.edit),
+                                )
                               ],
                             ),
                         ],
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: _submitData,
-                      child: Text('Submit'),
-                    ),
-                    Row(
-                      children: [
-                        Text("data"),
-                        Text("data"),
-                      ],
-                    ),
                   ],
                 ),
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _submitData() {
@@ -212,10 +312,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       return controllers.map((controller) => controller.text).toList();
     }).toList();
     final String notes = _notesController.text;
-    // You can do further processing or saving of data here
-    print('Player Names: $playerNames');
-    print('Notes: $notes');
-    // Clear input fields after submission
     _clearInputFields();
   }
 
