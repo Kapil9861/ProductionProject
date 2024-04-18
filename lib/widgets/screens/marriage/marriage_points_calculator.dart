@@ -261,6 +261,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                               height: 200,
                               width: 280,
                               child: TextFormField(
+                                controller: _notesController,
                                 maxLength: 300,
                                 maxLines: 6,
                                 decoration: const InputDecoration(
@@ -376,7 +377,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         _nameControllersList.map((controllers) {
       return controllers.map((controller) => controller.text).toList();
     }).toList();
-    final String notes = _notesController.text;
+
     _clearInputFields();
   }
 
