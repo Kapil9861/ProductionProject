@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/start_screen.dart';
-// import 'package:sajilo_hisab/widgets/start_screen.dart';
-// import 'package:flutter/services.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 36, 17, 66),

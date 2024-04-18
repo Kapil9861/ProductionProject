@@ -15,6 +15,7 @@ class MarriagePointsCalculator extends StatefulWidget {
 class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final TextEditingController _notesController = TextEditingController();
   List<List<TextEditingController>> _nameControllersList = [];
+  List<TextEditingController>? _individualPointsController = [];
   final TextEditingController _amountController = TextEditingController();
   String buttonText = "Start Calculation";
   String winnerButton = "Didn't Win";
@@ -24,6 +25,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final List<String> _winOrLoss = [];
 
   double _amountValue = 0.0;
+  int individualPoints = 0;
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       return List.generate(
           widget.playerNames.length, (index) => TextEditingController());
     });
+    _individualPointsController = List.generate(
+        widget.playerNames.length, (index) => TextEditingController());
   }
 
   void _initializePlayerResults() {
@@ -53,6 +57,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         } else if (_playersResult[index] == "Unseen") {
           _playersResult[index] = "Dublee";
         } else if (_playersResult[index] == "Dublee") {
+          _playersResult[index] = "Foul";
+        } else if (_playersResult[index] == "Foul") {
           _playersResult[index] = "Hold";
         } else if (_playersResult[index] == "Hold") {
           _playersResult[index] = "Seen";
@@ -99,7 +105,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController hello = TextEditingController();
+    Size screenSize = MediaQuery.of(context).size;
+    double screenWidth = screenSize.width;
+    double playerNameFont = 18;
+    double playerNameArea = 95;
+    double pointsArea = 85;
+    double padding = 10;
+
+    if (screenWidth < 393) {
+      playerNameFont = 14;
+      playerNameArea = 65;
+      pointsArea = 90;
+      padding = 6;
+    }
     // Check if playerNames list is empty
     if (widget.playerNames.isEmpty || widget.playerNames.length < 2) {
       Navigator.of(context).push(
@@ -129,9 +147,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                     child: TextFormField(
                       focusNode: amountNode,
                       maxLength: 4,
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         hintText: "0.01-99999",
-                        errorText: "Amount Range 0.01 - 99999!",
+                        errorText: "Amount Per Point 0.01 - 99999!",
                       ),
                       controller: _amountController,
                     ),
@@ -173,9 +192,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                               padding:
                                   const EdgeInsets.only(right: 10, left: 10),
                               child: SizedBox(
-                                width: 95,
+                                width: playerNameArea,
                                 child: Text(
-                                  widget.playerNames[i],
+                                  widget.playerNames[i].toUpperCase(),
+                                  style: TextStyle(fontSize: playerNameFont),
                                 ),
                               ),
                             ),
@@ -184,23 +204,30 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 changeWinner(i);
                               },
                               buttonText: _winOrLoss[i],
-                              fontSize: 13,
-                              width: 89,
+                              fontSize: 14,
+                              height: 45,
+                              width: 93,
                             ),
-                            SizedBox(
-                              height: 20,
-                              width: 80,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 0, left: 7, right: 7),
+                              child: SizedBox(
+                                width: pointsArea,
                                 child: TextFormField(
-                                  controller: hello,
+                                  controller: _individualPointsController![i],
                                   decoration: const InputDecoration(
-                                      helperText: "Points"),
+                                    helperText: "Points",
+                                    border: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                      gapPadding: 4,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(6),
+                                      ), // Border radius
+                                    ),
+                                  ),
                                   maxLength: 3,
                                   keyboardType: TextInputType.number,
-                                  onChanged: (text) {
-                                    print(text);
-                                  },
                                 ),
                               ),
                             ),
@@ -209,12 +236,50 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 changeSeenState(i);
                               },
                               buttonText: _playersResult[i],
-                              fontSize: 13,
+                              fontSize: 14,
+                              height: 45,
                               width: 100,
                             ),
                           ],
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "NOTES: ",
+                              style: TextStyle(
+                                  fontSize: 18, fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: padding),
+                            child: SizedBox(
+                              height: 200,
+                              width: 280,
+                              child: TextFormField(
+                                maxLength: 300,
+                                maxLines: 6,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    borderSide: BorderSide(
+                                        width: 2, color: Colors.grey),
+                                  ),
+                                  helperText:
+                                      "Incomplete Transaction or Foul Played",
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 10, right: 10, top: 10),
