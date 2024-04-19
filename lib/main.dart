@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sajilo_hisab/voiceRecognition/speech_to_text.dart';
 import 'package:sajilo_hisab/widgets/screens/start_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -83,7 +82,7 @@ class MyApp extends StatelessWidget {
           //or from the text theme
         ),
       ),
-      home: FromSpeechToText(), //const StartScreen(),
+      home: const StartScreen(),
     );
   }
 }

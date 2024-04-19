@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class MarriagePointsCalculator extends StatefulWidget {
   const MarriagePointsCalculator({Key? key, required this.playerNames})
@@ -23,6 +25,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<FocusNode>? focusNodes;
   final List<String> _playersResult = [];
   final List<String> _winOrLoss = [];
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+  double _confidenceLevel = 0.0;
+  bool isEnglish = false;
+  String nepaliLanguageCode = "ne-NP";
+  String englishLanguageCode = "en-US";
 
   double _amountValue = 0.0;
   int individualPoints = 0;
@@ -31,6 +39,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     super.initState();
     _initializeNameControllers();
     _initializePlayerResults();
+    initSpeech();
+  }
+
+  void initSpeech() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
   }
 
   void _initializeNameControllers() {
@@ -84,6 +98,16 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
+  void setLanguage(bool value) {
+    setState(() {
+      isEnglish = value;
+      _speechToText.listen(
+        localeId:
+            (isEnglish == value) ? englishLanguageCode : nepaliLanguageCode,
+      );
+    });
+  }
+
   void _validateAmount() {
     setState(() {
       if (_amountController.text.isEmpty) {
@@ -103,20 +127,73 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     super.dispose();
   }
 
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _confidenceLevel = result.confidence;
+      if (result.finalResult) {
+        _notesController.text = result.recognizedWords;
+      }
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _confidenceLevel = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    double screenWidth = screenSize.width;
-    double playerNameFont = 18;
-    double playerNameArea = 95;
-    double pointsArea = 85;
-    double padding = 10;
 
-    if (screenWidth < 393) {
+    double paddingPercentage = 0.015;
+    double buttonWidthPercentage = screenSize.width * 0.245;
+    double buttonHeightPercentage = screenSize.height * 0.05;
+    double notesArea = screenSize.width * 0.70;
+
+    int buttonWidth = buttonWidthPercentage.toInt();
+    int buttonHeight = buttonHeightPercentage.toInt();
+
+    double paddingSize = screenSize.height * paddingPercentage;
+
+    double screenWidth = screenSize.width;
+    double textError = 14;
+    double playerNameFont = 17;
+    double playerNameArea = 83;
+    double pointsArea = 90;
+    double padding = 10;
+    int amountButtonWidth = 130;
+    int amountButtonHeight = 55;
+
+    if (screenWidth < 393 && screenWidth > 350) {
       playerNameFont = 14;
       playerNameArea = 65;
       pointsArea = 90;
+      padding = 8;
+      textError = 12;
+      amountButtonWidth = 115;
+      amountButtonHeight = 45;
+    } else if (screenWidth > 321 && screenWidth < 350) {
+      playerNameFont = 12;
+      playerNameArea = 55;
+      pointsArea = 90;
+      padding = 7;
+      textError = 10;
+      amountButtonWidth = 102;
+      amountButtonHeight = 40;
+    } else if (screenWidth < 321) {
+      playerNameFont = 10;
+      playerNameArea = 55;
+      pointsArea = 70;
       padding = 6;
+      textError = 6;
+      amountButtonWidth = 90;
+      amountButtonHeight = 34;
     }
     // Check if playerNames list is empty
     if (widget.playerNames.isEmpty || widget.playerNames.length < 2) {
@@ -126,54 +203,65 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         ),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Marriage Points Calculator'),
+        title: Text(
+          'Marriage Points Calculator',
+          style: TextStyle(fontSize: playerNameFont + 4),
+        ),
+        actions: [
+          Switch(
+            value: isEnglish,
+            onChanged: (value) {
+              setLanguage(value);
+            },
+          ),
+        ],
       ),
       body: Flex(
         direction: Axis.vertical,
         children: [
-          Expanded(
-            flex: 2,
+          SizedBox(
+            height: buttonHeightPercentage * 3,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.only(
+                      top: paddingSize * 3,
+                      bottom: paddingSize,
+                      left: paddingSize),
                   child: SizedBox(
-                    height: 200,
-                    width: 200,
+                    height: 30,
+                    width: buttonWidthPercentage * 2.25,
                     child: TextFormField(
+                      controller: _amountController,
                       focusNode: amountNode,
-                      maxLength: 4,
+                      maxLength: 5,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: "0.01-99999",
                         errorText: "Amount Per Point 0.01 - 99999!",
+                        errorStyle: TextStyle(fontSize: textError),
+                        hintStyle: TextStyle(fontSize: textError + 3),
                       ),
-                      controller: _amountController,
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20, right: 10),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, bottom: 2),
-                        child: CustomButton(
-                          onPressed: () {
-                            _validateAmount();
-                          },
-                          buttonText: buttonText,
-                          width: 161,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
+                  padding: const EdgeInsets.only(top: 10, bottom: 2, right: 10),
+                  child: CustomButton(
+                    onPressed: () {
+                      _validateAmount();
+                    },
+                    buttonText: buttonText,
+                    width: amountButtonWidth + 15,
+                    height: amountButtonHeight + 10,
+                    fontSize: playerNameFont - 1.5,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -204,9 +292,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 changeWinner(i);
                               },
                               buttonText: _winOrLoss[i],
-                              fontSize: 14,
-                              height: 45,
-                              width: 93,
+                              fontSize: playerNameFont - 2,
+                              height: buttonHeight + 4,
+                              width: buttonWidth,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
@@ -215,9 +303,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 width: pointsArea,
                                 child: TextFormField(
                                   controller: _individualPointsController![i],
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     helperText: "Points",
-                                    border: OutlineInputBorder(
+                                    helperStyle:
+                                        TextStyle(fontSize: playerNameFont - 4),
+                                    border: const OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.grey),
                                       gapPadding: 4,
@@ -236,9 +326,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 changeSeenState(i);
                               },
                               buttonText: _playersResult[i],
-                              fontSize: 14,
-                              height: 45,
-                              width: 100,
+                              fontSize: playerNameFont - 2,
+                              height: buttonHeight + 4,
+                              width: buttonWidth,
                             ),
                           ],
                         ),
@@ -247,46 +337,87 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       padding: const EdgeInsets.all(10),
                       child: Row(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6, right: 6),
                             child: Text(
                               "NOTES: ",
                               style: TextStyle(
-                                  fontSize: 18, fontStyle: FontStyle.italic),
+                                  fontSize: playerNameFont,
+                                  fontStyle: FontStyle.italic),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(right: padding),
-                            child: SizedBox(
-                              height: 200,
-                              width: 280,
-                              child: TextFormField(
-                                controller: _notesController,
-                                maxLength: 300,
-                                maxLines: 6,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
+                          Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: padding),
+                                child: SizedBox(
+                                  height: 200,
+                                  width: notesArea,
+                                  child: TextFormField(
+                                    style:
+                                        TextStyle(fontSize: playerNameFont - 1),
+                                    controller: _notesController,
+                                    maxLength: 300,
+                                    maxLines: 6,
+                                    onTap: () {
+                                      _startListening();
+                                    },
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 2, color: Colors.grey),
+                                      ),
+                                      hintText: _speechToText.isListening
+                                          ? "Listening..."
+                                          : _speechEnabled
+                                              ? "Please tap on the microphone to start the voice assistant"
+                                              : "Permission denied for the microphone",
+                                      hintStyle: TextStyle(
+                                          fontSize: playerNameFont - 3),
+                                      helperText:
+                                          "Incomplete Transaction or Foul Play",
+                                      helperStyle: TextStyle(
+                                          fontSize: playerNameFont - 3),
                                     ),
-                                    borderSide: BorderSide(
-                                        width: 2, color: Colors.grey),
                                   ),
-                                  helperText:
-                                      "Incomplete Transaction or Foul Played",
                                 ),
                               ),
-                            ),
-                          )
+                              if (_speechToText.isNotListening &&
+                                  _confidenceLevel > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: Text(
+                                    "Confidence : ${(_confidenceLevel * 100).toStringAsFixed(1)}%",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
+                    FloatingActionButton(
+                      tooltip: 'Listen',
+                      onPressed: _speechToText.isListening
+                          ? _stopListening
+                          : _startListening,
+                      child: Icon(_speechToText.isNotListening
+                          ? Icons.mic_off
+                          : Icons.mic),
+                    ),
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 10, right: 10, top: 10),
+                          const EdgeInsets.only(left: 10, right: 10, top: 20),
                       child: CustomButton(
                         onPressed: _submitData,
                         buttonText: "Calulate",
+                        fontSize: playerNameFont,
                       ),
                     ),
                     const Padding(
@@ -319,17 +450,20 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                   child: Center(
                                       child: Text(
                                     name,
-                                    style: const TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: playerNameFont - 1),
                                   )),
                                 );
                               }).toList(),
-                              const Center(
+                              Center(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 10, top: 6),
+                                  padding:
+                                      const EdgeInsets.only(left: 10, top: 6),
                                   child: Text(
                                     "EDIT",
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: playerNameFont - 2,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -373,11 +507,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void _submitData() {
-    final List<List<String>> playerNames =
-        _nameControllersList.map((controllers) {
-      return controllers.map((controller) => controller.text).toList();
-    }).toList();
-
     _clearInputFields();
   }
 

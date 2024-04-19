@@ -30,6 +30,25 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    double screenWidth = screenSize.width;
+    double textSize1 = 19;
+    double textSize2 = 20;
+    double titleSize = 21;
+    double padding = 40;
+
+    if (screenWidth < 350 && screenWidth > 321) {
+      textSize1 = 15;
+      textSize2 = 16;
+      titleSize = 14;
+      padding = 30;
+    } else if (screenWidth < 321) {
+      textSize1 = 13;
+      textSize2 = 14;
+      titleSize = 12;
+      padding = 25;
+    }
+
     Widget home = Center(
       child: SingleChildScrollView(
         child: Column(
@@ -53,7 +72,7 @@ class _StartScreenState extends State<StartScreen> {
               buttonText: "Marriage Points Calculator",
               width: 300,
               height: 40,
-              fontSize: 19,
+              fontSize: textSize1,
             ),
             const SizedBox(
               height: 20,
@@ -65,7 +84,7 @@ class _StartScreenState extends State<StartScreen> {
               buttonText: "CallBreak Points Calculator",
               width: 300,
               height: 40,
-              fontSize: 19,
+              fontSize: textSize1,
             ),
             const SizedBox(
               height: 20,
@@ -75,6 +94,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Settings");
               },
               buttonText: "Settings",
+              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -84,6 +104,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Help (Tutorial)");
               },
               buttonText: "Help (Tutorial)",
+              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -93,6 +114,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Games Rules");
               },
               buttonText: "Games Rules",
+              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -102,6 +124,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("About Us");
               },
               buttonText: "About Us",
+              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -111,6 +134,7 @@ class _StartScreenState extends State<StartScreen> {
                 exit(0);
               },
               buttonText: "Exit",
+              fontSize: textSize2,
             )
           ],
         ),
@@ -144,11 +168,11 @@ class _StartScreenState extends State<StartScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Padding(
-            padding: const EdgeInsets.only(left: 40),
+            padding: EdgeInsets.only(left: padding),
             child: Text(
               appBarTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 21),
+              style: TextStyle(fontSize: titleSize),
             ),
           ),
           leading: Padding(

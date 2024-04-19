@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class FromSpeechToText extends StatefulWidget {
-  const FromSpeechToText({super.key});
+  const FromSpeechToText({Key? key}) : super(key: key);
 
   @override
   State<FromSpeechToText> createState() => _FromSpeechToTextState();
@@ -11,8 +12,11 @@ class FromSpeechToText extends StatefulWidget {
 class _FromSpeechToTextState extends State<FromSpeechToText> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
-  String _wordsSpoken = "";
+  final TextEditingController _notesController = TextEditingController();
   double _confidenceLevel = 0.0;
+  bool isEnglish = false;
+  String nepaliLanguageCode = "ne-NP";
+  String englishLanguageCode = "en-US";
 
   @override
   void initState() {
@@ -25,14 +29,26 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
     setState(() {});
   }
 
+  void setLanguage(bool value) {
+    setState(() {
+      isEnglish = value;
+      _speechToText.listen(
+        localeId:
+            (isEnglish == value) ? englishLanguageCode : nepaliLanguageCode,
+      );
+    });
+  }
+
   void _startListening() async {
     await _speechToText.listen(onResult: _onSpeechResult);
   }
 
-  void _onSpeechResult(result) {
+  void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
-      _wordsSpoken = "${result.recognizedWords}";
       _confidenceLevel = result.confidence;
+      if (result.finalResult) {
+        _notesController.text = result.recognizedWords;
+      }
     });
   }
 
@@ -48,6 +64,14 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Voice Assistant"),
+        actions: [
+          Switch(
+            value: isEnglish,
+            onChanged: (value) {
+              setLanguage(value);
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -63,12 +87,16 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
             ),
             Expanded(
               child: Container(
-                child: Text(
-                  _wordsSpoken,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
+                padding: const EdgeInsets.all(20),
+                child: TextFormField(
+                  controller: _notesController,
+                  decoration: const InputDecoration(
+                    hintText: "Speak here...",
+                    border: OutlineInputBorder(),
                   ),
+                  maxLines: null, // Allow multiple lines
+                  keyboardType: TextInputType.multiline,
+                  onTap: _startListening, // Start listening when tapped
                 ),
               ),
             ),
@@ -77,7 +105,7 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
                   "Confidence : ${(_confidenceLevel * 100).toStringAsFixed(1)}%",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w200,
                   ),

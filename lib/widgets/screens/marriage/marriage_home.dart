@@ -129,9 +129,24 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    double screenWidth = screenSize.width;
+    double textSize = 19;
+    double padding = 10;
+
+    if (screenWidth < 350 && screenWidth > 321) {
+      textSize = 10;
+      padding = 4;
+    } else if (screenWidth < 321) {
+      textSize = 9;
+      padding = 0;
+    } else if (screenWidth < 394 && screenWidth > 350) {
+      textSize = 12;
+      padding = 8;
+    }
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -146,16 +161,18 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                       FilteringTextInputFormatter.digitsOnly,
                       FilteringTextInputFormatter.allow(RegExp(r'[1-6]')),
                     ],
-                    decoration: const InputDecoration(
-                      labelText: 'Number Of Players (Min-2 Max-6)',
-                    ),
+                    decoration: InputDecoration(
+                        labelText: 'Number Of Players (Min-2 Max-6)',
+                        labelStyle: TextStyle(
+                          fontSize: textSize,
+                        )),
                   ),
                 ),
                 const SizedBox(
                   width: 20,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(right: padding),
                   child: ElevatedButton(
                     onPressed: () {
                       checkPlayers();
