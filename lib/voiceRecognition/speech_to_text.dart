@@ -14,10 +14,6 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
   bool _speechEnabled = false;
   final TextEditingController _notesController = TextEditingController();
   double _confidenceLevel = 0.0;
-  bool isEnglish = false;
-  String nepaliLanguageCode = "ne-NP";
-  String englishLanguageCode = "en-US";
-
   @override
   void initState() {
     super.initState();
@@ -27,16 +23,6 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
   void initSpeech() async {
     _speechEnabled = await _speechToText.initialize();
     setState(() {});
-  }
-
-  void setLanguage(bool value) {
-    setState(() {
-      isEnglish = value;
-      _speechToText.listen(
-        localeId:
-            (isEnglish == value) ? englishLanguageCode : nepaliLanguageCode,
-      );
-    });
   }
 
   void _startListening() async {
@@ -64,14 +50,7 @@ class _FromSpeechToTextState extends State<FromSpeechToText> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Voice Assistant"),
-        actions: [
-          Switch(
-            value: isEnglish,
-            onChanged: (value) {
-              setLanguage(value);
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Center(
         child: Column(

@@ -28,10 +28,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   double _confidenceLevel = 0.0;
-  bool isEnglish = false;
-  String nepaliLanguageCode = "ne-NP";
-  String englishLanguageCode = "en-US";
-
   double _amountValue = 0.0;
   int individualPoints = 0;
   @override
@@ -39,10 +35,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     super.initState();
     _initializeNameControllers();
     _initializePlayerResults();
-    initSpeech();
+    _initSpeech();
   }
 
-  void initSpeech() async {
+  void _initSpeech() async {
     _speechEnabled = await _speechToText.initialize();
     setState(() {});
   }
@@ -98,16 +94,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
-  void setLanguage(bool value) {
-    setState(() {
-      isEnglish = value;
-      _speechToText.listen(
-        localeId:
-            (isEnglish == value) ? englishLanguageCode : nepaliLanguageCode,
-      );
-    });
-  }
-
   void _validateAmount() {
     setState(() {
       if (_amountController.text.isEmpty) {
@@ -151,15 +137,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
 
-    double paddingPercentage = 0.015;
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;
     double notesArea = screenSize.width * 0.70;
 
     int buttonWidth = buttonWidthPercentage.toInt();
     int buttonHeight = buttonHeightPercentage.toInt();
-
-    double paddingSize = screenSize.height * paddingPercentage;
 
     double screenWidth = screenSize.width;
     double textError = 14;
@@ -210,14 +193,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           'Marriage Points Calculator',
           style: TextStyle(fontSize: playerNameFont + 4),
         ),
-        actions: [
-          Switch(
-            value: isEnglish,
-            onChanged: (value) {
-              setLanguage(value);
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Flex(
         direction: Axis.vertical,
@@ -229,12 +205,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                      top: paddingSize * 3,
-                      bottom: paddingSize,
-                      left: paddingSize),
+                  padding: EdgeInsets.only(left: padding * 1.5, top: 10),
                   child: SizedBox(
-                    height: 30,
+                    height: 70,
                     width: buttonWidthPercentage * 2.25,
                     child: TextFormField(
                       controller: _amountController,
@@ -242,16 +215,23 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       maxLength: 5,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: "0.01-99999",
-                        errorText: "Amount Per Point 0.01 - 99999!",
+                        hintText: "Amount Per Point",
+                        errorText: "Between 0.01 - 99999!",
                         errorStyle: TextStyle(fontSize: textError),
-                        hintStyle: TextStyle(fontSize: textError + 3),
+                        hintStyle: TextStyle(fontSize: textError),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          gapPadding: 4,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ), // Border radius
+                        ),
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 2, right: 10),
+                  padding: const EdgeInsets.only(top: 0, bottom: 12, right: 10),
                   child: CustomButton(
                     onPressed: () {
                       _validateAmount();
