@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MarriageRules extends StatelessWidget {
-  const MarriageRules({super.key});
+class CallBreakRules extends StatelessWidget {
+  const CallBreakRules({super.key});
 
   @override
   Widget build(BuildContext context) {

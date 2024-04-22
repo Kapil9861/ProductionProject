@@ -39,7 +39,8 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                   textSize: 20,
                 ),
                 content: const StyledText(
-                  text: 'This is a warning message for iOS.',
+                  text:
+                      'There must be atleast 2 or less than 6 players to start the game. Please Provide the number of players playing with you!',
                   textSize: 16,
                 ),
                 actions: <Widget>[
@@ -63,7 +64,8 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                   textSize: 20,
                 ),
                 content: const StyledText(
-                  text: 'This is a warning message for Android.',
+                  text:
+                      'There must be atleast 2  or less than 6 players to start the game. Please Provide the number of players playing with you!',
                   textSize: 16,
                 ),
                 actions: <Widget>[
@@ -86,6 +88,7 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
   }
 
   void _showSnackBar(String message, int index) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

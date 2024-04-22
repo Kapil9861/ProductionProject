@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/about_us_screen.dart';
+import 'package:sajilo_hisab/widgets/screens/call_break/call_break_player_rules.dart';
 import 'package:sajilo_hisab/widgets/screens/game_rules.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
-import 'package:sajilo_hisab/widgets/screens/call_break/callBreak_points_calculator.dart';
-import 'package:sajilo_hisab/widgets/screens/marriage/marriage_rules.dart';
+import 'package:sajilo_hisab/widgets/screens/marriage/marriage_players_rules.dart';
 import 'package:sajilo_hisab/widgets/screens/settings_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/help_screen.dart';
 
@@ -50,7 +50,7 @@ class _StartScreenState extends State<StartScreen> {
               onPressed: () {
                 selectScreen("Marriage Points Rules");
               },
-              buttonText: "Marriage Points Rules",
+              buttonText: "Marriage Points Calculator",
               width: 300,
               height: 40,
               fontSize: 19,
@@ -62,7 +62,7 @@ class _StartScreenState extends State<StartScreen> {
               onPressed: () {
                 selectScreen("CallBreak Points Rules");
               },
-              buttonText: "CallBreak Points Rules",
+              buttonText: "CallBreak Points Calculator",
               width: 300,
               height: 40,
               fontSize: 19,
@@ -119,10 +119,10 @@ class _StartScreenState extends State<StartScreen> {
 
     switch (appBarTitle) {
       case "Marriage Points Rules":
-        content = const MarriageRules();
+        content = const MarriagePlayerRules();
         break;
       case "CallBreak Points Rules":
-        content = CallBreakPointsCalculator();
+        content = const CallBreakPlayerRules();
         break;
       case "Settings":
         content = SettingsScreen();
