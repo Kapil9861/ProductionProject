@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sajilo_hisab/voiceRecognition/speech_to_text.dart';
+import 'package:sajilo_hisab/widgets/screens/modals/show_bottom_modal.dart';
 import 'package:sajilo_hisab/widgets/screens/start_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark().copyWith(
-        //appBarTheme: AppBarTheme(backgroundColor: kDarkColorScheme),
         colorScheme: kDarkColorScheme,
         cardTheme: CardTheme(
           color: kDarkColorScheme.primaryContainer,
@@ -83,7 +82,7 @@ class MyApp extends StatelessWidget {
           //or from the text theme
         ),
       ),
-      home: FromSpeechToText(),//const StartScreen(),
+      home: const StartScreen(),
     );
   }
 }

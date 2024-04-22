@@ -6,8 +6,9 @@ import 'package:sajilo_hisab/widgets/screens/marriage/marriage_points_calculator
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class MarriageHomeScreen extends StatefulWidget {
-  const MarriageHomeScreen({Key? key}) : super(key: key);
-
+  const MarriageHomeScreen({Key? key, required this.conditions})
+      : super(key: key);
+  final List<bool> conditions;
   @override
   State<MarriageHomeScreen> createState() => _MarriageHomeScreenState();
 }
@@ -120,8 +121,10 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              MarriagePointsCalculator(playerNames: playerNames),
+          builder: (context) => MarriagePointsCalculator(
+            playerNames: playerNames,
+            conditions: widget.conditions,
+          ),
         ),
       );
     }
@@ -145,6 +148,16 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
       padding = 8;
     }
     return Scaffold(
+      appBar: AppBar(
+        title: const Padding(
+          padding: EdgeInsets.only(left: 40),
+          child: Text(
+            "Marriage Points Home",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 21),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

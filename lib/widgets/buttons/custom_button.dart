@@ -14,8 +14,13 @@ class CustomButton extends StatelessWidget {
   final double fontSize;
   final void Function() onPressed;
   final String buttonText;
+
   @override
   Widget build(BuildContext context) {
+    Color color = Theme.of(context).colorScheme.onPrimaryContainer;
+    if (Theme.of(context).brightness == Brightness.dark) {
+      color = Theme.of(context).colorScheme.onPrimary;
+    }
     return SizedBox(
       height: height
           .toDouble(), // Convert height to double as SizedBox height expects double
@@ -24,8 +29,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Theme.of(context).colorScheme.onPrimaryContainer),
+          backgroundColor: MaterialStateProperty.all<Color>(color),
         ),
         child: Text(
           buttonText,

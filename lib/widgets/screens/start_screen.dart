@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/about_us_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/game_rules.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
-import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/callBreak_points_calculator.dart';
+import 'package:sajilo_hisab/widgets/screens/marriage/marriage_rules.dart';
 import 'package:sajilo_hisab/widgets/screens/settings_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/help_screen.dart';
 
@@ -22,33 +22,14 @@ class _StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    // Dismiss keyboard when the screen is loaded
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(FocusNode());
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    double screenWidth = screenSize.width;
-    double textSize1 = 19;
-    double textSize2 = 20;
-    double titleSize = 21;
-    double padding = 40;
-
-    if (screenWidth < 350 && screenWidth > 321) {
-      textSize1 = 15;
-      textSize2 = 16;
-      titleSize = 14;
-      padding = 30;
-    } else if (screenWidth < 321) {
-      textSize1 = 13;
-      textSize2 = 14;
-      titleSize = 12;
-      padding = 25;
-    }
-
     Widget home = Center(
       child: SingleChildScrollView(
         child: Column(
@@ -67,24 +48,24 @@ class _StartScreenState extends State<StartScreen> {
             ),
             CustomButton(
               onPressed: () {
-                selectScreen("Marriage Points Calculator");
+                selectScreen("Marriage Points Rules");
               },
-              buttonText: "Marriage Points Calculator",
+              buttonText: "Marriage Points Rules",
               width: 300,
               height: 40,
-              fontSize: textSize1,
+              fontSize: 19,
             ),
             const SizedBox(
               height: 20,
             ),
             CustomButton(
               onPressed: () {
-                selectScreen("CallBreak Points Calculator");
+                selectScreen("CallBreak Points Rules");
               },
-              buttonText: "CallBreak Points Calculator",
+              buttonText: "CallBreak Points Rules",
               width: 300,
               height: 40,
-              fontSize: textSize1,
+              fontSize: 19,
             ),
             const SizedBox(
               height: 20,
@@ -94,7 +75,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Settings");
               },
               buttonText: "Settings",
-              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -104,7 +84,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Help (Tutorial)");
               },
               buttonText: "Help (Tutorial)",
-              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -114,7 +93,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Games Rules");
               },
               buttonText: "Games Rules",
-              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -124,7 +102,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("About Us");
               },
               buttonText: "About Us",
-              fontSize: textSize2,
             ),
             const SizedBox(
               height: 20,
@@ -134,7 +111,6 @@ class _StartScreenState extends State<StartScreen> {
                 exit(0);
               },
               buttonText: "Exit",
-              fontSize: textSize2,
             )
           ],
         ),
@@ -142,10 +118,10 @@ class _StartScreenState extends State<StartScreen> {
     );
 
     switch (appBarTitle) {
-      case "Marriage Points Calculator":
-        content = const MarriageHomeScreen();
+      case "Marriage Points Rules":
+        content = const MarriageRules();
         break;
-      case "CallBreak Points Calculator":
+      case "CallBreak Points Rules":
         content = CallBreakPointsCalculator();
         break;
       case "Settings":
@@ -168,11 +144,11 @@ class _StartScreenState extends State<StartScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Padding(
-            padding: EdgeInsets.only(left: padding),
+            padding: const EdgeInsets.only(left: 40),
             child: Text(
               appBarTitle,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: titleSize),
+              style: const TextStyle(fontSize: 21),
             ),
           ),
           leading: Padding(
