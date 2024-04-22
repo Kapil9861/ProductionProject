@@ -30,6 +30,7 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
     Widget home = Center(
       child: SingleChildScrollView(
         child: Column(
@@ -75,6 +76,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Settings");
               },
               buttonText: "Settings",
+              fontSize: 20,
             ),
             const SizedBox(
               height: 20,
@@ -84,6 +86,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Help (Tutorial)");
               },
               buttonText: "Help (Tutorial)",
+              fontSize: 20,
             ),
             const SizedBox(
               height: 20,
@@ -93,6 +96,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Games Rules");
               },
               buttonText: "Games Rules",
+              fontSize: 20,
             ),
             const SizedBox(
               height: 20,
@@ -102,6 +106,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("About Us");
               },
               buttonText: "About Us",
+              fontSize: 20,
             ),
             const SizedBox(
               height: 20,
@@ -111,6 +116,7 @@ class _StartScreenState extends State<StartScreen> {
                 exit(0);
               },
               buttonText: "Exit",
+              fontSize: 20,
             )
           ],
         ),

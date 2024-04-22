@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
 import 'package:sajilo_hisab/widgets/screens/modals/show_bottom_modal.dart';
@@ -33,6 +34,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   double _confidenceLevel = 0.0;
   double _amountValue = 0.0;
   int individualPoints = 0;
+  int doubleeBonus = 5;
+  List<bool> status = [];
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +57,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
     _individualPointsController = List.generate(
         widget.playerNames.length, (index) => TextEditingController());
+    status = List.generate(
+      widget.playerNames.length,
+      (index) => true,
+    );
   }
 
   void _initializePlayerResults() {
@@ -75,6 +83,14 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           _playersResult[index] = "Hold";
         } else if (_playersResult[index] == "Hold") {
           _playersResult[index] = "Seen";
+        }
+
+        if (_playersResult[index] == "Unseen" &&
+                widget.conditions[3] == false ||
+            _playersResult[index] == "Hold") {
+          status[index] = false;
+        } else {
+          status[index] = true;
         }
       }
     });
@@ -136,6 +152,25 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
+  void _startCalculation() {
+    _validateAmount();
+    double pricePerPoint = _amountValue;
+    String notes = _notesController.text;
+  }
+
+  String? _validAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Enter an amount';
+    }
+
+    double? amount = double.tryParse(value);
+    if (amount == null || amount < 0.01 || amount > 99999) {
+      return 'Amount must be between 0.01 and 99999';
+    }
+
+    return null; // No error if the amount is valid
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -191,6 +226,22 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         ),
       );
     }
+    void showSnackBar(String message) {
+      Color color;
+      if (message == "Amount Added!") {
+        color = Colors.green;
+      } else {
+        color = Colors.red;
+      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+          backgroundColor: color,
+        ),
+      );
+    }
 
     Color color = Theme.of(context).colorScheme.onPrimaryContainer;
     if (Theme.of(context).brightness == Brightness.dark) {
@@ -203,7 +254,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             'Marriage Points Calculator',
             style: TextStyle(fontSize: playerNameFont + 4),
           ),
-          actions: [],
         ),
         body: Flex(
           direction: Axis.vertical,
@@ -220,15 +270,22 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       height: 70,
                       width: buttonWidthPercentage * 2.25,
                       child: TextFormField(
+                        onChanged: (value) {
+                          _validAmount(value) == null
+                              ? showSnackBar("Amount Added!")
+                              : showSnackBar("Invalid Amount");
+                        },
                         controller: _amountController,
                         focusNode: amountNode,
                         maxLength: 5,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: "Amount Per Point",
-                          errorText: "Between 0.01 - 99999!",
-                          errorStyle: TextStyle(fontSize: textError),
+                          helperText: "Between 0.01-99999!",
+                          helperStyle: TextStyle(fontSize: textError),
                           hintStyle: TextStyle(fontSize: textError),
+                          errorText: _validAmount(_amountController.text),
+                          errorStyle: TextStyle(fontSize: textError),
                           border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
                             gapPadding: 4,
@@ -293,6 +350,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    enabled: status[i],
                                     controller: _individualPointsController![i],
                                     decoration: InputDecoration(
                                       helperText: "Points",
@@ -309,6 +367,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     ),
                                     maxLength: 3,
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^[0-9]*$')),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -491,7 +553,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     );
                                   }).toList(),
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _startCalculation();
+                                    },
                                     icon: const Icon(Icons.edit),
                                   )
                                 ],

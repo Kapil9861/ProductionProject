@@ -12,7 +12,7 @@ class MarriagePlayerRules extends StatefulWidget {
 
 class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
   // bool isSwitched = true;
-  List<bool> isSwitched = [true, false, true, true];
+  List<bool> isSwitched = [true, true, true, false];
 
   void _toggleSwitch(bool value, int index) {
     setState(() {
@@ -57,6 +57,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       }
     }
 
+    FocusManager.instance.primaryFocus?.unfocus();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

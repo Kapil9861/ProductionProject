@@ -93,6 +93,7 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
       SnackBar(
         content: Text(message),
         duration: const Duration(seconds: 2),
+        backgroundColor: Colors.red,
       ),
     );
     FocusScope.of(context).requestFocus(focusNodes![index]);
@@ -178,10 +179,15 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[1-6]')),
                     ],
                     decoration: InputDecoration(
-                        labelText: 'Number Of Players (Min-2 Max-6)',
-                        labelStyle: TextStyle(
-                          fontSize: textSize,
-                        )),
+                      labelText: 'Number Of Players',
+                      labelStyle: TextStyle(
+                        fontSize: textSize + 4,
+                      ),
+                      hintText: '(Minimum-2 Maximum-6) Players',
+                      hintStyle: TextStyle(
+                        fontSize: textSize,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(

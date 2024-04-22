@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sajilo_hisab/widgets/screens/modals/show_bottom_modal.dart';
 import 'package:sajilo_hisab/widgets/screens/start_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
