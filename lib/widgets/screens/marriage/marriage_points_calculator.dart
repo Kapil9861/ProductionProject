@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
@@ -37,6 +39,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<bool> status = [];
   final List<double> pointsCollection = [];
   double totalPoints = 0;
+  HashMap<String, int> points = HashMap<String, int>();
+  bool fine = false;
+  int winnerCount = 0;
+  bool breakOperation = false;
+  final List<double> forWinnerWinning = [];
 
   @override
   void initState() {
@@ -84,12 +91,14 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       if (index >= 0 && index < _playersResult.length) {
         if (_playersResult[index] == "Seen") {
           _playersResult[index] = "Unseen";
+          _winOrLoss[index] = "Didn't Win";
         } else if (_playersResult[index] == "Unseen") {
           _playersResult[index] = "Dublee";
         } else if (_playersResult[index] == "Dublee") {
           _playersResult[index] = "Foul";
         } else if (_playersResult[index] == "Foul") {
           _playersResult[index] = "Hold";
+          _winOrLoss[index] = "Didn't Win";
         } else if (_playersResult[index] == "Hold") {
           _playersResult[index] = "Seen";
         }
@@ -135,6 +144,23 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
+  void showSnackBar(String message) {
+    Color color;
+    if (message == "Amount Added!") {
+      color = Colors.green;
+    } else {
+      color = Colors.red;
+    }
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        backgroundColor: color,
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _amountController.dispose();
@@ -161,37 +187,128 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     });
   }
 
+  void _hasWinner() {
+    for (int i = 0; i < widget.playerNames.length; i++) {
+      if (_winOrLoss[i] == "Winner") {
+        winnerCount = 1;
+      }
+    }
+    if (winnerCount != 1) {
+      showSnackBar("Winner is not selected!");
+      breakOperation = true;
+    }
+  }
+
   void _startCalculation() {
     _validateAmount();
-
-    double pricePerPoint = _amountValue;
-    String notes = _notesController.text;
-    for (int i = 0; i < widget.playerNames.length; i++) {
-      if (!status[i]) {
-        continue; // Skip if controller is disabled
+    _hasWinner();
+    double toAdd;
+    if (!breakOperation) {
+      int count = 0;
+      double pricePerPoint = _amountValue;
+      String notes = _notesController.text;
+      for (int i = 0; i < widget.playerNames.length; i++) {
+        if (status[i] == true || _playersResult[i] == "Unseen") {
+          count++;
+        }
+        if (!status[i]) {
+          _individualPointsController[i].text = "0";
+          continue; // Skip if controller is disabled
+        }
+        // Check if controller is empty
+        if (_individualPointsController[i].text.isEmpty) {
+          // Show message or perform necessary action
+          FocusScope.of(context).requestFocus(focusNodes[i]);
+        } else {
+          double points = double.parse((_individualPointsController[i]
+              .text
+              .replaceAll(RegExp(r'[^0-9.]'), '')));
+          pointsCollection.add(points);
+        }
       }
 
-      // Check if controller is empty
-      if (_individualPointsController[i].text.isEmpty) {
-        // Show message or perform necessary action
-        print('Points for ${widget.playerNames[i]} is empty');
-      } else {
+      // Calculate total sum of the points
+      totalPoints = 3.0 +
+          pointsCollection.fold(
+              0, (total, individualPoints) => total + individualPoints);
+      for (int i = 0; i < widget.playerNames.length; i++) {
         double points = double.parse((_individualPointsController[i]
             .text
             .replaceAll(RegExp(r'[^0-9.]'), '')));
-        pointsCollection.add(points);
-        print(points);
+        double individualPoints = points * count;
+        double individualWinning;
+        if (_playersResult[i] == "Unseen") {
+          individualWinning = -totalPoints - 7;
+          toAdd = -1 * individualWinning;
+          forWinnerWinning.add(toAdd);
+          print("Unseen");
+          print(individualWinning);
+        } else if (_playersResult[i] == "Hold") {
+          individualWinning = 0;
+          print(individualWinning);
+          print("hold");
+        } else if (_playersResult[i] == "Seen") {
+          if (_winOrLoss[i] != "Winner") {
+            individualWinning = individualPoints - totalPoints;
+            toAdd = -1 * individualWinning;
+            forWinnerWinning.add(toAdd);
+            print(individualWinning);
+            print("seen");
+          }
+        } else if (_playersResult[i] == "Dublee") {
+          if (_winOrLoss[i] != "Winner") {
+            individualWinning = individualPoints - totalPoints + 3;
+            toAdd = -1 * individualWinning;
+            forWinnerWinning.add(toAdd);
+            print(individualWinning);
+            print("dublee see");
+          }
+        } else {
+          if (widget.conditions[4] == true) {
+            individualWinning = -totalPoints - 12;
+            toAdd = -1 * individualWinning;
+            forWinnerWinning.add(toAdd);
+            print(individualWinning);
+            print("on same garda");
+          } else if (widget.conditions[4] == false) {
+            if (fine == true) {
+              individualWinning = -totalPoints - 12;
+              toAdd = -1 * individualWinning;
+              forWinnerWinning.add(toAdd);
+              print(individualWinning);
+              print("true");
+            }
+            individualWinning = -totalPoints + 3;
+            toAdd = -1 * individualWinning;
+            forWinnerWinning.add(toAdd);
+            print(individualWinning);
+            print("false");
+            fine = true;
+          }
+        }
+      }
+      double winnerResult = 0;
+      for (double item in forWinnerWinning) {
+        winnerResult = winnerResult + item;
+      }
+      print(winnerResult);
+      for (int i = 0; i < widget.playerNames.length; i++) {
+        double individualWinning;
+        if (_winOrLoss[i] == "Winner") {
+          if (_playersResult[i] == "Seen") {
+            individualWinning = winnerResult;
+          } else if (_playersResult[i] == "Dublee") {
+            individualWinning = winnerResult + 5;
+          }
+        }
       }
 
-      // Retrieve all the players values in pointsCollection
+      _clearInputFields();
+      pointsCollection.clear();
+      forWinnerWinning.clear();
+      winnerCount = 0;
     }
-
-    // Calculate total sum of the points
-    totalPoints = pointsCollection.fold(
-        0, (total, individualPoints) => total + individualPoints);
-    print(pointsCollection);
-    _clearInputFields();
-    pointsCollection.clear();
+    breakOperation = false;
   }
 
   String? _validAmount(String? value) {
@@ -259,22 +376,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           builder: (context) => const MarriageHomeScreen(
             conditions: [true, false, true, true],
           ),
-        ),
-      );
-    }
-    void showSnackBar(String message) {
-      Color color;
-      if (message == "Amount Added!") {
-        color = Colors.green;
-      } else {
-        color = Colors.red;
-      }
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: const Duration(seconds: 2),
-          backgroundColor: color,
         ),
       );
     }
@@ -610,11 +711,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void _clearInputFields() {
-    for (var controllersList in _nameControllersList) {
-      for (var controller in controllersList) {
-        controller.clear();
-      }
+    for (int i = 0; i < _individualPointsController.length; i++) {
+      _notesController.clear();
+      _individualPointsController[i].clear();
+      _winOrLoss[i] == "Didn't Win";
+      _playersResult[i] == "Seen";
     }
-    _notesController.clear();
   }
 }

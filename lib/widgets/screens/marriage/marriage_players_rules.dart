@@ -12,7 +12,7 @@ class MarriagePlayerRules extends StatefulWidget {
 
 class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
   // bool isSwitched = true;
-  List<bool> isSwitched = [true, true, true, false];
+  List<bool> isSwitched = [true, true, true, false, false];
 
   void _toggleSwitch(bool value, int index) {
     setState(() {
@@ -38,8 +38,10 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
         return title = "Dublee";
       } else if (index == 2) {
         return title = "Dublee Point Less";
-      } else {
+      } else if (index == 3) {
         return title = "Kidnap";
+      } else {
+        return title = "Fine System";
       }
     }
 
@@ -51,9 +53,11 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       } else if (index == 2) {
         return infoText =
             "The Player with Dublee Should not Pay 3 Points to the Winner.";
-      } else {
+      } else if (index == 3) {
         return infoText =
             "The Unseen Player/s Should Pay for Their Points too.";
+      } else {
+        return infoText = "Pay Fine Amount in the Same Game.";
       }
     }
 
@@ -65,7 +69,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
             height: screenSize.height,
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(15.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
@@ -76,7 +80,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                             padding: EdgeInsets.only(bottom: 10),
                             child: Text(
                               "Marriage Players Rule",
-                              style: TextStyle(fontSize: 32),
+                              style: TextStyle(fontSize: 30),
                             ),
                           ),
                           for (int index = 0;
@@ -85,7 +89,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: SizedBox(
-                                height: 120,
+                                height: 95,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -143,7 +147,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                               ),
                             ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+                            padding: const EdgeInsets.only(top: 0.0),
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
