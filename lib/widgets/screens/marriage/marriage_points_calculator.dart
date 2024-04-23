@@ -21,21 +21,22 @@ class MarriagePointsCalculator extends StatefulWidget {
 class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final TextEditingController _notesController = TextEditingController();
   List<List<TextEditingController>> _nameControllersList = [];
-  List<TextEditingController>? _individualPointsController = [];
+  List<TextEditingController> _individualPointsController = [];
   final TextEditingController _amountController = TextEditingController();
   String buttonText = "Start Calculation";
   String winnerButton = "Didn't Win";
   FocusNode amountNode = FocusNode();
-  List<FocusNode>? focusNodes;
+  List<FocusNode> focusNodes = [];
   final List<String> _playersResult = [];
   final List<String> _winOrLoss = [];
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   double _confidenceLevel = 0.0;
   double _amountValue = 0.0;
-  int individualPoints = 0;
   int doubleeBonus = 5;
   List<bool> status = [];
+  final List<double> pointsCollection = [];
+  double totalPoints = 0;
 
   @override
   void initState() {
@@ -53,10 +54,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   void _initializeNameControllers() {
     _nameControllersList = List.generate(widget.playerNames.length, (index) {
       return List.generate(
-          widget.playerNames.length, (index) => TextEditingController());
+        widget.playerNames.length,
+        (index) => TextEditingController(),
+      );
     });
     _individualPointsController = List.generate(
-        widget.playerNames.length, (index) => TextEditingController());
+      widget.playerNames.length,
+      (index) => TextEditingController(),
+    );
+    focusNodes = List.generate(
+      widget.playerNames.length,
+      (index) => FocusNode(),
+    );
     status = List.generate(
       widget.playerNames.length,
       (index) => true,
@@ -154,8 +163,35 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   void _startCalculation() {
     _validateAmount();
+
     double pricePerPoint = _amountValue;
     String notes = _notesController.text;
+    for (int i = 0; i < widget.playerNames.length; i++) {
+      if (!status[i]) {
+        continue; // Skip if controller is disabled
+      }
+
+      // Check if controller is empty
+      if (_individualPointsController[i].text.isEmpty) {
+        // Show message or perform necessary action
+        print('Points for ${widget.playerNames[i]} is empty');
+      } else {
+        double points = double.parse((_individualPointsController[i]
+            .text
+            .replaceAll(RegExp(r'[^0-9.]'), '')));
+        pointsCollection.add(points);
+        print(points);
+      }
+
+      // Retrieve all the players values in pointsCollection
+    }
+
+    // Calculate total sum of the points
+    totalPoints = pointsCollection.fold(
+        0, (total, individualPoints) => total + individualPoints);
+    print(pointsCollection);
+    _clearInputFields();
+    pointsCollection.clear();
   }
 
   String? _validAmount(String? value) {
@@ -350,8 +386,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    focusNode: focusNodes[i],
                                     enabled: status[i],
-                                    controller: _individualPointsController![i],
+                                    controller: _individualPointsController[i],
                                     decoration: InputDecoration(
                                       helperText: "Points",
                                       helperStyle: TextStyle(
@@ -468,7 +505,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         padding:
                             const EdgeInsets.only(left: 10, right: 10, top: 20),
                         child: CustomButton(
-                          onPressed: _submitData,
+                          onPressed: _startCalculation,
                           buttonText: "Calulate",
                           fontSize: playerNameFont,
                         ),
@@ -553,9 +590,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     );
                                   }).toList(),
                                   IconButton(
-                                    onPressed: () {
-                                      _startCalculation();
-                                    },
+                                    onPressed: () {},
                                     icon: const Icon(Icons.edit),
                                   )
                                 ],
@@ -572,10 +607,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         ),
       ),
     );
-  }
-
-  void _submitData() {
-    _clearInputFields();
   }
 
   void _clearInputFields() {
