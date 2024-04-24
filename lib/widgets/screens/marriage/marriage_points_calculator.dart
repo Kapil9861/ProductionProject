@@ -1,10 +1,13 @@
 import 'dart:collection';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
 import 'package:sajilo_hisab/widgets/screens/modals/show_bottom_modal.dart';
+import 'package:sajilo_hisab/widgets/styled_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -25,9 +28,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<List<TextEditingController>> _nameControllersList = [];
   List<TextEditingController> _individualPointsController = [];
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _fineController = TextEditingController();
   String buttonText = "Start Calculation";
   String winnerButton = "Didn't Win";
   FocusNode amountNode = FocusNode();
+  FocusNode fineNode = FocusNode();
   List<FocusNode> focusNodes = [];
   final List<String> _playersResult = [];
   final List<String> _winOrLoss = [];
@@ -44,6 +49,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   int winnerCount = 0;
   bool breakOperation = false;
   final List<double> forWinnerWinning = [];
+  double finePoint = 15;
 
   @override
   void initState() {
@@ -106,7 +112,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         if ((_playersResult[index] == "Unseen" &&
                 widget.conditions[3] == false) ||
             (_playersResult[index] == "Unseen" &&
-                widget.conditions[0] == true) ||
+                widget.conditions[0] == true &&
+                widget.conditions[3] == false) ||
             _playersResult[index] == "Hold") {
           status[index] = false;
         } else {
@@ -129,19 +136,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         } else {
           _winOrLoss[index] = "Didn't Win";
         }
-      }
-    });
-  }
-
-  void _validateAmount() {
-    setState(() {
-      if (_amountController.text.isEmpty) {
-        FocusScope.of(context).requestFocus(amountNode);
-      } else {
-        _amountValue = double.parse(_amountController.text);
-      }
-      if (_amountValue < 100000 && _amountValue > 0) {
-        buttonText = "Game Running";
       }
     });
   }
@@ -201,10 +195,42 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     }
   }
 
+  void _validateAmount() {
+    if (_amountController.text.isEmpty) {
+      setState(() {
+        FocusScope.of(context).requestFocus(amountNode);
+      });
+    } else {
+      setState(() {
+        _amountValue = double.parse(
+          _amountController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+      });
+    }
+    if (_fineController.text.isEmpty && _amountController.text.isNotEmpty) {
+      setState(() {
+        FocusScope.of(context).requestFocus(fineNode);
+      });
+    } else {
+      finePoint = double.parse(
+        _fineController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+      );
+      setState(() {
+        if ((_amountValue < 100000 && _amountValue > 0) &&
+            (finePoint > 4 && finePoint < 101)) {
+          buttonText = "Game Running";
+        } else {
+          ShowDialogBox();
+        }
+      });
+    }
+  }
+
   void _startCalculation() {
     _validateAmount();
     _hasWinner();
     double toAdd;
+    double individualWinning;
     if (!breakOperation) {
       int count = 0;
       double pricePerPoint = _amountValue;
@@ -244,6 +270,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           toAdd = -1 * individualWinning;
           if (widget.conditions[0] == false) {
             individualWinning = individualPoints - totalPoints - 7;
+          } else if (widget.conditions[3] == true) {
+            //winnerResult = points;
           }
           forWinnerWinning.add(toAdd);
           print("Unseen");
@@ -263,6 +291,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         } else if (_playersResult[i] == "Dublee") {
           if (_winOrLoss[i] != "Winner") {
             individualWinning = individualPoints - totalPoints + 3;
+            if (widget.conditions[2] == false) {
+              individualWinning = individualPoints - totalPoints;
+            }
             toAdd = -1 * individualWinning;
             forWinnerWinning.add(toAdd);
             print(individualWinning);
@@ -277,7 +308,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             print("on same garda");
           } else if (widget.conditions[4] == false) {
             if (fine == true) {
-              individualWinning = -totalPoints - 12;
+              individualWinning = -totalPoints - finePoint + 3;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
               print(individualWinning);
@@ -298,12 +329,14 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       }
       print(winnerResult);
       for (int i = 0; i < widget.playerNames.length; i++) {
-        double individualWinning;
         if (_winOrLoss[i] == "Winner") {
           if (_playersResult[i] == "Seen") {
             individualWinning = winnerResult;
           } else if (_playersResult[i] == "Dublee") {
             individualWinning = winnerResult + 5;
+            if (widget.conditions[1] == false) {
+              individualWinning = winnerResult;
+            }
           }
         }
       }
@@ -326,7 +359,61 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       return 'Amount must be between 0.01 and 99999';
     }
 
-    return null; // No error if the amount is valid
+    return null;
+  }
+
+  void ShowDialogBox() {
+    if (Platform.isAndroid) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const StyledText(
+              text: 'Sorry',
+              textSize: 20,
+            ),
+            content: const StyledText(
+              text:
+                  'Fine is for punishment so, it must be a way to remind the player who committed foul not to repeat it again!\nSo it must be between 5 and 100',
+              textSize: 16,
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const StyledText(
+              text: "Sorry",
+              textSize: 20,
+            ),
+            content: const StyledText(
+              text:
+                  'There must be atleast 2  or less than 6 players to start the game. Please Provide the number of players playing with you!',
+              textSize: 16,
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -385,10 +472,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       );
     }
 
-    Color color = Theme.of(context).colorScheme.onPrimaryContainer;
-    if (Theme.of(context).brightness == Brightness.dark) {
-      color = Theme.of(context).colorScheme.onPrimary;
-    }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -410,12 +493,17 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                     padding: EdgeInsets.only(left: padding * 1.5, top: 10),
                     child: SizedBox(
                       height: 70,
-                      width: buttonWidthPercentage * 2.25,
+                      width: buttonWidthPercentage * 2.25 - 60,
                       child: TextFormField(
                         onChanged: (value) {
                           _validAmount(value) == null
                               ? showSnackBar("Amount Added!")
-                              : showSnackBar("Invalid Amount");
+                              : {
+                                  showSnackBar("Invalid Amount"),
+                                  setState(() {
+                                    buttonText = "Start Calculation";
+                                  })
+                                };
                         },
                         controller: _amountController,
                         focusNode: amountNode,
@@ -424,9 +512,36 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         decoration: InputDecoration(
                           hintText: "Amount Per Point",
                           helperText: "Between 0.01-99999!",
-                          helperStyle: TextStyle(fontSize: textError),
+                          helperStyle: TextStyle(fontSize: textError - 1),
                           hintStyle: TextStyle(fontSize: textError),
                           errorText: _validAmount(_amountController.text),
+                          errorStyle: TextStyle(fontSize: textError),
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            gapPadding: 4,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ), // Border radius
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SizedBox(
+                      width: buttonHeightPercentage + 40,
+                      height: 70,
+                      child: TextFormField(
+                        controller: _fineController,
+                        focusNode: fineNode,
+                        maxLength: 3,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: "FINE!",
+                          helperText: "5-100",
+                          helperStyle: TextStyle(fontSize: textError - 1),
+                          hintStyle: TextStyle(fontSize: textError),
                           errorStyle: TextStyle(fontSize: textError),
                           border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
@@ -444,10 +559,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         const EdgeInsets.only(top: 0, bottom: 12, right: 10),
                     child: CustomButton(
                       onPressed: () {
-                        _validateAmount();
+                        _validAmount(_amountController.text) == null
+                            ? _validateAmount()
+                            : {FocusScope.of(context).requestFocus(amountNode)};
                       },
                       buttonText: buttonText,
-                      width: amountButtonWidth + 15,
+                      width: amountButtonWidth - 2,
                       height: amountButtonHeight + 10,
                       fontSize: playerNameFont - 1.5,
                     ),
