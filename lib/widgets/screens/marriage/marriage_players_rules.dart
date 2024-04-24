@@ -19,6 +19,11 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       if (index < isSwitched.length) {
         isSwitched[index] = value;
       }
+      if (index == 0 && isSwitched[0] == false) {
+        isSwitched[3] = false;
+      } else if (index == 3 && isSwitched[3] == true) {
+        isSwitched[0] = true;
+      }
     });
   }
 

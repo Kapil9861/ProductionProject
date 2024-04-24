@@ -103,8 +103,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           _playersResult[index] = "Seen";
         }
 
-        if (_playersResult[index] == "Unseen" &&
-                widget.conditions[3] == false ||
+        if ((_playersResult[index] == "Unseen" &&
+                widget.conditions[3] == false) ||
+            (_playersResult[index] == "Unseen" &&
+                widget.conditions[0] == true) ||
             _playersResult[index] == "Hold") {
           status[index] = false;
         } else {
@@ -213,7 +215,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         }
         if (!status[i]) {
           _individualPointsController[i].text = "0";
-          continue; // Skip if controller is disabled
+          continue;
         }
         // Check if controller is empty
         if (_individualPointsController[i].text.isEmpty) {
@@ -240,6 +242,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         if (_playersResult[i] == "Unseen") {
           individualWinning = -totalPoints - 7;
           toAdd = -1 * individualWinning;
+          if (widget.conditions[0] == false) {
+            individualWinning = individualPoints - totalPoints - 7;
+          }
           forWinnerWinning.add(toAdd);
           print("Unseen");
           print(individualWinning);
