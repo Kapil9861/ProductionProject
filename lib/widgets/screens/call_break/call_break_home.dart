@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/screens/call_break/call_break_points_calculator.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_points_calculator.dart';
 
 class CallBreakHome extends StatefulWidget {
@@ -45,7 +46,7 @@ class _CallBreakHomeState extends State<CallBreakHome> {
     FocusScope.of(context).requestFocus(playerFocusNodes[index]);
   }
 
-  void _startCalculation() {
+  void _proceedToCalculator() {
     bool allFieldsFilled = true;
     for (int i = 0; i < numberOfPlayers; i++) {
       if (playerControllers[i].text.isEmpty) {
@@ -64,7 +65,7 @@ class _CallBreakHomeState extends State<CallBreakHome> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MarriagePointsCalculator(
+          builder: (context) => CallBreakPointsCalculator(
             playerNames: playerNames,
             conditions: widget.conditions,
           ),
@@ -93,18 +94,18 @@ class _CallBreakHomeState extends State<CallBreakHome> {
           children: [
             // Generate text fields for player names
             for (int i = 0; i < numberOfPlayers; i++)
-              TextField(
+              TextFormField(
                 controller: playerControllers[i],
                 focusNode: playerFocusNodes[i],
                 decoration: InputDecoration(
-                  labelText: 'Player ${i + 1}',
+                  labelText: 'Player ${i + 1} Name',
                 ),
               ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(right: 10),
               child: ElevatedButton(
-                onPressed: _startCalculation,
+                onPressed: _proceedToCalculator,
                 child: const Text('Start Calculator'),
               ),
             ),

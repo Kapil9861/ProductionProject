@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
-import 'package:sajilo_hisab/widgets/screens/modals/show_bottom_modal.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -220,7 +219,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             (finePoint > 4 && finePoint < 101)) {
           buttonText = "Game Running";
         } else {
-          ShowDialogBox();
+          showDialogBox();
         }
       });
     }
@@ -362,7 +361,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     return null;
   }
 
-  void ShowDialogBox() {
+  void showDialogBox() {
     if (Platform.isAndroid) {
       showDialog(
         context: context,
@@ -399,7 +398,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             ),
             content: const StyledText(
               text:
-                  'There must be atleast 2  or less than 6 players to start the game. Please Provide the number of players playing with you!',
+                  'Fine is for punishment so, it must be a way to remind the player who committed foul not to repeat it again!\nSo it must be between 5 and 100',
               textSize: 16,
             ),
             actions: <Widget>[
