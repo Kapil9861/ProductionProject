@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/styled_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -19,11 +23,10 @@ class CallBreakPointsCalculator extends StatefulWidget {
 }
 
 class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
-  List<TextEditingController> _individualPointsController = [];
-  List<TextEditingController> _individualPointsController1 = [];
+  List<TextEditingController> _individualInitialPointsController = [];
+  List<TextEditingController> _individualResultPointsController = [];
   List<TextEditingController> _amountController = [];
   final TextEditingController _notesController = TextEditingController();
-  final List<List<TextEditingController>> _nameControllersList = [];
 
   List<FocusNode> pointsFocusNodes = [];
   List<FocusNode> amountNode = [];
@@ -36,11 +39,15 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   bool state = false;
   List<FocusNode> focusNodes = [];
   List<FocusNode> focusNodes1 = [];
-  List<bool> status = [];
+  bool status = true;
+  int initialPointsStatus = 0;
+  bool isAmountValid = false;
+  String information =
+      "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
 
   void showSnackBar(String message) {
     Color color;
-    if (message == "Amount Added!") {
+    if (message == "Amount Added!" || message == "Started Game!") {
       color = Colors.green;
     } else {
       color = Colors.red;
@@ -57,24 +64,56 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   String? _validAmount(String? value, int index) {
     if (value == null || value.isEmpty) {
-      return index == 0
-          ? "2ND"
-          : index == 1
-              ? "3RD"
-              : "4TH";
+      if (index == 0) {
+        return "2ND";
+      } else if (index == 1) {
+        return "3RD";
+      } else {
+        return "4TH";
+      }
+    } else {
+      double amount = double.parse(
+        value.replaceAll(RegExp(r'[^0-9.]'), ''),
+      );
+      if (amount < 4 || amount > 99999) {
+        if (index == 0) {
+          return "2ND";
+        } else if (index == 1) {
+          return "3RD";
+        } else {
+          return "4TH";
+        }
+      } else {
+        isAmountValid = true;
+        return null;
+      }
     }
+  }
 
-    double amount = double.parse(
-      value.replaceAll(RegExp(r'[^0-9.]'), ''),
-    );
-    if (amount < 4 || amount > 99999) {
-      return index == 0
-          ? "2ND"
-          : index == 1
-              ? "3RD"
-              : "4TH";
+  void _validateAmount() {
+    for (int i = 0; i < widget.playerNames.length - 1; i++) {
+      String? value = _amountController[i].text;
+      if (value.isEmpty) {
+        FocusScope.of(context).requestFocus(amountNode[i]);
+      } else {
+        double amount = double.parse(
+          value.replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        if (amount < 5 || amount > 100000) {
+          showSnackBar("Player $i Amount is Invalid!");
+        } else {
+          double secondValue = double.parse(
+            _amountController[1].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+          );
+          if (i == 2 && secondValue > 4 && secondValue < 100000) {
+            showSnackBar("Started Game!");
+            setState(() {
+              buttonText = "Running";
+            });
+          }
+        }
+      }
     }
-    return null;
   }
 
   @override
@@ -85,11 +124,11 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   void _initializeControllers() {
-    _individualPointsController = List.generate(
+    _individualInitialPointsController = List.generate(
       widget.playerNames.length - 1,
       (index) => TextEditingController(),
     );
-    _individualPointsController1 = List.generate(
+    _individualResultPointsController = List.generate(
       widget.playerNames.length - 1,
       (index) => TextEditingController(),
     );
@@ -140,7 +179,129 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     });
   }
 
-  void _startCalculation() {}
+  int _checkFinalPoints() {
+    double totalPoints = 0;
+    for (int i = 0; i < _individualInitialPointsController.length; i++) {
+      if (_individualInitialPointsController[i].text.isNotEmpty) {
+        double individualPoint = double.parse(
+          _individualInitialPointsController[i]
+              .text
+              .replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        if (individualPoint.isNegative ||
+            individualPoint < 1 ||
+            individualPoint > 13) {
+          FocusScope.of(context).requestFocus(focusNodes[i]);
+          return 1;
+        } else {
+          totalPoints += individualPoint;
+        }
+      } else {
+        FocusScope.of(context).requestFocus(focusNodes[i]);
+        return 1;
+      }
+    }
+    if (totalPoints > 13) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  int _checkInitialPoints() {
+    for (int i = 0; i < _individualInitialPointsController.length; i++) {
+      if (_individualInitialPointsController[i].text.isNotEmpty) {
+        double individualPoint = double.parse(
+          _individualInitialPointsController[i]
+              .text
+              .replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        if (individualPoint.isNegative ||
+            individualPoint < 1 ||
+            individualPoint > 13) {
+          showDialogBox(
+              "Players must commit a point, minimum of 1 to maximum 13!");
+          FocusScope.of(context).requestFocus(focusNodes[i]);
+          return 1;
+        }
+      } else {
+        showSnackBar("Empty points for player $i");
+        FocusScope.of(context).requestFocus(focusNodes[i]);
+        return 1;
+      }
+    }
+    return 0;
+  }
+
+  int _startCalculation() {
+    _checkInitialPoints();
+    _checkFinalPoints();
+    if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
+      return 1;
+    }
+    if (isAmountValid) {
+      for (int i = 0; i < widget.playerNames.length; i++) {
+        int points = int.parse(
+          _individualInitialPointsController[i]
+              .text
+              .replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+      }
+    }
+    return 0;
+  }
+
+  void showDialogBox(String information) {
+    if (Platform.isAndroid) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const StyledText(
+              text: 'Sorry',
+              textSize: 20,
+            ),
+            content: StyledText(
+              text: information,
+              textSize: 14,
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const StyledText(
+              text: "Sorry",
+              textSize: 20,
+            ),
+            content: StyledText(
+              text: information,
+              textSize: 14,
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,30 +385,24 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         const EdgeInsets.only(top: 0, bottom: 15, right: 10),
                     child: CustomButton(
                       onPressed: () {
-                        for (int i = 0;
-                            i < widget.playerNames.length - 1;
-                            i++) {
-                          _validAmount(_amountController[i].text, i) == null
-                              ? setState(() {
-                                  buttonText = "Running";
-                                })
-                              : FocusScope.of(context)
-                                  .requestFocus(amountNode[i]);
-                        }
+                        _validateAmount();
                       },
                       buttonText: buttonText,
                       width: amountButtonWidth - 20,
                       height: amountButtonHeight - 7,
-                      fontSize: playerNameFont - 2,
+                      fontSize: playerNameFont - 1.5,
                     ),
                   ),
                 ],
               ),
             ),
-            const Text(
-              "Amount For Players Those Lost! Min-5 Max-99999!",
-              style: TextStyle(
-                color: Color.fromARGB(255, 60, 125, 179),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 6),
+              child: Text(
+                "Amount For Players Those Lost! Min-5 Max-99999!",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 60, 125, 179),
+                ),
               ),
             ),
             Expanded(
@@ -278,8 +433,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    enabled: status,
                                     focusNode: focusNodes[i],
-                                    controller: _individualPointsController[i],
+                                    controller:
+                                        _individualInitialPointsController[i],
                                     decoration: InputDecoration(
                                       helperText: "Points",
                                       helperStyle: TextStyle(
@@ -309,7 +466,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   width: pointsArea,
                                   child: TextFormField(
                                     focusNode: focusNodes1[i],
-                                    controller: _individualPointsController1[i],
+                                    controller:
+                                        _individualResultPointsController[i],
                                     decoration: InputDecoration(
                                       helperText: "Points",
                                       helperStyle: TextStyle(
@@ -336,6 +494,21 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ),
                         ),
                       Padding(
+                        padding: const EdgeInsets.only(right: 85),
+                        child: CustomButton(
+                          onPressed: () {
+                            setState(() {
+                              _checkInitialPoints() == 0
+                                  ? status = true
+                                  : false;
+                            });
+                          },
+                          buttonText: "Lock",
+                          width: 90,
+                          fontSize: playerNameFont - 1.5,
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.all(10),
                         child: Row(
                           children: [
@@ -353,13 +526,13 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 Padding(
                                   padding: EdgeInsets.only(right: padding),
                                   child: SizedBox(
-                                    height: 200,
+                                    height: 150,
                                     width: notesArea,
                                     child: TextFormField(
                                       style: TextStyle(
                                           fontSize: playerNameFont - 1),
                                       controller: _notesController,
-                                      maxLength: 300,
+                                      maxLength: 150,
                                       maxLines: 6,
                                       onTap: () {
                                         _startListening();
@@ -382,7 +555,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                         helperText:
                                             "Incomplete Transaction or Foul Play",
                                         helperStyle: TextStyle(
-                                            fontSize: playerNameFont - 3),
+                                            fontSize: playerNameFont - 5),
                                       ),
                                     ),
                                   ),

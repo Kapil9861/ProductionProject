@@ -663,13 +663,13 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 Padding(
                                   padding: EdgeInsets.only(right: padding),
                                   child: SizedBox(
-                                    height: 200,
+                                    height: 150,
                                     width: notesArea,
                                     child: TextFormField(
                                       style: TextStyle(
                                           fontSize: playerNameFont - 1),
                                       controller: _notesController,
-                                      maxLength: 300,
+                                      maxLength: 150,
                                       maxLines: 6,
                                       onTap: () {
                                         _startListening();
@@ -692,7 +692,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                         helperText:
                                             "Incomplete Transaction or Foul Play",
                                         helperStyle: TextStyle(
-                                            fontSize: playerNameFont - 3),
+                                            fontSize: playerNameFont - 5),
                                       ),
                                     ),
                                   ),

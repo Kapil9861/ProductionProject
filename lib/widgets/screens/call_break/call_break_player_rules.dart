@@ -13,7 +13,7 @@ class CallBreakPlayerRules extends StatefulWidget {
 
 class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
   // bool isSwitched = true;
-  List<bool> isSwitched = [true, false];
+  List<bool> isSwitched = [false, false, true, true];
 
   void _toggleSwitch(bool value, int index) {
     setState(() {
@@ -32,19 +32,30 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
     if (Theme.of(context).brightness == Brightness.dark) {
       color = Theme.of(context).colorScheme.onPrimary;
     }
+
     String getTitle(int index) {
       if (index == 0) {
         return title = "Double Pay";
-      } else {
+      } else if (index == 1) {
         return title = "Double Receive";
+      } else if (index == 2) {
+        return title = "Sum Of Nine";
+      } else {
+        return title = "Direct Winner";
       }
     }
 
     String getInfoText(int index) {
       if (index == 0) {
         return infoText = "Pay Double When You Get Negative Total Points.";
-      } else {
+      } else if (index == 1) {
         return infoText = "Receive Double When You Cross Total of 20 Points.";
+      } else if (index == 2) {
+        return infoText =
+            "Skip the particular game and move to next if total initial points is less than 10)";
+      } else {
+        return infoText =
+            "Finish the complete round (whole game) if player receives 8 or more successful points(HAAT)";
       }
     }
 
