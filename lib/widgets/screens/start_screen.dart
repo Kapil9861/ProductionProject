@@ -18,6 +18,8 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
   String appBarTitle = "Sajilo Hisab";
   Widget? content;
+  double padding = 40;
+  double fontSize = 20;
 
   @override
   void initState() {
@@ -52,7 +54,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Marriage Points Rules");
               },
               buttonText: "Marriage Points Calculator",
-              width: 300,
               height: 40,
               fontSize: 19,
             ),
@@ -64,7 +65,6 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("CallBreak Points Rules");
               },
               buttonText: "CallBreak Points Calculator",
-              width: 300,
               height: 40,
               fontSize: 19,
             ),
@@ -150,11 +150,13 @@ class _StartScreenState extends State<StartScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Padding(
-            padding: const EdgeInsets.only(left: 40),
+            padding:
+                EdgeInsets.only(left: appBarTitle == "Sajilo Hisab" ? 70 : 40),
             child: Text(
               appBarTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 21),
+              style:
+                  TextStyle(fontSize: appBarTitle == "Sajilo Hisab" ? 24 : 21),
             ),
           ),
           leading: Padding(

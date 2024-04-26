@@ -36,6 +36,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
     if (Theme.of(context).brightness == Brightness.dark) {
       color = Theme.of(context).colorScheme.onPrimary;
     }
+    print(screenSize);
     String getTitle(int index) {
       if (index == 0) {
         return title = "Murder";
@@ -94,7 +95,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: SizedBox(
-                                height: 95,
+                                height: 101,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -119,10 +120,9 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                       ),
                                     ),
                                     Container(
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color.fromARGB(255, 201, 199,
-                                            199), // Background color of the circle
+                                        color: color,
                                       ),
                                       child: IconButton(
                                         onPressed: () {
@@ -134,7 +134,9 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                           );
                                         },
                                         icon: const Icon(
-                                            Icons.question_mark_outlined),
+                                          Icons.question_mark_outlined,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                     SizedBox(

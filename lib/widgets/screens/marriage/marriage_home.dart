@@ -154,9 +154,9 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Padding(
-          padding: EdgeInsets.only(left: 40),
+          padding: EdgeInsets.only(left: 15),
           child: Text(
-            "Marriage Points Home",
+            "Marriage Calculator Home",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 21),
           ),
@@ -222,7 +222,6 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: numberOfFields,

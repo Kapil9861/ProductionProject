@@ -86,7 +86,7 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: SizedBox(
-                                height: 120,
+                                height: 125,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -111,10 +111,10 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                       ),
                                     ),
                                     Container(
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color.fromARGB(255, 201, 199,
-                                            199), // Background color of the circle
+                                        color:
+                                            color, // Background color of the circle
                                       ),
                                       child: IconButton(
                                         onPressed: () {
@@ -126,7 +126,7 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                           );
                                         },
                                         icon: const Icon(
-                                            Icons.question_mark_outlined),
+                                            Icons.question_mark_outlined,color: Colors.white),
                                       ),
                                     ),
                                     SizedBox(

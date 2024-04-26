@@ -105,7 +105,14 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           double secondValue = double.parse(
             _amountController[1].text.replaceAll(RegExp(r'[^0-9.]'), ''),
           );
-          if (i == 2 && secondValue > 4 && secondValue < 100000) {
+          double firstValue = double.parse(
+            _amountController[0].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+          );
+          if (i == 2 &&
+              secondValue > 4 &&
+              secondValue < 100000 &&
+              firstValue > 4 &&
+              firstValue < 100000) {
             showSnackBar("Started Game!");
             setState(() {
               buttonText = "Running";
@@ -181,27 +188,32 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   int _checkFinalPoints() {
     double totalPoints = 0;
-    for (int i = 0; i < _individualInitialPointsController.length; i++) {
-      if (_individualInitialPointsController[i].text.isNotEmpty) {
+    for (int i = 0; i < _individualResultPointsController.length; i++) {
+      if (_individualResultPointsController[i].text.isNotEmpty) {
         double individualPoint = double.parse(
-          _individualInitialPointsController[i]
+          _individualResultPointsController[i]
               .text
               .replaceAll(RegExp(r'[^0-9.]'), ''),
         );
         if (individualPoint.isNegative ||
-            individualPoint < 1 ||
+            individualPoint < 0 ||
             individualPoint > 13) {
-          FocusScope.of(context).requestFocus(focusNodes[i]);
+          showDialogBox(
+              "Players' result point should not exceed 13 and cannot be negative!");
+          FocusScope.of(context).requestFocus(focusNodes1[i]);
           return 1;
         } else {
           totalPoints += individualPoint;
         }
       } else {
-        FocusScope.of(context).requestFocus(focusNodes[i]);
+        showSnackBar("Player $i Field is Empty!");
+        FocusScope.of(context).requestFocus(focusNodes1[i]);
         return 1;
       }
     }
-    if (totalPoints > 13) {
+    if (totalPoints != 13) {
+      showDialogBox(
+          "Players' total result point should be exactly be 13, currently it is $totalPoints!");
       return 1;
     } else {
       return 0;
@@ -234,13 +246,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   int _startCalculation() {
-    _checkInitialPoints();
-    _checkFinalPoints();
+    _validateAmount();
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
       return 1;
     }
     if (isAmountValid) {
-      for (int i = 0; i < widget.playerNames.length; i++) {
+      for (int i = 0; i < widget.playerNames.length - 1; i++) {
         int points = int.parse(
           _individualInitialPointsController[i]
               .text
@@ -314,7 +325,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     double textError = 14;
     double playerNameFont = 17;
     double playerNameArea = 83;
-    double pointsArea = 90;
+    double pointsArea = 95;
     double padding = 10;
     int amountButtonWidth = 125;
     int amountButtonHeight = 55;
@@ -411,6 +422,32 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                 child: SizedBox(
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0, bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 26,
+                            ),
+                            Text(
+                              "INITIAL POINTS",
+                              style: TextStyle(
+                                  fontSize: playerNameFont - 4,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                            Text(
+                              "FINAL POINTS",
+                              style: TextStyle(
+                                  fontSize: playerNameFont - 4,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
                       for (int i = 0; i < widget.playerNames.length - 1; i++)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
@@ -438,9 +475,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     controller:
                                         _individualInitialPointsController[i],
                                     decoration: InputDecoration(
-                                      helperText: "Points",
-                                      helperStyle: TextStyle(
+                                      helperText: "MAX-13",
+                                      hintText: "MIN-1",
+                                      hintStyle: TextStyle(
                                           fontSize: playerNameFont - 4),
+                                      helperStyle: TextStyle(
+                                          fontSize: playerNameFont - 5),
                                       border: const OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.grey),
@@ -469,9 +509,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     controller:
                                         _individualResultPointsController[i],
                                     decoration: InputDecoration(
-                                      helperText: "Points",
-                                      helperStyle: TextStyle(
+                                      helperText: "MAX-13",
+                                      hintText: "MIN-0",
+                                      hintStyle: TextStyle(
                                           fontSize: playerNameFont - 4),
+                                      helperStyle: TextStyle(
+                                          fontSize: playerNameFont - 5),
                                       border: const OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: Colors.grey),
@@ -494,17 +537,17 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 85),
+                        padding: const EdgeInsets.only(right: 75),
                         child: CustomButton(
                           onPressed: () {
                             setState(() {
                               _checkInitialPoints() == 0
-                                  ? status = true
-                                  : false;
+                                  ? status = false
+                                  : true;
                             });
                           },
                           buttonText: "Lock",
-                          width: 90,
+                          width: 105,
                           fontSize: playerNameFont - 1.5,
                         ),
                       ),

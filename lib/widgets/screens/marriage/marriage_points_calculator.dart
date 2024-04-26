@@ -28,7 +28,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<TextEditingController> _individualPointsController = [];
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _fineController = TextEditingController();
-  String buttonText = "Start Calculation";
+  String buttonText = "Start";
   String winnerButton = "Didn't Win";
   FocusNode amountNode = FocusNode();
   FocusNode fineNode = FocusNode();
@@ -217,7 +217,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       setState(() {
         if ((_amountValue < 100000 && _amountValue > 0) &&
             (finePoint > 4 && finePoint < 101)) {
-          buttonText = "Game Running";
+          buttonText = "Running...";
         } else {
           showDialogBox();
         }
@@ -500,7 +500,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                               : {
                                   showSnackBar("Invalid Amount"),
                                   setState(() {
-                                    buttonText = "Start Calculation";
+                                    buttonText = "Start";
                                   })
                                 };
                         },
@@ -511,7 +511,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         decoration: InputDecoration(
                           hintText: "Amount Per Point",
                           helperText: "Between 0.01-99999!",
-                          helperStyle: TextStyle(fontSize: textError - 1),
+                          helperStyle: TextStyle(fontSize: textError - 3),
                           hintStyle: TextStyle(fontSize: textError),
                           errorText: _validAmount(_amountController.text),
                           errorStyle: TextStyle(fontSize: textError),
@@ -539,7 +539,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         decoration: InputDecoration(
                           hintText: "FINE!",
                           helperText: "5-100",
-                          helperStyle: TextStyle(fontSize: textError - 1),
+                          helperStyle: TextStyle(fontSize: textError - 3),
                           hintStyle: TextStyle(fontSize: textError),
                           errorStyle: TextStyle(fontSize: textError),
                           border: const OutlineInputBorder(

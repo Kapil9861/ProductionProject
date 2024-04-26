@@ -4,7 +4,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
     this.height = 40,
-    this.width = 300,
+    this.width = 305,
     this.fontSize = 12,
     required this.onPressed,
     required this.buttonText,

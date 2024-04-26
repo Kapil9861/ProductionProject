@@ -79,9 +79,9 @@ class _CallBreakHomeState extends State<CallBreakHome> {
     return Scaffold(
       appBar: AppBar(
         title: const Padding(
-          padding: EdgeInsets.only(left: 40),
+          padding: EdgeInsets.only(left: 15),
           child: Text(
-            "Marriage Points Home",
+            "CallBreak Calculator Home",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 21),
           ),
@@ -94,11 +94,14 @@ class _CallBreakHomeState extends State<CallBreakHome> {
           children: [
             // Generate text fields for player names
             for (int i = 0; i < numberOfPlayers; i++)
-              TextFormField(
-                controller: playerControllers[i],
-                focusNode: playerFocusNodes[i],
-                decoration: InputDecoration(
-                  labelText: 'Player ${i + 1} Name',
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: TextFormField(
+                  controller: playerControllers[i],
+                  focusNode: playerFocusNodes[i],
+                  decoration: InputDecoration(
+                    labelText: 'Player ${i + 1} Name',
+                  ),
                 ),
               ),
             const SizedBox(height: 20),
