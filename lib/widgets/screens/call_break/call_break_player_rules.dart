@@ -63,7 +63,7 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
-            height: screenSize.height,
+            height: screenSize.height + 180,
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -126,7 +126,8 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                           );
                                         },
                                         icon: const Icon(
-                                            Icons.question_mark_outlined,color: Colors.white),
+                                            Icons.question_mark_outlined,
+                                            color: Colors.white),
                                       ),
                                     ),
                                     SizedBox(

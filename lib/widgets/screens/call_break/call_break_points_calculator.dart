@@ -329,6 +329,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     double padding = 10;
     int amountButtonWidth = 125;
     int amountButtonHeight = 55;
+    if (screenSize.width > 400) {
+      textError = 15;
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -349,10 +352,16 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                 children: [
                   for (int i = 0; i < widget.playerNames.length - 1; i++)
                     Padding(
-                      padding: EdgeInsets.only(left: padding, top: 10),
+                      padding: EdgeInsets.only(
+                          left: screenSize.width > 400
+                              ? padding + 3
+                              : padding - 4,
+                          top: 10),
                       child: SizedBox(
                         height: 70,
-                        width: buttonWidthPercentage - 20,
+                        width: screenSize.width < 390 && screenSize.width > 350
+                            ? buttonWidthPercentage - 13
+                            : buttonWidthPercentage - 20,
                         child: TextFormField(
                           onChanged: (value) {
                             _validAmount(value, i) == null
@@ -379,7 +388,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             hintStyle: TextStyle(fontSize: textError - 2.5),
                             errorText:
                                 _validAmount(_amountController[i].text, i),
-                            errorStyle: TextStyle(fontSize: textError),
+                            errorStyle: TextStyle(fontSize: textError - 2),
                             border: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey),
                               gapPadding: 4,
@@ -392,15 +401,22 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                       ),
                     ),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: 0, bottom: 15, right: 10),
+                    padding: EdgeInsets.only(
+                        top: 0,
+                        bottom: 15,
+                        left: 5,
+                        right: screenSize.width < 390 && screenSize.width > 350
+                            ? 5
+                            : 10),
                     child: CustomButton(
                       onPressed: () {
                         _validateAmount();
                       },
                       buttonText: buttonText,
                       width: amountButtonWidth - 20,
-                      height: amountButtonHeight - 7,
+                      height: screenSize.height < 625
+                          ? amountButtonHeight - 20
+                          : amountButtonHeight - 7,
                       fontSize: playerNameFont - 1.5,
                     ),
                   ),
@@ -427,8 +443,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const SizedBox(
-                              width: 26,
+                            SizedBox(
+                              width: screenSize.width > 400
+                                  ? 10
+                                  : screenSize.height < 625
+                                      ? 55
+                                      : 26,
                             ),
                             Text(
                               "INITIAL POINTS",
@@ -537,7 +557,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 75),
+                        padding: EdgeInsets.only(
+                            right: screenSize.height < 625 ? 45 : 75),
                         child: CustomButton(
                           onPressed: () {
                             setState(() {

@@ -72,7 +72,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
-            height: screenSize.height,
+            height: screenSize.height + 130,
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),

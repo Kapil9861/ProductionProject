@@ -138,7 +138,7 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double screenWidth = screenSize.width;
-    double textSize = 19;
+    double textSize = 16.5;
     double padding = 10;
 
     if (screenWidth < 350 && screenWidth > 321) {

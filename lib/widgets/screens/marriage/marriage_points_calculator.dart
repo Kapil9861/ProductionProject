@@ -418,6 +418,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    print("Screen size:  $screenSize");
 
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;
@@ -435,14 +436,23 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     int amountButtonWidth = 130;
     int amountButtonHeight = 55;
 
-    if (screenWidth < 393 && screenWidth > 350) {
+    if (screenWidth < 375 && screenWidth > 350) {
       playerNameFont = 14;
       playerNameArea = 65;
-      pointsArea = 90;
+      pointsArea = 80;
       padding = 8;
-      textError = 12;
+      textError = 12.5;
       amountButtonWidth = 115;
       amountButtonHeight = 45;
+    } else if (screenWidth < 393 && screenWidth > 375) {
+      playerNameFont = 15;
+      playerNameArea = 75;
+      pointsArea = 80;
+      padding = 8;
+      textError = 13.5;
+      amountButtonWidth = 115;
+      amountButtonHeight = 45;
+      buttonHeightPercentage = buttonHeightPercentage - 5;
     } else if (screenWidth > 321 && screenWidth < 350) {
       playerNameFont = 12;
       playerNameArea = 55;
@@ -514,7 +524,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                           helperStyle: TextStyle(fontSize: textError - 3),
                           hintStyle: TextStyle(fontSize: textError),
                           errorText: _validAmount(_amountController.text),
-                          errorStyle: TextStyle(fontSize: textError),
+                          errorStyle: TextStyle(fontSize: textError - 2),
                           border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
                             gapPadding: 4,
@@ -541,7 +551,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                           helperText: "5-100",
                           helperStyle: TextStyle(fontSize: textError - 3),
                           hintStyle: TextStyle(fontSize: textError),
-                          errorStyle: TextStyle(fontSize: textError),
+                          errorStyle: TextStyle(fontSize: textError - 3),
                           border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
                             gapPadding: 4,
@@ -565,7 +575,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       buttonText: buttonText,
                       width: amountButtonWidth - 2,
                       height: amountButtonHeight + 10,
-                      fontSize: playerNameFont - 1.5,
+                      fontSize: screenSize.height < 625
+                          ? playerNameFont
+                          : playerNameFont - 1.5,
                     ),
                   ),
                 ],
@@ -640,7 +652,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 buttonText: _playersResult[i],
                                 fontSize: playerNameFont - 2,
                                 height: buttonHeight + 4,
-                                width: buttonWidth,
+                                width: screenSize.width > 350 &&
+                                        screenSize.width < 390
+                                    ? buttonWidth + 1
+                                    : buttonWidth,
                               ),
                             ],
                           ),

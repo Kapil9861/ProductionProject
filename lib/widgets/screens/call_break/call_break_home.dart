@@ -89,30 +89,32 @@ class _CallBreakHomeState extends State<CallBreakHome> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Generate text fields for player names
-            for (int i = 0; i < numberOfPlayers; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: TextFormField(
-                  controller: playerControllers[i],
-                  focusNode: playerFocusNodes[i],
-                  decoration: InputDecoration(
-                    labelText: 'Player ${i + 1} Name',
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Generate text fields for player names
+              for (int i = 0; i < numberOfPlayers; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: TextFormField(
+                    controller: playerControllers[i],
+                    focusNode: playerFocusNodes[i],
+                    decoration: InputDecoration(
+                      labelText: 'Player ${i + 1} Name',
+                    ),
                   ),
                 ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ElevatedButton(
+                  onPressed: _proceedToCalculator,
+                  child: const Text('Start Calculator'),
+                ),
               ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: ElevatedButton(
-                onPressed: _proceedToCalculator,
-                child: const Text('Start Calculator'),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
