@@ -5,8 +5,8 @@ import 'package:sajilo_hisab/widgets/screens/call_break/call_break_player_rules.
 import 'package:sajilo_hisab/widgets/screens/game_rules.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_players_rules.dart';
-import 'package:sajilo_hisab/widgets/screens/settings_screen.dart';
 import 'package:sajilo_hisab/widgets/screens/help_screen.dart';
+import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -73,16 +73,6 @@ class _StartScreenState extends State<StartScreen> {
             ),
             CustomButton(
               onPressed: () {
-                selectScreen("Settings");
-              },
-              buttonText: "Settings",
-              fontSize: 20,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomButton(
-              onPressed: () {
                 selectScreen("Help (Tutorial)");
               },
               buttonText: "Help (Tutorial)",
@@ -117,7 +107,8 @@ class _StartScreenState extends State<StartScreen> {
               },
               buttonText: "Exit",
               fontSize: 20,
-            )
+            ),
+            const MyFooter()
           ],
         ),
       ),
@@ -129,9 +120,6 @@ class _StartScreenState extends State<StartScreen> {
         break;
       case "CallBreak Points Rules":
         content = const CallBreakPlayerRules();
-        break;
-      case "Settings":
-        content = SettingsScreen();
         break;
       case "Help (Tutorial)":
         content = HelpScreen();

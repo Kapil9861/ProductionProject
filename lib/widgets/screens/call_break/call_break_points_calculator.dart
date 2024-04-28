@@ -27,6 +27,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<TextEditingController> _individualResultPointsController = [];
   List<TextEditingController> _amountController = [];
   final TextEditingController _notesController = TextEditingController();
+  final List<num> _individualResults = [];
+  Color? textColor;
+  bool isCalculation = false;
 
   List<FocusNode> pointsFocusNodes = [];
   List<FocusNode> amountNode = [];
@@ -113,7 +116,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
               secondValue < 100000 &&
               firstValue > 4 &&
               firstValue < 100000) {
-            showSnackBar("Started Game!");
+            isCalculation ? null : showSnackBar("Started Game!");
             setState(() {
               buttonText = "Running";
             });
@@ -132,11 +135,11 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   void _initializeControllers() {
     _individualInitialPointsController = List.generate(
-      widget.playerNames.length - 1,
+      widget.playerNames.length,
       (index) => TextEditingController(),
     );
     _individualResultPointsController = List.generate(
-      widget.playerNames.length - 1,
+      widget.playerNames.length,
       (index) => TextEditingController(),
     );
     _amountController = List.generate(
@@ -152,13 +155,14 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       (index) => FocusNode(),
     );
     focusNodes = List.generate(
-      widget.playerNames.length - 1,
+      widget.playerNames.length,
       (index) => FocusNode(),
     );
     focusNodes1 = List.generate(
-      widget.playerNames.length - 1,
+      widget.playerNames.length,
       (index) => FocusNode(),
     );
+    _individualResults.add(0);
   }
 
   void _initSpeech() async {
@@ -246,18 +250,38 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   int _startCalculation() {
+    print("isCalulation");
+    isCalculation = true;
     _validateAmount();
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
+      print("here 1");
       return 1;
     }
     if (isAmountValid) {
-      for (int i = 0; i < widget.playerNames.length - 1; i++) {
-        int points = int.parse(
+      print("valid Amount");
+      for (int i = 0; i < widget.playerNames.length; i++) {
+        _individualResults.add(0);
+        int initialPoints = int.parse(
           _individualInitialPointsController[i]
               .text
               .replaceAll(RegExp(r'[^0-9.]'), ''),
         );
+        int finalPoints = int.parse(
+          _individualResultPointsController[i]
+              .text
+              .replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        int otti = finalPoints - initialPoints;
+        if (otti < 0) {
+          textColor = Colors.red;
+        }
+        num haat = otti < 0 ? otti : initialPoints + otti / 10;
+        _individualResults[i] = (haat + otti).toDouble();
+
+        print(_individualResults[i]);
       }
+    } else {
+      print("Katai Milena");
     }
     return 0;
   }
@@ -316,6 +340,11 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    Color displayColor = Theme.of(context).colorScheme.onPrimaryContainer;
+    if (Theme.of(context).brightness == Brightness.dark) {
+      displayColor = Theme.of(context).colorScheme.onPrimary;
+    }
+
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -468,7 +497,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ],
                         ),
                       ),
-                      for (int i = 0; i < widget.playerNames.length - 1; i++)
+                      for (int i = 0; i < widget.playerNames.length; i++)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: Row(
