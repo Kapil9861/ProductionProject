@@ -6,7 +6,7 @@ class MyFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.only(top: 25.0),
+      padding: EdgeInsets.only(top: 40, bottom: 20),
       child: SizedBox(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

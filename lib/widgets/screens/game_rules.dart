@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/smallWidgets/link.dart';
 import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class GamesRules extends StatelessWidget {
-  GamesRules({super.key});
+  const GamesRules({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class GamesRules extends StatelessWidget {
       child: SizedBox(
         height: 800,
         child: ListView(
-          children: [
+          children: const [
             SizedBox(
               height: 200,
               // ignore: prefer_interpolation_to_compose_strings
@@ -128,7 +129,21 @@ class GamesRules extends StatelessWidget {
                   "If a player calls/bids 8 hands points and successfully receives 8 or more points, he/she will automatically win the whole game."),
             ),
             Text(
-                "For more information about the game and rules visit the site below by bhoos.com, specifically the blog by Deb Mahato Upadted on: Sep 29,2023 (Last Seen)"),
+                "For more information about the game and rules, visit the site given below by bhoos.com,"),
+            CustomLink(
+              link:
+                  "https://www.bhoos.com/blog/learn-to-play-the-best-marriage-card-game/",
+            ),
+            Text(
+                "is the blog by Deb Mahato Upadted on: Sep 29,2023 (Last Seen)"),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text("Also visit the official website of Sajilo Hisab:"),
+            ),
+            CustomLink(
+              link:
+                  "https://www.bhoos.com/blog/learn-to-play-the-best-marriage-card-game/",
+            ),
             MyFooter()
           ],
         ),
