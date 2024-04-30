@@ -73,7 +73,11 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
-            height: screenSize.height + 130,
+            height: screenSize.height < 686
+                ? screenSize.height + 230
+                : screenSize.height < 636
+                    ? screenSize.height + 210
+                    : screenSize.height + 130,
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -171,7 +175,6 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                         ],
                       ),
                     ),
-                    const MyFooter()
                   ],
                 ),
               ),

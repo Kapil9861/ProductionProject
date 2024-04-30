@@ -366,7 +366,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Marriage Points Calculator',
+            'Call Break Points Calculator',
             style: TextStyle(fontSize: playerNameFont + 4),
           ),
         ),

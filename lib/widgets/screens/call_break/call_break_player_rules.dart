@@ -159,7 +159,6 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                               child: const Text("Proceed"),
                             ),
                           ),
-                          const MyFooter()
                         ],
                       ),
                     )

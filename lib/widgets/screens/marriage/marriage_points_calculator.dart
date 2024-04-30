@@ -42,6 +42,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   int doubleeBonus = 5;
   List<bool> status = [];
   final List<double> pointsCollection = [];
+  final List<double> winningCollection = [];
   double totalPoints = 0;
   HashMap<String, int> points = HashMap<String, int>();
   bool fine = false;
@@ -233,7 +234,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     if (!breakOperation) {
       int count = 0;
       double pricePerPoint = _amountValue;
-      String notes = _notesController.text;
+      String? notes = _notesController.text;
       for (int i = 0; i < widget.playerNames.length; i++) {
         if (status[i] == true || _playersResult[i] == "Unseen") {
           count++;
@@ -268,21 +269,29 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           individualWinning = -totalPoints - 7;
           toAdd = -1 * individualWinning;
           if (widget.conditions[0] == false) {
+            individualWinning = 0;
+
             individualWinning = individualPoints - totalPoints - 7;
           } else if (widget.conditions[3] == true) {
             //winnerResult = points;
           }
+          winningCollection.add(individualWinning);
+
           forWinnerWinning.add(toAdd);
           print("Unseen");
           print(individualWinning);
         } else if (_playersResult[i] == "Hold") {
           individualWinning = 0;
+          winningCollection.add(individualWinning);
+
           print(individualWinning);
           print("hold");
         } else if (_playersResult[i] == "Seen") {
           if (_winOrLoss[i] != "Winner") {
             individualWinning = individualPoints - totalPoints;
             toAdd = -1 * individualWinning;
+            winningCollection.add(individualWinning);
+
             forWinnerWinning.add(toAdd);
             print(individualWinning);
             print("seen");
@@ -291,9 +300,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           if (_winOrLoss[i] != "Winner") {
             individualWinning = individualPoints - totalPoints + 3;
             if (widget.conditions[2] == false) {
+              individualWinning = 0;
               individualWinning = individualPoints - totalPoints;
             }
             toAdd = -1 * individualWinning;
+            winningCollection.add(individualWinning);
+
             forWinnerWinning.add(toAdd);
             print(individualWinning);
             print("dublee see");
@@ -303,21 +315,26 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             individualWinning = -totalPoints - 12;
             toAdd = -1 * individualWinning;
             forWinnerWinning.add(toAdd);
+            winningCollection.add(individualWinning);
+
             print(individualWinning);
             print("on same garda");
           } else if (widget.conditions[4] == false) {
+            individualWinning = -totalPoints + 3;
+            toAdd = -1 * individualWinning;
+            forWinnerWinning.add(toAdd);
+            print(individualWinning);
+            print("false");
             if (fine == true) {
+              individualWinning = 0;
               individualWinning = -totalPoints - finePoint + 3;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
               print(individualWinning);
               print("true");
             }
-            individualWinning = -totalPoints + 3;
-            toAdd = -1 * individualWinning;
-            forWinnerWinning.add(toAdd);
-            print(individualWinning);
-            print("false");
+            winningCollection.add(individualWinning);
+
             fine = true;
           }
         }
@@ -330,15 +347,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       for (int i = 0; i < widget.playerNames.length; i++) {
         if (_winOrLoss[i] == "Winner") {
           if (_playersResult[i] == "Seen") {
-            individualWinning = winnerResult;
+            winnerResult = winnerResult;
           } else if (_playersResult[i] == "Dublee") {
-            individualWinning = winnerResult + 5;
             if (widget.conditions[1] == false) {
-              individualWinning = winnerResult;
+              winnerResult = winnerResult;
+            } else {
+              winnerResult = winnerResult + 5;
             }
           }
         }
       }
+      print(winnerResult);
+      winningCollection.add(winnerResult);
 
       _clearInputFields();
       pointsCollection.clear();
