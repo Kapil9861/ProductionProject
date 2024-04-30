@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
-import 'package:url_launcher/link.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});

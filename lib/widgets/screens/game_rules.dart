@@ -26,6 +26,13 @@ class GamesRules extends StatelessWidget {
             SizedBox(
               child: StyledText(text: "Marriage Card Game", textSize: 24),
             ),
+            Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: SizedBox(
+                child: Text(
+                    "In marriage card game, depending on your luck and skill you can receive points (Maal) from the deck and from the players alognside. The more the points the more you will win and vice versa."),
+              ),
+            ),
             ListTile(
               leading: Icon(Icons.circle),
               title: Text(
@@ -129,7 +136,7 @@ class GamesRules extends StatelessWidget {
                   "If a player calls/bids 8 hands points and successfully receives 8 or more points, he/she will automatically win the whole game."),
             ),
             Text(
-                "For more information about the game and rules, visit the site given below by bhoos.com,"),
+                "For more information about the game and rules, visit the site given below by bhoos.com,\n"),
             CustomLink(
               link:
                   "https://www.bhoos.com/blog/learn-to-play-the-best-marriage-card-game/",
