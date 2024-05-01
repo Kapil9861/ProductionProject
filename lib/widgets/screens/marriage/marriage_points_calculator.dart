@@ -102,6 +102,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           _playersResult[index] = "Dublee";
         } else if (_playersResult[index] == "Dublee") {
           _playersResult[index] = "Foul";
+          _winOrLoss[index] = "Didn't Win";
         } else if (_playersResult[index] == "Foul") {
           _playersResult[index] = "Hold";
           _winOrLoss[index] = "Didn't Win";
@@ -114,7 +115,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             (_playersResult[index] == "Unseen" &&
                 widget.conditions[0] == true &&
                 widget.conditions[3] == false) ||
-            _playersResult[index] == "Hold") {
+            _playersResult[index] == "Hold" ||
+            _playersResult[index] == "Foul") {
           status[index] = false;
         } else {
           status[index] = true;
@@ -131,6 +133,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           for (int i = 0; i < _playersResult.length; i++) {
             if (i != index) {
               _winOrLoss[i] = "Didn't Win";
+            } else if (_playersResult[index] == "Unseen" ||
+                _playersResult[index] == "Hold" ||
+                _playersResult[index] == "Foul") {
+              _winOrLoss[i] = "Didn't Win";
+              showSnackBar("Invalid Winner!");
             }
           }
         } else {
@@ -280,7 +287,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           forWinnerWinning.add(toAdd);
           print("Unseen");
           print(individualWinning);
-        } else if (_playersResult[i] == "Hold") {
+        } else if (_playersResult[i] == "Hold" || _playersResult[i] == "Foul") {
           individualWinning = 0;
           winningCollection.add(individualWinning);
 
@@ -312,7 +319,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           }
         } else {
           if (widget.conditions[4] == true) {
-            individualWinning = -totalPoints - 12;
+            individualWinning = -totalPoints + 3 - finePoint;
             toAdd = -1 * individualWinning;
             forWinnerWinning.add(toAdd);
             winningCollection.add(individualWinning);
