@@ -50,6 +50,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   bool breakOperation = false;
   final List<double> forWinnerWinning = [];
   double finePoint = 15;
+  String foulPlayerName = "";
 
   @override
   void initState() {
@@ -243,7 +244,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       double pricePerPoint = _amountValue;
       String? notes = _notesController.text;
       for (int i = 0; i < widget.playerNames.length; i++) {
-        if (status[i] == true || _playersResult[i] == "Unseen") {
+        if (status[i] == true ||
+            _playersResult[i] == "Unseen" ||
+            _playersResult[i] == "Foul") {
           count++;
         }
         if (!status[i]) {
@@ -272,77 +275,97 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             .replaceAll(RegExp(r'[^0-9.]'), '')));
         double individualPoints = points * count;
         double individualWinning;
-        if (_playersResult[i] == "Unseen") {
-          individualWinning = -totalPoints - 7;
-          toAdd = -1 * individualWinning;
-          if (widget.conditions[0] == false) {
-            individualWinning = 0;
-
-            individualWinning = individualPoints - totalPoints - 7;
-          } else if (widget.conditions[3] == true) {
-            //winnerResult = points;
-          }
-          winningCollection.add(individualWinning);
-
-          forWinnerWinning.add(toAdd);
-          print("Unseen");
-          print(individualWinning);
-        } else if (_playersResult[i] == "Hold" || _playersResult[i] == "Foul") {
-          individualWinning = 0;
-          winningCollection.add(individualWinning);
-
-          print(individualWinning);
-          print("hold");
-        } else if (_playersResult[i] == "Seen") {
-          if (_winOrLoss[i] != "Winner") {
-            individualWinning = individualPoints - totalPoints;
-            toAdd = -1 * individualWinning;
-            winningCollection.add(individualWinning);
-
-            forWinnerWinning.add(toAdd);
-            print(individualWinning);
-            print("seen");
-          }
-        } else if (_playersResult[i] == "Dublee") {
-          if (_winOrLoss[i] != "Winner") {
-            individualWinning = individualPoints - totalPoints + 3;
-            if (widget.conditions[2] == false) {
-              individualWinning = 0;
-              individualWinning = individualPoints - totalPoints;
-            }
-            toAdd = -1 * individualWinning;
-            winningCollection.add(individualWinning);
-
-            forWinnerWinning.add(toAdd);
-            print(individualWinning);
-            print("dublee see");
-          }
+        if (foulPlayerName == widget.playerNames[i] &&
+            _playersResult[i] == "Winner") {
+          print("milira cha milauna parcha");
         } else {
-          if (widget.conditions[4] == true) {
-            individualWinning = -totalPoints + 3 - finePoint;
+          if (_playersResult[i] == "Unseen") {
+            individualWinning = -totalPoints - 7;
             toAdd = -1 * individualWinning;
+            if (widget.conditions[0] == false) {
+              individualWinning = individualPoints - totalPoints - 7;
+            } else if (widget.conditions[3] == true) {
+              //winnerResult = points;
+            }
+            winningCollection.add(individualWinning);
+
             forWinnerWinning.add(toAdd);
+            print("Unseen");
+            print(individualWinning);
+          } else if (_playersResult[i] == "Hold") {
+            if (foulPlayerName == widget.playerNames[i] &&
+                widget.conditions[4] == false) {
+              fine = true;
+              foulPlayerName = widget.playerNames[i];
+            }
+            individualWinning = 0;
             winningCollection.add(individualWinning);
 
             print(individualWinning);
-            print("on same garda");
-          } else if (widget.conditions[4] == false) {
-            individualWinning = -totalPoints + 3;
-            toAdd = -1 * individualWinning;
-            forWinnerWinning.add(toAdd);
-            print(individualWinning);
-            print("false");
-            if (fine == true) {
-              individualWinning = 0;
-              individualWinning = -totalPoints - finePoint + 3;
+            print("hold");
+          } else if (_playersResult[i] == "Seen") {
+            if (_winOrLoss[i] != "Winner") {
+              individualWinning = individualPoints - totalPoints;
               toAdd = -1 * individualWinning;
+              winningCollection.add(individualWinning);
+
               forWinnerWinning.add(toAdd);
               print(individualWinning);
-              print("true");
+              print("seen");
             }
-            winningCollection.add(individualWinning);
+          } else if (_playersResult[i] == "Dublee") {
+            if (_winOrLoss[i] != "Winner") {
+              individualWinning = individualPoints - totalPoints + 3;
+              if (widget.conditions[2] == false) {
+                individualWinning = individualPoints - totalPoints;
+              }
+              toAdd = -1 * individualWinning;
+              winningCollection.add(individualWinning);
 
-            fine = true;
+              forWinnerWinning.add(toAdd);
+              print(individualWinning);
+              print("dublee see");
+            }
+          } else if (_playersResult[i] == "Foul") {
+            print("foul committed by $foulPlayerName");
+            if (widget.conditions[4] == true) {
+              individualWinning = -totalPoints + 3 - finePoint;
+              toAdd = -1 * individualWinning;
+              forWinnerWinning.add(toAdd);
+              winningCollection.add(individualWinning);
+
+              print(individualWinning);
+              print("on same garda");
+            } else if (widget.conditions[4] == false &&
+                _playersResult[i] != "Winner") {
+              if (fine == true && foulPlayerName == widget.playerNames[i]) {
+                individualWinning = -totalPoints - finePoint + 3;
+
+                if (_playersResult[i] == "Foul") {
+                  fine = true;
+                }
+                toAdd = -1 * individualWinning;
+                forWinnerWinning.add(toAdd);
+                print(individualWinning);
+                print("true");
+              } else {
+                individualWinning = -totalPoints + 3;
+                toAdd = -1 * individualWinning;
+                forWinnerWinning.add(toAdd);
+                print(individualWinning);
+                print("false");
+
+                fine = true;
+              }
+              winningCollection.add(individualWinning);
+            } else if (foulPlayerName != "") {
+              if (_playersResult[i] != "Winner") {
+                print("Not a winner");
+              }
+              print("Fine but not the winner");
+            }
+            foulPlayerName = widget.playerNames[i];
+            print(foulPlayerName);
           }
         }
       }
@@ -353,6 +376,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       print(winnerResult);
       for (int i = 0; i < widget.playerNames.length; i++) {
         if (_winOrLoss[i] == "Winner") {
+          print(widget.playerNames[i]);
+          if (widget.playerNames[i] == foulPlayerName &&
+              widget.conditions[4] == false) {
+            fine = false;
+            print("fine is $fine");
+          }
           if (_playersResult[i] == "Seen") {
             winnerResult = winnerResult;
           } else if (_playersResult[i] == "Dublee") {
