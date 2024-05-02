@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
+import 'package:sajilo_hisab/widgets/chart/chart.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -42,9 +43,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   int doubleeBonus = 5;
   List<bool> status = [];
   final List<double> pointsCollection = [];
-  final List<double> winningCollection = [];
   double totalPoints = 0;
-  HashMap<String, int> points = HashMap<String, int>();
+  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
   bool fine = false;
   int winnerCount = 0;
   bool breakOperation = false;
@@ -84,6 +84,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       widget.playerNames.length,
       (index) => true,
     );
+    for (String name in widget.playerNames) {
+      individualWinPoints[name] = 0;
+    }
   }
 
   void _initializePlayerResults() {
@@ -234,7 +237,192 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     }
   }
 
+  // void _startCalculation() {
+  //   double kidnapPoint = 0;
+  //   _validateAmount();
+  //   _hasWinner();
+  //   double toAdd;
+  //   double individualWinning;
+  //   if (!breakOperation) {
+  //     int count = 0;
+  //     double pricePerPoint = _amountValue;
+  //     String? notes = _notesController.text;
+  //     for (int i = 0; i < widget.playerNames.length; i++) {
+  //       if (status[i] == true ||
+  //           _playersResult[i] == "Unseen" ||
+  //           _playersResult[i] == "Foul") {
+  //         count++;
+  //       }
+  //       if (!status[i]) {
+  //         _individualPointsController[i].text = "0";
+  //         continue;
+  //       }
+  //       // Check if controller is empty
+  //       if (_individualPointsController[i].text.isEmpty) {
+  //         // Show message or perform necessary action
+  //         FocusScope.of(context).requestFocus(focusNodes[i]);
+  //       } else {
+  //         double points = double.parse((_individualPointsController[i]
+  //             .text
+  //             .replaceAll(RegExp(r'[^0-9.]'), '')));
+  //         pointsCollection.add(points);
+  //       }
+  //     }
+
+  //     // Calculate total sum of the points
+  //     totalPoints = 3.0 +
+  //         pointsCollection.fold(
+  //             0, (total, individualPoints) => total + individualPoints);
+  //     for (int i = 0; i < widget.playerNames.length; i++) {
+  //       double points = double.parse((_individualPointsController[i]
+  //           .text
+  //           .replaceAll(RegExp(r'[^0-9.]'), '')));
+  //       double individualPoints = points * count;
+  //       double individualWinning;
+  //       if (foulPlayerName == widget.playerNames[i] &&
+  //           _playersResult[i] == "Winner") {
+  //         print("milira cha milauna parcha");
+  //       } else {
+  //         if (_playersResult[i] == "Unseen") {
+  //           if (widget.conditions[0] == false) {
+  //             individualWinning = individualPoints - totalPoints - 7;
+  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
+
+  //             print("Unseen");
+  //             print(individualWinning);
+  //           } else if (widget.conditions[3] == true) {
+  //             kidnapPoint = individualPoints;
+  //             individualWinPoints[widget.playerNames[i]] = 0;
+
+  //             print("Kidnap on Unseen");
+  //             print(0);
+  //           } else {
+  //             individualWinning = -totalPoints - 7;
+  //             toAdd = -1 * individualWinning;
+  //             forWinnerWinning.add(toAdd);
+
+  //             print("Unseen");
+  //             print(individualWinning);
+  //           }
+  //         } else if (_playersResult[i] == "Hold") {
+  //           if (foulPlayerName == widget.playerNames[i] &&
+  //               widget.conditions[4] == false) {
+  //             fine = true;
+  //             foulPlayerName = widget.playerNames[i];
+  //           }
+  //           individualWinning = 0;
+  //           individualWinPoints[widget.playerNames[i]] = individualWinning;
+
+  //           print(individualWinning);
+  //           print("hold");
+  //         } else if (_playersResult[i] == "Seen") {
+  //           if (_winOrLoss[i] != "Winner") {
+  //             individualWinning = individualPoints - totalPoints;
+  //             toAdd = -1 * individualWinning;
+  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
+
+  //             forWinnerWinning.add(toAdd);
+  //             print(individualWinning);
+  //             print("seen");
+  //           }
+  //         } else if (_playersResult[i] == "Dublee") {
+  //           if (_winOrLoss[i] != "Winner") {
+  //             individualWinning = individualPoints - totalPoints + 3;
+  //             if (widget.conditions[2] == false) {
+  //               individualWinning = individualPoints - totalPoints;
+  //             }
+  //             toAdd = -1 * individualWinning;
+  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
+
+  //             forWinnerWinning.add(toAdd);
+  //             print(individualWinning);
+  //             print("dublee see");
+  //           }
+  //         } else if (_playersResult[i] == "Foul") {
+  //           print("foul committed by $foulPlayerName");
+  //           if (widget.conditions[4] == true) {
+  //             individualWinning = -totalPoints + 3 - finePoint;
+  //             toAdd = -1 * individualWinning;
+  //             forWinnerWinning.add(toAdd);
+  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
+
+  //             print(individualWinning);
+  //             print("on same garda");
+  //           } else if (widget.conditions[4] == false &&
+  //               _playersResult[i] != "Winner") {
+  //             if (fine == true && foulPlayerName == widget.playerNames[i]) {
+  //               individualWinning = -totalPoints - finePoint + 3;
+
+  //               if (_playersResult[i] == "Foul") {
+  //                 fine = true;
+  //               }
+  //               toAdd = -1 * individualWinning;
+  //               forWinnerWinning.add(toAdd);
+  //               print(individualWinning);
+  //               print("true");
+  //             } else {
+  //               individualWinning = -totalPoints + 3;
+  //               toAdd = -1 * individualWinning;
+  //               forWinnerWinning.add(toAdd);
+  //               print(individualWinning);
+  //               print("false");
+
+  //               fine = true;
+  //             }
+  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
+  //           } else if (foulPlayerName != "") {
+  //             if (_playersResult[i] != "Winner") {
+  //               print("Not a winner");
+  //             }
+  //             print("Fine but not the winner");
+  //           }
+  //           foulPlayerName = widget.playerNames[i];
+  //           print(foulPlayerName);
+  //         }
+  //       }
+  //     }
+  //     print("For players $individualWinPoints");
+  //     double winnerResult = 0;
+  //     for (double item in forWinnerWinning) {
+  //       winnerResult = winnerResult + item;
+  //     }
+  //     print(winnerResult);
+  //     for (int i = 0; i < widget.playerNames.length; i++) {
+  //       if (_winOrLoss[i] == "Winner") {
+  //         print(widget.playerNames[i]);
+  //         if (widget.playerNames[i] == foulPlayerName &&
+  //             widget.conditions[4] == false) {
+  //           fine = false;
+  //           print("fine is $fine");
+  //         }
+  //         if (_playersResult[i] == "Seen") {
+  //           winnerResult = winnerResult + kidnapPoint;
+  //           individualWinPoints[widget.playerNames[i]] = winnerResult;
+  //           break;
+  //         } else if (_playersResult[i] == "Dublee") {
+  //           if (widget.conditions[1] == false) {
+  //             winnerResult = winnerResult + kidnapPoint;
+  //             individualWinPoints[widget.playerNames[i]] = winnerResult;
+  //             break;
+  //           } else {
+  //             winnerResult = winnerResult + 5 + kidnapPoint;
+  //             individualWinPoints[widget.playerNames[i]] = winnerResult;
+  //             break;
+  //           }
+  //         }
+  //       }
+  //     }
+  //     print(winnerResult);
+  //     print(individualWinPoints);
+  //     _clearInputFields();
+  //     pointsCollection.clear();
+  //     forWinnerWinning.clear();
+  //     winnerCount = 0;
+  //   }
+  //   breakOperation = false;
+  // }
   void _startCalculation() {
+    double kidnapPoint = 0;
     _validateAmount();
     _hasWinner();
     double toAdd;
@@ -280,18 +468,26 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           print("milira cha milauna parcha");
         } else {
           if (_playersResult[i] == "Unseen") {
-            individualWinning = -totalPoints - 7;
-            toAdd = -1 * individualWinning;
             if (widget.conditions[0] == false) {
               individualWinning = individualPoints - totalPoints - 7;
-            } else if (widget.conditions[3] == true) {
-              //winnerResult = points;
-            }
-            winningCollection.add(individualWinning);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
 
-            forWinnerWinning.add(toAdd);
-            print("Unseen");
-            print(individualWinning);
+              print("Unseen");
+              print(individualWinning);
+            } else if (widget.conditions[3] == true) {
+              kidnapPoint = individualPoints;
+              individualWinPoints[widget.playerNames[i]] = 0;
+
+              print("Kidnap on Unseen");
+              print(0);
+            } else {
+              individualWinning = -totalPoints - 7;
+              toAdd = -1 * individualWinning;
+              forWinnerWinning.add(toAdd);
+
+              print("Unseen");
+              print(individualWinning);
+            }
           } else if (_playersResult[i] == "Hold") {
             if (foulPlayerName == widget.playerNames[i] &&
                 widget.conditions[4] == false) {
@@ -299,7 +495,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               foulPlayerName = widget.playerNames[i];
             }
             individualWinning = 0;
-            winningCollection.add(individualWinning);
+            individualWinPoints[widget.playerNames[i]] = individualWinning;
 
             print(individualWinning);
             print("hold");
@@ -307,7 +503,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             if (_winOrLoss[i] != "Winner") {
               individualWinning = individualPoints - totalPoints;
               toAdd = -1 * individualWinning;
-              winningCollection.add(individualWinning);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
 
               forWinnerWinning.add(toAdd);
               print(individualWinning);
@@ -320,7 +516,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                 individualWinning = individualPoints - totalPoints;
               }
               toAdd = -1 * individualWinning;
-              winningCollection.add(individualWinning);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
 
               forWinnerWinning.add(toAdd);
               print(individualWinning);
@@ -332,7 +528,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               individualWinning = -totalPoints + 3 - finePoint;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
-              winningCollection.add(individualWinning);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
 
               print(individualWinning);
               print("on same garda");
@@ -357,7 +553,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
                 fine = true;
               }
-              winningCollection.add(individualWinning);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
             } else if (foulPlayerName != "") {
               if (_playersResult[i] != "Winner") {
                 print("Not a winner");
@@ -369,6 +565,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           }
         }
       }
+      print("For players $individualWinPoints");
       double winnerResult = 0;
       for (double item in forWinnerWinning) {
         winnerResult = winnerResult + item;
@@ -383,19 +580,24 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             print("fine is $fine");
           }
           if (_playersResult[i] == "Seen") {
-            winnerResult = winnerResult;
+            winnerResult = winnerResult + kidnapPoint;
+            individualWinPoints[widget.playerNames[i]] = winnerResult;
+            break;
           } else if (_playersResult[i] == "Dublee") {
             if (widget.conditions[1] == false) {
-              winnerResult = winnerResult;
+              winnerResult = winnerResult + kidnapPoint;
+              individualWinPoints[widget.playerNames[i]] = winnerResult;
+              break;
             } else {
-              winnerResult = winnerResult + 5;
+              winnerResult = winnerResult + 5 + kidnapPoint;
+              individualWinPoints[widget.playerNames[i]] = winnerResult;
+              break;
             }
           }
         }
       }
       print(winnerResult);
-      winningCollection.add(winnerResult);
-
+      print(individualWinPoints);
       _clearInputFields();
       pointsCollection.clear();
       forWinnerWinning.clear();
@@ -891,6 +1093,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: screenSize.height * 0.02,
+                          right: screenSize.height * 0.02,
+                        ),
+                        child: SizedBox(
+                          height: screenSize.height * 0.40,
+                          width: screenSize.width * 0.90,
+                          child: Chart(
+                              playerNames: widget.playerNames,
+                              individualWinPoints: individualWinPoints),
+                        ),
+                      )
                     ],
                   ),
                 ),

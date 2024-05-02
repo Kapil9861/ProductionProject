@@ -148,8 +148,7 @@ class GamesRules extends StatelessWidget {
               child: Text("Also visit the official website of Sajilo Hisab:"),
             ),
             CustomLink(
-              link:
-                  "https://www.bhoos.com/blog/learn-to-play-the-best-marriage-card-game/",
+              link: "https://sajilohisab-production.up.railway.app/",
             ),
             MyFooter()
           ],

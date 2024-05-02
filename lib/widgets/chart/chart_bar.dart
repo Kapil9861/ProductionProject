@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class ChartBar extends StatelessWidget {
   const ChartBar({
-    super.key,
+    Key? key,
     required this.fill,
-  }); //Left to mention in about us add a line about it
+  }) : super(key: key);
 
   final double fill;
 
@@ -12,11 +12,15 @@ class ChartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+    // Ensure fill is between 0 and 1
+    final clampedFill = fill.clamp(0.0, 1.0);
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: FractionallySizedBox(
-          heightFactor: fill,
+          heightFactor: clampedFill,
           child: DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,

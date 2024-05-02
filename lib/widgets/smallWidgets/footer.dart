@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/smallWidgets/link.dart';
 
 class MyFooter extends StatelessWidget {
   const MyFooter({super.key});
@@ -16,6 +17,7 @@ class MyFooter extends StatelessWidget {
               'Visit Official Site: ',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            CustomLink(link: "https://sajilohisab-production.up.railway.app/"),
             Text(
               'Copyright @2024, All Rights Reserved',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
