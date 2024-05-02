@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_home.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_rules.dart';
-import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
 
 class CallBreakPlayerRules extends StatefulWidget {
   const CallBreakPlayerRules({super.key});

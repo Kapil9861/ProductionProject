@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/chart/chart.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
@@ -51,6 +52,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final List<double> forWinnerWinning = [];
   double finePoint = 15;
   String foulPlayerName = "";
+  List<Map<String, dynamic>> allIndividualWinPoints = [];
+  List<double> allPricePerPoint = [];
+  List<double> allFinePoint = [];
+  List<List<String>> allPlayerNames = [];
 
   @override
   void initState() {
@@ -237,191 +242,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     }
   }
 
-  // void _startCalculation() {
-  //   double kidnapPoint = 0;
-  //   _validateAmount();
-  //   _hasWinner();
-  //   double toAdd;
-  //   double individualWinning;
-  //   if (!breakOperation) {
-  //     int count = 0;
-  //     double pricePerPoint = _amountValue;
-  //     String? notes = _notesController.text;
-  //     for (int i = 0; i < widget.playerNames.length; i++) {
-  //       if (status[i] == true ||
-  //           _playersResult[i] == "Unseen" ||
-  //           _playersResult[i] == "Foul") {
-  //         count++;
-  //       }
-  //       if (!status[i]) {
-  //         _individualPointsController[i].text = "0";
-  //         continue;
-  //       }
-  //       // Check if controller is empty
-  //       if (_individualPointsController[i].text.isEmpty) {
-  //         // Show message or perform necessary action
-  //         FocusScope.of(context).requestFocus(focusNodes[i]);
-  //       } else {
-  //         double points = double.parse((_individualPointsController[i]
-  //             .text
-  //             .replaceAll(RegExp(r'[^0-9.]'), '')));
-  //         pointsCollection.add(points);
-  //       }
-  //     }
+  void _startCalculation() async {
+    int calculationRunCount = 0;
+    await Hive.initFlutter();
+    double pricePerPoint = 0.0;
 
-  //     // Calculate total sum of the points
-  //     totalPoints = 3.0 +
-  //         pointsCollection.fold(
-  //             0, (total, individualPoints) => total + individualPoints);
-  //     for (int i = 0; i < widget.playerNames.length; i++) {
-  //       double points = double.parse((_individualPointsController[i]
-  //           .text
-  //           .replaceAll(RegExp(r'[^0-9.]'), '')));
-  //       double individualPoints = points * count;
-  //       double individualWinning;
-  //       if (foulPlayerName == widget.playerNames[i] &&
-  //           _playersResult[i] == "Winner") {
-  //         print("milira cha milauna parcha");
-  //       } else {
-  //         if (_playersResult[i] == "Unseen") {
-  //           if (widget.conditions[0] == false) {
-  //             individualWinning = individualPoints - totalPoints - 7;
-  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-  //             print("Unseen");
-  //             print(individualWinning);
-  //           } else if (widget.conditions[3] == true) {
-  //             kidnapPoint = individualPoints;
-  //             individualWinPoints[widget.playerNames[i]] = 0;
-
-  //             print("Kidnap on Unseen");
-  //             print(0);
-  //           } else {
-  //             individualWinning = -totalPoints - 7;
-  //             toAdd = -1 * individualWinning;
-  //             forWinnerWinning.add(toAdd);
-
-  //             print("Unseen");
-  //             print(individualWinning);
-  //           }
-  //         } else if (_playersResult[i] == "Hold") {
-  //           if (foulPlayerName == widget.playerNames[i] &&
-  //               widget.conditions[4] == false) {
-  //             fine = true;
-  //             foulPlayerName = widget.playerNames[i];
-  //           }
-  //           individualWinning = 0;
-  //           individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-  //           print(individualWinning);
-  //           print("hold");
-  //         } else if (_playersResult[i] == "Seen") {
-  //           if (_winOrLoss[i] != "Winner") {
-  //             individualWinning = individualPoints - totalPoints;
-  //             toAdd = -1 * individualWinning;
-  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-  //             forWinnerWinning.add(toAdd);
-  //             print(individualWinning);
-  //             print("seen");
-  //           }
-  //         } else if (_playersResult[i] == "Dublee") {
-  //           if (_winOrLoss[i] != "Winner") {
-  //             individualWinning = individualPoints - totalPoints + 3;
-  //             if (widget.conditions[2] == false) {
-  //               individualWinning = individualPoints - totalPoints;
-  //             }
-  //             toAdd = -1 * individualWinning;
-  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-  //             forWinnerWinning.add(toAdd);
-  //             print(individualWinning);
-  //             print("dublee see");
-  //           }
-  //         } else if (_playersResult[i] == "Foul") {
-  //           print("foul committed by $foulPlayerName");
-  //           if (widget.conditions[4] == true) {
-  //             individualWinning = -totalPoints + 3 - finePoint;
-  //             toAdd = -1 * individualWinning;
-  //             forWinnerWinning.add(toAdd);
-  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-  //             print(individualWinning);
-  //             print("on same garda");
-  //           } else if (widget.conditions[4] == false &&
-  //               _playersResult[i] != "Winner") {
-  //             if (fine == true && foulPlayerName == widget.playerNames[i]) {
-  //               individualWinning = -totalPoints - finePoint + 3;
-
-  //               if (_playersResult[i] == "Foul") {
-  //                 fine = true;
-  //               }
-  //               toAdd = -1 * individualWinning;
-  //               forWinnerWinning.add(toAdd);
-  //               print(individualWinning);
-  //               print("true");
-  //             } else {
-  //               individualWinning = -totalPoints + 3;
-  //               toAdd = -1 * individualWinning;
-  //               forWinnerWinning.add(toAdd);
-  //               print(individualWinning);
-  //               print("false");
-
-  //               fine = true;
-  //             }
-  //             individualWinPoints[widget.playerNames[i]] = individualWinning;
-  //           } else if (foulPlayerName != "") {
-  //             if (_playersResult[i] != "Winner") {
-  //               print("Not a winner");
-  //             }
-  //             print("Fine but not the winner");
-  //           }
-  //           foulPlayerName = widget.playerNames[i];
-  //           print(foulPlayerName);
-  //         }
-  //       }
-  //     }
-  //     print("For players $individualWinPoints");
-  //     double winnerResult = 0;
-  //     for (double item in forWinnerWinning) {
-  //       winnerResult = winnerResult + item;
-  //     }
-  //     print(winnerResult);
-  //     for (int i = 0; i < widget.playerNames.length; i++) {
-  //       if (_winOrLoss[i] == "Winner") {
-  //         print(widget.playerNames[i]);
-  //         if (widget.playerNames[i] == foulPlayerName &&
-  //             widget.conditions[4] == false) {
-  //           fine = false;
-  //           print("fine is $fine");
-  //         }
-  //         if (_playersResult[i] == "Seen") {
-  //           winnerResult = winnerResult + kidnapPoint;
-  //           individualWinPoints[widget.playerNames[i]] = winnerResult;
-  //           break;
-  //         } else if (_playersResult[i] == "Dublee") {
-  //           if (widget.conditions[1] == false) {
-  //             winnerResult = winnerResult + kidnapPoint;
-  //             individualWinPoints[widget.playerNames[i]] = winnerResult;
-  //             break;
-  //           } else {
-  //             winnerResult = winnerResult + 5 + kidnapPoint;
-  //             individualWinPoints[widget.playerNames[i]] = winnerResult;
-  //             break;
-  //           }
-  //         }
-  //       }
-  //     }
-  //     print(winnerResult);
-  //     print(individualWinPoints);
-  //     _clearInputFields();
-  //     pointsCollection.clear();
-  //     forWinnerWinning.clear();
-  //     winnerCount = 0;
-  //   }
-  //   breakOperation = false;
-  // }
-  void _startCalculation() {
     double kidnapPoint = 0;
     _validateAmount();
     _hasWinner();
@@ -597,11 +422,47 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         }
       }
       print(winnerResult);
-      print(individualWinPoints);
+      print("Yo bhanda muni$individualWinPoints");
+      //Defining Hive Boxes
+      var individualWinPointsBox = await Hive.openBox('individualWinPoints');
+      var pricePerPointBox = await Hive.openBox('pricePerPoint');
+      var finePointBox = await Hive.openBox('finePoint');
+      var playerNamesBox = await Hive.openBox('playerNames');
+
+      // Storing the data
+      individualWinPointsBox.put(
+          'individualWinPoints$calculationRunCount', individualWinPoints);
+      pricePerPointBox.put('pricePerPoint$calculationRunCount', pricePerPoint);
+      finePointBox.put('finePoint$calculationRunCount', finePoint);
+      playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
+
+      while (true) {
+        // Construct keys based on the calculationRunCount
+        String individualWinPointsKey =
+            'individualWinPoints$calculationRunCount';
+        String pricePerPointKey = 'pricePerPoint$calculationRunCount';
+        String finePointKey = 'finePoint$calculationRunCount';
+        String playerNamesKey = 'playerNames$calculationRunCount';
+
+        // Retrieve values from the boxes
+        if (individualWinPointsBox.containsKey(individualWinPointsKey)) {
+          allIndividualWinPoints
+              .add(individualWinPointsBox.get(individualWinPointsKey));
+          allPricePerPoint.add(pricePerPointBox.get(pricePerPointKey));
+          allFinePoint.add(finePointBox.get(finePointKey));
+          allPlayerNames.add(playerNamesBox.get(playerNamesKey));
+          calculationRunCount++;
+        } else {
+          break; // Exit the loop if the key does not exist
+        }
+      }
+      print(allIndividualWinPoints);
+
       _clearInputFields();
       pointsCollection.clear();
       forWinnerWinning.clear();
       winnerCount = 0;
+      calculationRunCount++;
     }
     breakOperation = false;
   }
@@ -1037,10 +898,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
                                         child: Text(
-                                      name,
+                                      name.toUpperCase(),
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: playerNameFont - 1),
+                                          fontSize: playerNameFont - 3),
                                     )),
                                   );
                                 }).toList(),

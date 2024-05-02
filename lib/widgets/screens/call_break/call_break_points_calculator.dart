@@ -1,9 +1,11 @@
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/chart/chart.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -23,6 +25,7 @@ class CallBreakPointsCalculator extends StatefulWidget {
 }
 
 class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
+  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
   List<TextEditingController> _individualInitialPointsController = [];
   List<TextEditingController> _individualResultPointsController = [];
   List<TextEditingController> _amountController = [];
@@ -162,6 +165,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       widget.playerNames.length,
       (index) => FocusNode(),
     );
+    for (String name in widget.playerNames) {
+      individualWinPoints[name] = 0;
+    }
     _individualResults.add(0);
   }
 
@@ -250,8 +256,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   int _startCalculation() {
-    print("isCalulation");
-    isCalculation = true;
     _validateAmount();
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
       print("here 1");
@@ -279,6 +283,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         _individualResults[i] = (haat + otti).toDouble();
 
         print(_individualResults[i]);
+        individualWinPoints[widget.playerNames[i]] = _individualResults[i];
       }
     } else {
       print("Katai Milena");
@@ -778,6 +783,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ],
                         ),
                       ),
+                      Chart(
+                        individualWinPoints: individualWinPoints,
+                        playerNames: widget.playerNames,
+                      )
                     ],
                   ),
                 ),

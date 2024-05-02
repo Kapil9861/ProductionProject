@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_points_calculator.dart';
-import 'package:sajilo_hisab/widgets/screens/marriage/marriage_points_calculator.dart';
 
 class CallBreakHome extends StatefulWidget {
   const CallBreakHome({Key? key, required this.conditions}) : super(key: key);

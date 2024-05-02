@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:sajilo_hisab/widgets/screens/start_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -9,7 +10,8 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 5, 99, 125),
 );
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
   runApp(
     const MyApp(),
   );
