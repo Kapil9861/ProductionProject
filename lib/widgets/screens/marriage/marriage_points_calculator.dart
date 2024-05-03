@@ -56,6 +56,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<double> allPricePerPoint = [];
   List<double> allFinePoint = [];
   List<List<String>> allPlayerNames = [];
+  List<String> allNotes = [];
 
   @override
   void initState() {
@@ -246,13 +247,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   void _startCalculation() async {
     int calculationRunCount = 0;
     await Hive.initFlutter();
-    double pricePerPoint = 0.0;
 
     double kidnapPoint = 0;
     _validateAmount();
     _hasWinner();
     double toAdd;
-    double individualWinning;
     if (!breakOperation) {
       int count = 0;
       double pricePerPoint = _amountValue;
@@ -270,6 +269,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         // Check if controller is empty
         if (_individualPointsController[i].text.isEmpty) {
           // Show message or perform necessary action
+          // ignore: use_build_context_synchronously
           FocusScope.of(context).requestFocus(focusNodes[i]);
         } else {
           double points = double.parse((_individualPointsController[i]
@@ -291,28 +291,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         double individualWinning;
         if (foulPlayerName == widget.playerNames[i] &&
             _playersResult[i] == "Winner") {
-          print("milira cha milauna parcha");
         } else {
           if (_playersResult[i] == "Unseen") {
             if (widget.conditions[0] == false) {
               individualWinning = individualPoints - totalPoints - 7;
               individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-              print("Unseen");
-              print(individualWinning);
             } else if (widget.conditions[3] == true) {
               kidnapPoint = individualPoints;
               individualWinPoints[widget.playerNames[i]] = 0;
-
-              print("Kidnap on Unseen");
-              print(0);
             } else {
               individualWinning = -totalPoints - 7;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
-
-              print("Unseen");
-              print(individualWinning);
             }
           } else if (_playersResult[i] == "Hold") {
             if (foulPlayerName == widget.playerNames[i] &&
@@ -322,9 +312,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             }
             individualWinning = 0;
             individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-            print(individualWinning);
-            print("hold");
           } else if (_playersResult[i] == "Seen") {
             if (_winOrLoss[i] != "Winner") {
               individualWinning = individualPoints - totalPoints;
@@ -332,8 +319,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               individualWinPoints[widget.playerNames[i]] = individualWinning;
 
               forWinnerWinning.add(toAdd);
-              print(individualWinning);
-              print("seen");
             }
           } else if (_playersResult[i] == "Dublee") {
             if (_winOrLoss[i] != "Winner") {
@@ -345,19 +330,13 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               individualWinPoints[widget.playerNames[i]] = individualWinning;
 
               forWinnerWinning.add(toAdd);
-              print(individualWinning);
-              print("dublee see");
             }
           } else if (_playersResult[i] == "Foul") {
-            print("foul committed by $foulPlayerName");
             if (widget.conditions[4] == true) {
               individualWinning = -totalPoints + 3 - finePoint;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
               individualWinPoints[widget.playerNames[i]] = individualWinning;
-
-              print(individualWinning);
-              print("on same garda");
             } else if (widget.conditions[4] == false &&
                 _playersResult[i] != "Winner") {
               if (fine == true && foulPlayerName == widget.playerNames[i]) {
@@ -368,42 +347,27 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                 }
                 toAdd = -1 * individualWinning;
                 forWinnerWinning.add(toAdd);
-                print(individualWinning);
-                print("true");
               } else {
                 individualWinning = -totalPoints + 3;
                 toAdd = -1 * individualWinning;
                 forWinnerWinning.add(toAdd);
-                print(individualWinning);
-                print("false");
-
                 fine = true;
               }
               individualWinPoints[widget.playerNames[i]] = individualWinning;
-            } else if (foulPlayerName != "") {
-              if (_playersResult[i] != "Winner") {
-                print("Not a winner");
-              }
-              print("Fine but not the winner");
             }
             foulPlayerName = widget.playerNames[i];
-            print(foulPlayerName);
           }
         }
       }
-      print("For players $individualWinPoints");
       double winnerResult = 0;
       for (double item in forWinnerWinning) {
         winnerResult = winnerResult + item;
       }
-      print(winnerResult);
       for (int i = 0; i < widget.playerNames.length; i++) {
         if (_winOrLoss[i] == "Winner") {
-          print(widget.playerNames[i]);
           if (widget.playerNames[i] == foulPlayerName &&
               widget.conditions[4] == false) {
             fine = false;
-            print("fine is $fine");
           }
           if (_playersResult[i] == "Seen") {
             winnerResult = winnerResult + kidnapPoint;
@@ -422,20 +386,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           }
         }
       }
-      print(winnerResult);
-      print("Yo bhanda muni$individualWinPoints");
       //Defining Hive Boxes
       var individualWinPointsBox = await Hive.openBox('individualWinPoints');
       var pricePerPointBox = await Hive.openBox('pricePerPoint');
       var finePointBox = await Hive.openBox('finePoint');
       var playerNamesBox = await Hive.openBox('playerNames');
-
+      var notesBox = await Hive.openBox('notes');
       // Storing the data
       individualWinPointsBox.put(
           'individualWinPoints$calculationRunCount', individualWinPoints);
       pricePerPointBox.put('pricePerPoint$calculationRunCount', pricePerPoint);
       finePointBox.put('finePoint$calculationRunCount', finePoint);
       playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
+      notesBox.put('notes$calculationRunCount', notes);
 
       while (true) {
         // Construct keys based on the calculationRunCount
@@ -444,6 +407,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         String pricePerPointKey = 'pricePerPoint$calculationRunCount';
         String finePointKey = 'finePoint$calculationRunCount';
         String playerNamesKey = 'playerNames$calculationRunCount';
+        String notesKey = 'notes$calculationRunCount';
 
         // Retrieve values from the boxes
         if (individualWinPointsBox.containsKey(individualWinPointsKey)) {
@@ -452,12 +416,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           allPricePerPoint.add(pricePerPointBox.get(pricePerPointKey));
           allFinePoint.add(finePointBox.get(finePointKey));
           allPlayerNames.add(playerNamesBox.get(playerNamesKey));
+          allNotes.add(notesBox.get(notesKey));
           calculationRunCount++;
         } else {
           break; // Exit the loop if the key does not exist
         }
       }
-      print(allIndividualWinPoints);
 
       _clearInputFields();
       pointsCollection.clear();
@@ -538,7 +502,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    print("Screen size:  $screenSize");
 
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;

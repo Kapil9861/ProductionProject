@@ -183,7 +183,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     );
     for (int i = 0; i < widget.playerNames.length; i++) {
       individualWinPoints[widget.playerNames[i]] = 0;
-      print(widget.playerNames[i]);
     }
     _individualResults.add(0);
   }
@@ -278,13 +277,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     _validateAmount();
 
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
-      print("here 1");
       return 1;
     }
 
     if (isAmountValid) {
-      print("valid Amount");
-      print("Start ma sab 0 $individualWinPoints");
       for (int i = 0; i < widget.playerNames.length; i++) {
         int initialPoints = int.parse(
           _individualInitialPointsController[i]
@@ -306,11 +302,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         num individualResult =
             otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
 
-        print("$i : $individualResult");
         individualWinPoints[widget.playerNames[i]] = individualResult;
       }
 
-      print("Winnings $individualWinPoints");
       status = true;
       clearControllers();
 
@@ -389,11 +383,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    Color displayColor = Theme.of(context).colorScheme.onPrimaryContainer;
-    if (Theme.of(context).brightness == Brightness.dark) {
-      displayColor = Theme.of(context).colorScheme.onPrimary;
-    }
-
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -809,8 +798,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 ),
                                 children: [
                                   ...widget.playerNames.map((controller) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                    return const Padding(
+                                      padding:  EdgeInsets.all(8.0),
                                       child: TextField(controller: null),
                                     );
                                   }).toList(),

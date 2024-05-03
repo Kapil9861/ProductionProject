@@ -17,11 +17,8 @@ class GamesRules extends StatelessWidget {
             SizedBox(
               height: 200,
               // ignore: prefer_interpolation_to_compose_strings
-              child: Text("Marriage (Also called as Myarrich or 21 Patti or 21 Rummy Card Game) and Call Break (13 Patti or Otti) are" +
-                  " the two famous card games played all over Nepal and in India and Bhutan by the people of the Nepalese Origin." +
-                  " Additionally, all around the world by Nepalsese and few Indian descendents." +
-                  " The games are widely played on the festivals and or some occasional gatherings and all over the " +
-                  "year by the admirers."),
+              child: Text(
+                  "Marriage (Also called as Myarrich or 21 Patti or 21 Rummy Card Game) and Call Break (13 Patti or Otti) are the two famous card games played all over Nepal and in India and Bhutan by the people of the Nepalese Origin. Additionally, all around the world by Nepalsese and few Indian descendents. The games are widely played on the festivals and or some occasional gatherings and all over the year by the admirers."),
             ),
             SizedBox(
               child: StyledText(text: "Marriage Card Game", textSize: 24),

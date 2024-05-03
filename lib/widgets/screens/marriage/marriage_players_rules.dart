@@ -36,7 +36,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
     if (Theme.of(context).brightness == Brightness.dark) {
       color = Theme.of(context).colorScheme.onPrimary;
     }
-    print(screenSize);
+    
     String getTitle(int index) {
       if (index == 0) {
         return title = "Murder";
