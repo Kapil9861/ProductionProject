@@ -101,37 +101,55 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
 
   void _startCalculation() {
     bool allFieldsFilled = true;
+    Set<String> uniqueNames = {}; // Keep track of unique names
+    List<String> duplicateNames = []; // Store duplicate names
+
     if (controllers != null && focusNodes != null) {
       for (int i = 0; i < controllers!.length; i++) {
-        if (controllers![i].text.isEmpty) {
+        String playerName = controllers![i]
+            .text
+            .trim(); // Trim leading and trailing whitespaces
+        if (playerName.isEmpty) {
           _showSnackBar('Player ${i + 1} name is empty', i);
           allFieldsFilled = false;
           break;
-        } else if (controllers![i].text.length < 3) {
+        } else if (playerName.length < 3) {
           _showSnackBar(
               'Player ${i + 1} name must have 3 or more characters', i);
           allFieldsFilled = false;
           break;
+        } else if (!uniqueNames.add(playerName)) {
+          // If the name is already in the set, it's a duplicate
+          duplicateNames.add(playerName);
         }
       }
     } else {
       allFieldsFilled = false;
     }
-    if (allFieldsFilled) {
-      List<String> playerNames = [];
-      for (int i = 0; i < controllers!.length; i++) {
-        playerNames.add(controllers![i].text);
-      }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MarriagePointsCalculator(
-            playerNames: playerNames,
-            conditions: widget.conditions,
-          ),
-        ),
-      );
+
+    if (!allFieldsFilled) {
+      return; // Exit function if not all fields are filled
     }
+
+    if (duplicateNames.isNotEmpty) {
+      _showSnackBar(
+          'Duplicate player names found: ${duplicateNames.join(', ')}',
+          1); // Show duplicates in Snackbar
+      return; // Exit function if duplicate names are found
+    }
+
+    // Proceed to calculator if all conditions are met
+    List<String> playerNames =
+        controllers!.map((controller) => controller.text.trim()).toList();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MarriagePointsCalculator(
+          playerNames: playerNames,
+          conditions: widget.conditions,
+        ),
+      ),
+    );
   }
 
   @override

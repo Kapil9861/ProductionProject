@@ -52,7 +52,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final List<double> forWinnerWinning = [];
   double finePoint = 15;
   String foulPlayerName = "";
-  List<Map<String, dynamic>> allIndividualWinPoints = [];
+  List<LinkedHashMap<String, num>> allIndividualWinPoints = [];
   List<double> allPricePerPoint = [];
   List<double> allFinePoint = [];
   List<List<String>> allPlayerNames = [];
@@ -176,6 +176,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   @override
   void dispose() {
     _amountController.dispose();
+    Hive.close();
     super.dispose();
   }
 

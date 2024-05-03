@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
-import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
 
 class MarriagePlayerRules extends StatefulWidget {
   const MarriagePlayerRules({super.key});

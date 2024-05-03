@@ -41,6 +41,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   double _confidenceLevel = 0.0;
   final SpeechToText _speechToText = SpeechToText();
   List<String> helperText = [];
+
+  List<double> amounts = [];
   String buttonText = "Start";
   bool state = false;
   List<FocusNode> focusNodes = [];
@@ -81,7 +83,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       double amount = double.parse(
         value.replaceAll(RegExp(r'[^0-9.]'), ''),
       );
-      if (amount < 4 || amount > 99999) {
+      if (amount < 5 || amount > 99999) {
         if (index == 0) {
           return "2ND";
         } else if (index == 1) {
@@ -97,6 +99,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   void _validateAmount() {
+    bool success = false;
     for (int i = 0; i < widget.playerNames.length - 1; i++) {
       String? value = _amountController[i].text;
       if (value.isEmpty) {
@@ -106,7 +109,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           value.replaceAll(RegExp(r'[^0-9.]'), ''),
         );
         if (amount < 5 || amount > 100000) {
-          showSnackBar("Player $i Amount is Invalid!");
+          showSnackBar("Amount for looser $i is Invalid!");
         } else {
           double secondValue = double.parse(
             _amountController[1].text.replaceAll(RegExp(r'[^0-9.]'), ''),
@@ -114,15 +117,28 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           double firstValue = double.parse(
             _amountController[0].text.replaceAll(RegExp(r'[^0-9.]'), ''),
           );
+          double thirdValue = double.parse(
+            _amountController[2].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+          );
           if (i == 2 &&
               secondValue > 4 &&
               secondValue < 100000 &&
               firstValue > 4 &&
-              firstValue < 100000) {
+              firstValue < 100000 &&
+              thirdValue > 4 &&
+              thirdValue < 100000) {
             isCalculation ? null : showSnackBar("Started Game!");
+
+            success = true;
+
             setState(() {
               buttonText = "Running";
             });
+          }
+          if (success) {
+            amounts.add(firstValue);
+            amounts.add(secondValue);
+            amounts.add(thirdValue);
           }
         }
       }
@@ -165,8 +181,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       widget.playerNames.length,
       (index) => FocusNode(),
     );
-    for (String name in widget.playerNames) {
-      individualWinPoints[name] = 0;
+    for (int i = 0; i < widget.playerNames.length; i++) {
+      individualWinPoints[widget.playerNames[i]] = 0;
+      print(widget.playerNames[i]);
     }
     _individualResults.add(0);
   }
@@ -256,39 +273,66 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   int _startCalculation() {
+    _lock();
+    amounts.clear();
     _validateAmount();
+
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
       print("here 1");
       return 1;
     }
+
     if (isAmountValid) {
       print("valid Amount");
+      print("Start ma sab 0 $individualWinPoints");
       for (int i = 0; i < widget.playerNames.length; i++) {
-        _individualResults.add(0);
         int initialPoints = int.parse(
           _individualInitialPointsController[i]
               .text
               .replaceAll(RegExp(r'[^0-9.]'), ''),
         );
+
         int finalPoints = int.parse(
           _individualResultPointsController[i]
               .text
               .replaceAll(RegExp(r'[^0-9.]'), ''),
         );
+
         int otti = finalPoints - initialPoints;
         if (otti < 0) {
           textColor = Colors.red;
         }
-        num haat = otti < 0 ? otti : initialPoints + otti / 10;
-        _individualResults[i] = (haat + otti).toDouble();
 
-        print(_individualResults[i]);
-        individualWinPoints[widget.playerNames[i]] = _individualResults[i];
+        num individualResult =
+            otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
+
+        print("$i : $individualResult");
+        individualWinPoints[widget.playerNames[i]] = individualResult;
       }
+
+      print("Winnings $individualWinPoints");
+      status = true;
+      clearControllers();
+
+      return 0;
     } else {
-      print("Katai Milena");
+      showSnackBar("Something Went Wrong!");
+      return 1;
     }
-    return 0;
+  }
+
+  void clearControllers() {
+    for (int i = 0; i < widget.playerNames.length; i++) {
+      _notesController.clear();
+      _individualInitialPointsController[i].clear();
+      _individualResultPointsController[i].clear();
+    }
+  }
+
+  void _lock() {
+    setState(() {
+      _checkInitialPoints() == 0 ? status = false : true;
+    });
   }
 
   void showDialogBox(String information) {
@@ -595,11 +639,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             right: screenSize.height < 625 ? 45 : 75),
                         child: CustomButton(
                           onPressed: () {
-                            setState(() {
-                              _checkInitialPoints() == 0
-                                  ? status = false
-                                  : true;
-                            });
+                            _lock();
                           },
                           buttonText: "Lock",
                           width: 105,
