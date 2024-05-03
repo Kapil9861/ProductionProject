@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/chart/chart.dart';
@@ -383,6 +384,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.onPrimary;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -430,6 +434,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             ? buttonWidthPercentage - 13
                             : buttonWidthPercentage - 20,
                         child: TextFormField(
+                          style: TextStyle(color: textColor),
                           onChanged: (value) {
                             _validAmount(value, i) == null
                                 ? showSnackBar("Amount Added!")
@@ -557,6 +562,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    style: TextStyle(color: textColor),
                                     enabled: status,
                                     focusNode: focusNodes[i],
                                     controller:
@@ -592,6 +598,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    style: TextStyle(color: textColor),
                                     focusNode: focusNodes1[i],
                                     controller:
                                         _individualResultPointsController[i],
@@ -657,7 +664,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     width: notesArea,
                                     child: TextFormField(
                                       style: TextStyle(
-                                          fontSize: playerNameFont - 1),
+                                          fontSize: playerNameFont - 1,
+                                          color: textColor),
                                       controller: _notesController,
                                       maxLength: 150,
                                       maxLines: 6,
@@ -799,7 +807,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 children: [
                                   ...widget.playerNames.map((controller) {
                                     return const Padding(
-                                      padding:  EdgeInsets.all(8.0),
+                                      padding: EdgeInsets.all(8.0),
                                       child: TextField(controller: null),
                                     );
                                   }).toList(),

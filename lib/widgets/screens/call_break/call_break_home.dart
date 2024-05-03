@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_points_calculator.dart';
 
 class CallBreakHome extends StatefulWidget {
@@ -95,6 +96,9 @@ class _CallBreakHomeState extends State<CallBreakHome> {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.onPrimary;
     return Scaffold(
       appBar: AppBar(
         title: const Padding(
@@ -117,6 +121,9 @@ class _CallBreakHomeState extends State<CallBreakHome> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5),
                   child: TextFormField(
+                    style: TextStyle(
+                      color: textColor,
+                    ),
                     controller: playerControllers[i],
                     focusNode: playerFocusNodes[i],
                     decoration: InputDecoration(

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:sajilo_hisab/widgets/chart/chart.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
@@ -266,9 +267,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           _individualPointsController[i].text = "0";
           continue;
         }
-        // Check if controller is empty
         if (_individualPointsController[i].text.isEmpty) {
-          // Show message or perform necessary action
           // ignore: use_build_context_synchronously
           FocusScope.of(context).requestFocus(focusNodes[i]);
         } else {
@@ -279,7 +278,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         }
       }
 
-      // Calculate total sum of the points
       totalPoints = 3.0 +
           pointsCollection.fold(
               0, (total, individualPoints) => total + individualPoints);
@@ -401,7 +399,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       notesBox.put('notes$calculationRunCount', notes);
 
       while (true) {
-        // Construct keys based on the calculationRunCount
         String individualWinPointsKey =
             'individualWinPoints$calculationRunCount';
         String pricePerPointKey = 'pricePerPoint$calculationRunCount';
@@ -419,7 +416,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           allNotes.add(notesBox.get(notesKey));
           calculationRunCount++;
         } else {
-          break; // Exit the loop if the key does not exist
+          break;
         }
       }
 
@@ -501,6 +498,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.onPrimary;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -509,8 +509,16 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
     int buttonWidth = buttonWidthPercentage.toInt();
     int buttonHeight = buttonHeightPercentage.toInt();
-
     double screenWidth = screenSize.width;
+
+    double tableWidth = screenSize.width;
+    if (widget.playerNames.length == 4) {
+      tableWidth = screenSize.width * 1.2;
+    } else if (widget.playerNames.length == 5) {
+      tableWidth = screenSize.width * 1.4;
+    } else if (widget.playerNames.length == 6) {
+      tableWidth = screenSize.width * 1.6;
+    }
     double textError = 14;
     double playerNameFont = 17;
     double playerNameArea = 83;
@@ -587,6 +595,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       height: 70,
                       width: buttonWidthPercentage * 2.25 - 60,
                       child: TextFormField(
+                        style: TextStyle(color: textColor),
                         onChanged: (value) {
                           _validAmount(value) == null
                               ? showSnackBar("Amount Added!")
@@ -625,6 +634,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       width: buttonHeightPercentage + 40,
                       height: 70,
                       child: TextFormField(
+                        style: TextStyle(color: textColor),
                         controller: _fineController,
                         focusNode: fineNode,
                         maxLength: 3,
@@ -703,6 +713,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 child: SizedBox(
                                   width: pointsArea,
                                   child: TextFormField(
+                                    style: TextStyle(color: textColor),
                                     focusNode: focusNodes[i],
                                     enabled: status[i],
                                     controller: _individualPointsController[i],
@@ -765,7 +776,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     width: notesArea,
                                     child: TextFormField(
                                       style: TextStyle(
-                                          fontSize: playerNameFont - 1),
+                                          fontSize: playerNameFont - 1,
+                                          color: textColor),
                                       controller: _notesController,
                                       maxLength: 150,
                                       maxLines: 6,
@@ -840,82 +852,121 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
-                        child: Table(
-                          columnWidths: {
-                            for (var i = 0; i < widget.playerNames.length; i++)
-                              i: const FlexColumnWidth(1),
-                          },
-                          border: TableBorder.all(),
-                          children: [
-                            TableRow(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                              ),
-                              children: [
-                                ...widget.playerNames.map((name) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                        child: Text(
-                                      name.toUpperCase(),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: playerNameFont - 3),
-                                    )),
-                                  );
-                                }).toList(),
-                                Center(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 10, top: 6),
-                                    child: Text(
-                                      "EDIT",
-                                      style: TextStyle(
-                                        fontSize: playerNameFont - 2,
-                                        color: Colors.white,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: tableWidth,
+                                child: Table(
+                                  columnWidths: {
+                                    for (var i = 0;
+                                        i < widget.playerNames.length;
+                                        i++)
+                                      i: FixedColumnWidth((tableWidth - 50) /
+                                          (widget.playerNames.length + 2)),
+                                  },
+                                  border: TableBorder.all(),
+                                  children: [
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer,
                                       ),
+                                      children: [
+                                        ...widget.playerNames.map((name) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text(
+                                                name.toUpperCase(),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: playerNameFont - 3,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, top: 6),
+                                            child: Text(
+                                              "EDIT",
+                                              style: TextStyle(
+                                                fontSize: playerNameFont - 2,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, top: 6),
+                                            child: Text(
+                                              "Notes",
+                                              style: TextStyle(
+                                                fontSize: playerNameFont - 2,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                    for (var i = 0;
+                                        i < widget.playerNames.length - 1;
+                                        i++)
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? i % 2 == 0
+                                                  ? const Color.fromARGB(
+                                                      255, 87, 87, 87)
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer
+                                              : i % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color.fromARGB(
+                                                      255, 79, 23, 135),
+                                        ),
+                                        children: [
+                                          ..._nameControllersList[i]
+                                              .map((controller) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: TextField(
+                                                  controller: controller),
+                                            );
+                                          }).toList(),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(Icons.edit),
+                                          ),
+                                          Text(
+                                            allNotes.toString(),
+                                            style: TextStyle(
+                                              fontSize: playerNameFont - 2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            for (var i = 0;
-                                i < widget.playerNames.length - 1;
-                                i++)
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? i % 2 == 0
-                                          ? const Color.fromARGB(
-                                              255, 87, 87, 87)
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer
-                                      : i % 2 == 0
-                                          ? Colors.white
-                                          : const Color.fromARGB(
-                                              255, 79, 23, 135),
-                                ),
-                                children: [
-                                  ..._nameControllersList[i].map((controller) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextField(controller: controller),
-                                    );
-                                  }).toList(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.edit),
-                                  )
-                                ],
                               ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       Padding(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_points_calculator.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
 
@@ -154,6 +155,10 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.onPrimary;
+
     Size screenSize = MediaQuery.of(context).size;
     double screenWidth = screenSize.width;
     double textSize = 16.5;
@@ -192,6 +197,7 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                     maxLength: 1,
                     controller: numberController,
                     keyboardType: TextInputType.number,
+                    style: TextStyle(color: textColor),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,
                       FilteringTextInputFormatter.allow(RegExp(r'[1-6]')),
@@ -246,6 +252,9 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                 itemBuilder: (context, index) {
                   if (controllers != null && focusNodes != null) {
                     return TextField(
+                      style: TextStyle(
+                        color: textColor,
+                      ),
                       controller: controllers![index],
                       focusNode: focusNodes![index],
                       maxLength: 15,

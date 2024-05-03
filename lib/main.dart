@@ -26,22 +26,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark().copyWith(
-          colorScheme: kDarkColorScheme,
-          cardTheme: CardTheme(
-            color: kDarkColorScheme.primaryContainer,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-          textTheme: TextTheme(
-            bodyMedium: TextStyle(color: kDarkColorScheme.onPrimaryContainer),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: kDarkColorScheme.primaryContainer),
-          ),
-          appBarTheme: const AppBarTheme().copyWith(
-            backgroundColor: kDarkColorScheme.onPrimary,
-            foregroundColor: kDarkColorScheme.onPrimaryContainer,
-          )),
+        colorScheme: kDarkColorScheme,
+        cardTheme: CardTheme(
+          color: kDarkColorScheme.primaryContainer,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ),
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: kDarkColorScheme.onPrimaryContainer),
+          bodySmall: TextStyle(color: kDarkColorScheme.onPrimaryContainer),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: kDarkColorScheme.primaryContainer),
+        ),
+        appBarTheme: const AppBarTheme().copyWith(
+          backgroundColor: kDarkColorScheme.onPrimary,
+          foregroundColor: kDarkColorScheme.onPrimaryContainer,
+        ),
+      ),
       theme: ThemeData().copyWith(
         //Those that doesn't change change it manually
         colorScheme: kColorScheme,
