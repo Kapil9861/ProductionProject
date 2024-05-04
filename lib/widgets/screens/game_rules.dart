@@ -142,7 +142,7 @@ class GamesRules extends StatelessWidget {
                 "is the blog by Deb Mahato Upadted on: Sep 29,2023 (Last Seen)"),
             Padding(
               padding: EdgeInsets.only(top: 8.0),
-              child: Text("And Call Break rules at :"),
+              child: Text("And Call Break rules at firstgames.in:"),
             ),
             CustomLink(
               link:
