@@ -34,6 +34,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   final List<num> _individualResults = [];
   Color? textColor;
   bool isCalculation = false;
+  String lockButtonText = "Lock";
 
   List<FocusNode> pointsFocusNodes = [];
   List<FocusNode> amountNode = [];
@@ -327,6 +328,18 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   void _lock() {
     setState(() {
       _checkInitialPoints() == 0 ? status = false : true;
+      if (status == false) {
+        lockButtonText = "Locked";
+      }
+    });
+  }
+
+  void _unlock() {
+    setState(() {
+      if (status == false && lockButtonText == "Locked") {
+        lockButtonText = "Lock";
+        status = true;
+      }
     });
   }
 
@@ -635,9 +648,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             right: screenSize.height < 625 ? 45 : 75),
                         child: CustomButton(
                           onPressed: () {
-                            _lock();
+                            lockButtonText == "Locked" ? _unlock() : _lock();
                           },
-                          buttonText: "Lock",
+                          buttonText: lockButtonText,
                           width: 105,
                           fontSize: playerNameFont - 1.5,
                         ),

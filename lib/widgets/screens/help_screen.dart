@@ -41,6 +41,9 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/1-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
@@ -58,11 +61,14 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/3-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Select the rules as per the your decisions and comfortablility.",
+                    "Select the rules as per the your decisions and comfortablility and click on proceed.",
                 textSize: 20,
               ),
             ),
@@ -75,6 +81,9 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+            ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/4-min.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -94,6 +103,9 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/5-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
@@ -110,6 +122,21 @@ class HelpScreen extends StatelessWidget {
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
                 ),
+              ),
+            ),
+            SizedBox(
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 15),
+                    child: CustomImages(
+                      image: AssetImage('assets/images/screenshots/6-min.png'),
+                    ),
+                  ),
+                  CustomImages(
+                    image: AssetImage('assets/images/screenshots/7-min.png'),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -134,7 +161,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Now press on the button to change the winner, remember there can be only one winner and if the player has not seen, is on hold or has committed foul in the same game he/she cannot win the game and after that input the win points by individual player and remember 3 points will be counted by the calculator itself so you must not add 3 points if you win! Then change if the player has seen, seen with dublee, is on hold, unseen or has committed foul then press the calculate button!",
+                    "Now, press on the button to change the winner as shown in Seocnd Image of Step: 5, remember there can be only one winner and if the player has not seen, is on hold or has committed foul in the same game he/she cannot win the game and after that input the win points by individual player and remember 3 points will be counted by the calculator itself so you must not add 3 points if you win! Then change if the player has seen, seen with dublee, is on hold, unseen or has committed foul then press the calculate button!",
                 textSize: 20,
               ),
             ),
@@ -147,6 +174,9 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+            ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/7-min.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -169,6 +199,9 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/2-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
@@ -185,6 +218,9 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+            ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/8-min.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -204,6 +240,9 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/9-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
@@ -221,6 +260,9 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+            ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/10-min.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -240,11 +282,26 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 15),
+                    child: CustomImages(
+                      image: AssetImage('assets/images/screenshots/11-min.png'),
+                    ),
+                  ),
+                  CustomImages(
+                    image: AssetImage('assets/images/screenshots/12-min.png'),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "As in the marriage points calculator you cannot change the points in here as there will be almost no way to make mistake while entering the points and you can change the initial points once locked clicking in the button once again. However, you can delete the game info if agreed between the players or you can just change the initial and final points without calculating the points.",
+                    "As in the marriage points calculator you cannot change the points in here as there will be almost no way to make mistake while entering the points and you can change the initial points once locked clicking in the same button once again. However, you can delete the game info if agreed between the players or you can just change the initial and final points without calculating the points.",
                 textSize: 20,
               ),
             ),
@@ -258,12 +315,43 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/-min.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
                     "You can see the real time winner, between you and other player in a chart at the bottom of your screen once you scroll to the end as in marriage points calculator.",
                 textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "**Note : You will be assisted by some dialog box with informations to guide you if you make some major errors. Also, for minor errors or for some valid informations you will be guided by the form controls and snackbars as given below:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 15),
+                    child: CustomImages(
+                      image: AssetImage('assets/images/screenshots/13-min.png'),
+                    ),
+                  ),
+                  CustomImages(
+                    image: AssetImage('assets/images/screenshots/14-min.png'),
+                  ),
+                  CustomImages(
+                    image: AssetImage('assets/images/screenshots/15-min.png'),
+                  ),
+                ],
               ),
             ),
             Padding(
