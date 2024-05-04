@@ -386,7 +386,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   Widget build(BuildContext context) {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
-        : kColorScheme.onPrimary;
+        : kColorScheme.onPrimaryContainer;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;

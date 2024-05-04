@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
+import 'package:sajilo_hisab/widgets/screens/marriage/marriage_rules.dart';
 
 class MarriagePlayerRules extends StatefulWidget {
   const MarriagePlayerRules({super.key});
@@ -132,7 +133,7 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const MarriagePlayerRules(),
+                                                  const MarriageRules(),
                                             ),
                                           );
                                         },

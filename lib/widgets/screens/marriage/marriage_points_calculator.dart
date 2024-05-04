@@ -500,7 +500,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   Widget build(BuildContext context) {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
-        : kColorScheme.onPrimary;
+        : kColorScheme.onPrimaryContainer;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -971,12 +971,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                          left: screenSize.height * 0.02,
-                          right: screenSize.height * 0.02,
+                          left: screenSize.height * 0.01,
+                          right: screenSize.height * 0.01,
                         ),
                         child: SizedBox(
                           height: screenSize.height * 0.40,
-                          width: screenSize.width * 0.90,
+                          width: screenSize.width * 0.95,
                           child: Chart(
                               playerNames: widget.playerNames,
                               individualWinPoints: individualWinPoints),

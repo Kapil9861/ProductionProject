@@ -133,13 +133,22 @@ class GamesRules extends StatelessWidget {
                   "If a player calls/bids 8 hands points and successfully receives 8 or more points, he/she will automatically win the whole game."),
             ),
             Text(
-                "For more information about the game and rules, visit the site given below by bhoos.com,\n"),
+                "For more information about the marriage card game and rules, visit the site given below by bhoos.com,\n"),
             CustomLink(
               link:
                   "https://www.bhoos.com/blog/learn-to-play-the-best-marriage-card-game/",
             ),
             Text(
                 "is the blog by Deb Mahato Upadted on: Sep 29,2023 (Last Seen)"),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text("And Call Break rules at :"),
+            ),
+            CustomLink(
+              link:
+                  "https://firstgames.in/blog/how-to-play-call-break-call-break-rules-in-detail",
+            ),
+            Text("Also a blog by Suraj Jayaswal on: Jun 2, 2021 (Last Seen)"),
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: Text("Also visit the official website of Sajilo Hisab:"),

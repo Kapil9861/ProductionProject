@@ -19,7 +19,7 @@ class MyFooter extends StatelessWidget {
             ),
             CustomLink(link: "https://sajilohisab-production.up.railway.app/"),
             Text(
-              'Copyright @2024, All Rights Reserved',
+              '\nCopyright @2024, All Rights Reserved',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(

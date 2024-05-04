@@ -43,7 +43,7 @@ class _StartScreenState extends State<StartScreen> {
               height: 220,
               width: 220,
               child: Image(
-                image: AssetImage('assets/images/logo.png'),
+                image: AssetImage('assets/images/logo/logo.png'),
               ),
             ),
             const SizedBox(
@@ -122,13 +122,13 @@ class _StartScreenState extends State<StartScreen> {
         content = const CallBreakPlayerRules();
         break;
       case "Help (Tutorial)":
-        content = HelpScreen();
+        content = const HelpScreen();
         break;
       case "Games Rules":
-        content = GamesRules();
+        content = const GamesRules();
         break;
       case "About Us":
-        content = AboutUsScreen();
+        content = const AboutUsScreen();
         break;
       default:
         content = home;
@@ -159,7 +159,7 @@ class _StartScreenState extends State<StartScreen> {
                 });
               },
               child: Image.asset(
-                'assets/images/logo.png',
+                'assets/images/logo/logo.png',
                 width: 30,
                 height: 30,
               ),

@@ -98,7 +98,7 @@ class _CallBreakHomeState extends State<CallBreakHome> {
   Widget build(BuildContext context) {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
-        : kColorScheme.onPrimary;
+        : kColorScheme.onPrimaryContainer;
     return Scaffold(
       appBar: AppBar(
         title: const Padding(

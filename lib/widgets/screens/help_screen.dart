@@ -1,9 +1,283 @@
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/widgets/smallWidgets/custom_images.dart';
+import 'package:sajilo_hisab/widgets/smallWidgets/footer.dart';
+import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class HelpScreen extends StatelessWidget {
+  const HelpScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    
-    return SizedBox();
+    return const SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomImages(
+              image: AssetImage('assets/images/logo/logo.png'),
+            ),
+            SizedBox(
+              child: StyledText(
+                  text: "Welcome to Sajilo Hisab's Tutorial!", textSize: 24),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text: "Learn how to use the Sajilo Hisab in details!",
+                textSize: 22,
+              ),
+            ),
+            SizedBox(
+              child: StyledText(text: "For Marriage Card Game", textSize: 24),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 1:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text: "Select Marriage Point Calculator",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 2:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Select the rules as per the your decisions and comfortablility.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 3:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Enter the players playing with you, keep in mind that the minimum player is 2 and maximum 6 players can play together.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 4:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Enter the players name of the individual players it does not matter where you sit while playing you will get absolutely reliable and correct results.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 5:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Bravo!\n you have reached the calculator now! Now put the points per amount that you want to play with your friends and do not forget to input the fine amount and remember it will be the same if you pay the fine on the same game or another! Do not forget that you have minimum and maximum limit on both price per amount and fine amount. In price per point it must be between 0.01 to 99999 and in fine points it must be between 5 and 100! Click at the Start button, to know that the game is running this will also ensure that there is not any invalid values entered in the fine points and per per amount section. However, it will also be checked once clicked the calculate button.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 6:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Now press on the button to change the winner, remember there can be only one winner and if the player has not seen, is on hold or has committed foul in the same game he/she cannot win the game and after that input the win points by individual player and remember 3 points will be counted by the calculator itself so you must not add 3 points if you win! Then change if the player has seen, seen with dublee, is on hold, unseen or has committed foul then press the calculate button!",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 7:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Now you will see the points updated on the table below, here you can update the points of previous games and also can delete the row if the game was cancelled after the game was completed in mutual understanding! \n\n Below the table you can see the chart in which you can see who is winning the more than another. Remember if you have negative points your bar will be at 0 meaning you have not won anything may be have lost instead. ",
+                textSize: 20,
+              ),
+            ),
+            SizedBox(
+              child: StyledText(text: "For Call Break Card Game", textSize: 24),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 1:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text: "Select CallBreak Point Calculator",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 2:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Now you are in the players rule screen which is similar to the player rule screen for marriage. Here, you have to choose the rules according to your group's preferences. After you press the proceed button, you will be taken to the call break home screen.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 3:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "In this screen you have to provide the individual players' name and if two players have same name don't forget to provide with some number or any characters you want so that you can identify the players. Now, click on the start calculator to move to the calculator screen.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 4:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Good Job!\n Now you are in the call break points calculator. Here you must provide the amount that must be paid by the loosers. The amount should be for the 2nd, 3rd and the 4th players respectively. The amount must be greater than 5 and must be less than 100000! Click at the Start button, to know that the game is running this will also ensure that there is not any invalid values entered in the amount section for the players that comes 2nd, 3rd and 4th respectively. However, it will also be checked once clicked the calculate button. Then you should provide the initial haat(Haat Bolnu), before starting the game after distributing the cards. Then you should lock the initial haat so that the points can not be changed while the game is running and after the game. Then provide the final points after the game is finished. Then you can calculate the points clicking on the calculate button and all the tasks will be handled by the calculator itself. Remember! you can directly calculate points without clicking the lock button however, if done so the points can be changed by any player unknowingly.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 5:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "As in the marriage points calculator you cannot change the points in here as there will be almost no way to make mistake while entering the points and you can change the initial points once locked clicking in the button once again. However, you can delete the game info if agreed between the players or you can just change the initial and final points without calculating the points.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "Step 6:",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "You can see the real time winner, between you and other player in a chart at the bottom of your screen once you scroll to the end as in marriage points calculator.",
+                textSize: 20,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Congratulations!\n You have completed the tutorial, you are fully capable to use the Sajilo Hisab app for while playing the game.",
+                textSize: 22,
+              ),
+            ),
+            MyFooter()
+          ],
+        ),
+      ),
+    );
   }
 }

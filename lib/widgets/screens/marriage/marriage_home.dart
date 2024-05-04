@@ -157,7 +157,7 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
   Widget build(BuildContext context) {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
-        : kColorScheme.onPrimary;
+        : kColorScheme.onPrimaryContainer;
 
     Size screenSize = MediaQuery.of(context).size;
     double screenWidth = screenSize.width;
