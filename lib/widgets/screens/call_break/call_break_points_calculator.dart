@@ -333,10 +333,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           'individualCallBreakPoints$calculationRunCount', individualWinPoints);
       playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
       notesBox.put('notes$calculationRunCount', notes);
-      print("Is inside this ");
 
       while (true) {
-        print("Inside true");
         String individualWinPointsKey =
             'individualCallBreakPoints$calculationRunCount';
         String loosersAmountKey = 'pricePerPoint$calculationRunCount';
@@ -345,7 +343,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
         // Retrieve values from the boxes
         if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
-          print("inside box");
           allIndividualWinPoints
               .add(individualCallBreakPointsBox.get(individualWinPointsKey));
           allPlayerNames.add(playerNamesBox.get(playerNamesKey));
@@ -356,7 +353,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           setState(() {
             calculationRunCount++;
           });
-          print({allIndividualWinPoints, allPlayerNames, allNotes});
         } else {
           break;
         }
@@ -459,6 +455,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;
     double notesArea = screenSize.width * 0.70;
+    double individualColumnWidth = (screenSize.width - 50) / 6;
 
     double textError = 14;
     double playerNameFont = 17;
@@ -831,7 +828,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
                                         child: Text(
-                                      name,
+                                      name.toUpperCase(),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: playerNameFont - 1),
@@ -867,27 +864,60 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             itemBuilder: (context, index) {
                               return Dismissible(
                                 key: UniqueKey(),
+                                direction: DismissDirection.horizontal,
                                 onDismissed: (direction) {
-                                  // Remove the dismissed item from all lists
-                                  setState(() {
-                                    allIndividualWinPoints.removeAt(index);
-                                    allPlayerNames.removeAt(index);
-                                    allNotes.removeAt(index);
-                                  });
+                                  AlertDialog(
+                                    title: const Text("Delete Item?"),
+                                    content: const Text(
+                                      "Are you sure?\n You want to delete this item?",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text("No"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text("Yes"),
+                                        onPressed: () {
+                                          setState(() {
+                                            allIndividualWinPoints
+                                                .removeAt(index);
+                                            allPlayerNames.removeAt(index);
+                                            allNotes.removeAt(index);
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
                                 },
                                 child: ListTile(
                                   tileColor:
                                       index % 2 != 0 ? textColor : Colors.white,
                                   title: Text("Item ${index + 1}"),
-                                  subtitle: Column(
+                                  subtitle: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                          "Individual Win Points: ${allIndividualWinPoints[index]}"),
-                                      Text(
-                                          "Player Names: ${allPlayerNames[index].join(', ')}"),
-                                      Text("Notes: ${allNotes[index]}"),
+                                      SizedBox(
+                                        width: individualColumnWidth,
+                                        child: Text(
+                                            "Individual Win Points: ${allIndividualWinPoints[index]}"),
+                                      ),
+                                      SizedBox(
+                                        width: individualColumnWidth,
+                                        child: Text(
+                                            "Player Names: ${allPlayerNames[index].join(', ')}"),
+                                      ),
+                                      SizedBox(
+                                          width: individualColumnWidth,
+                                          child: Text(
+                                              "Notes: ${allNotes[index]}")),
                                     ],
                                   ),
                                 ),

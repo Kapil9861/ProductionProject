@@ -64,7 +64,7 @@ class Chart extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Text(
-                        playerName,
+                        playerName.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: isDarkMode

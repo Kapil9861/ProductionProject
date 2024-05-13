@@ -926,44 +926,89 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 0, bottom: 10, right: 5, left: 5),
-                        child: SizedBox(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: allIndividualWinPoints.length,
-                            itemBuilder: (context, index) {
-                              return Dismissible(
-                                key: UniqueKey(),
-                                onDismissed: (direction) {
-                                  // Remove the dismissed item from all lists
-                                  setState(() {
-                                    allIndividualWinPoints.removeAt(index);
-                                    allPricePerPoint.removeAt(index);
-                                    allFinePoint.removeAt(index);
-                                    allPlayerNames.removeAt(index);
-                                    allNotes.removeAt(index);
-                                  });
-                                },
-                                child: ListTile(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: tableWidth,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: allIndividualWinPoints.length,
+                              itemBuilder: (context, index) {
+                                int tapCount = 0;
+                                return ListTile(
+                                  onTap: () {
+                                    tapCount++;
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      setState(() {
+                                        tapCount = 0;
+                                      });
+                                    });
+                                    if (tapCount == 3) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Delete Item?"),
+                                            content: const Text(
+                                              "Are you sure?\n You want to delete this item?",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text("No"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: const Text("Yes"),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    allIndividualWinPoints
+                                                        .removeAt(index);
+                                                    allPricePerPoint
+                                                        .removeAt(index);
+                                                    allFinePoint
+                                                        .removeAt(index);
+                                                    allPlayerNames
+                                                        .removeAt(index);
+                                                    allNotes.removeAt(index);
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
                                   title: Text("Item ${index + 1}"),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          "Individual Win Points: ${allIndividualWinPoints[index]}"),
-                                      Text(
-                                          "Price Per Point: ${allPricePerPoint[index]}"),
-                                      Text(
-                                          "Fine Point: ${allFinePoint[index]}"),
-                                      Text(
-                                          "Player Names: ${allPlayerNames[index].join(', ')}"),
-                                      Text("Notes: ${allNotes[index]}"),
-                                    ],
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            "Individual Win Points: ${allIndividualWinPoints[index]}"),
+                                        Text(
+                                            "Price Per Point: ${allPricePerPoint[index]}"),
+                                        Text(
+                                            "Fine Point: ${allFinePoint[index]}"),
+                                        Text(
+                                            "Player Names: ${allPlayerNames[index].join(', ')}"),
+                                        Text("Notes: ${allNotes[index]}"),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
