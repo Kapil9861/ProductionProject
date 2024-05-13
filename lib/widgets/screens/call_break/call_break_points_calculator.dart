@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class CallBreakPointsCalculator extends StatefulWidget {
 }
 
 class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
-  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
   List<TextEditingController> _individualInitialPointsController = [];
   List<TextEditingController> _individualResultPointsController = [];
   List<TextEditingController> _amountController = [];
@@ -52,6 +52,14 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   bool status = true;
   int initialPointsStatus = 0;
   bool isAmountValid = false;
+
+  int calculationRunCount = 0;
+  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
+  List<LinkedHashMap<String, num>> allIndividualWinPoints = [];
+  List<List<String>> allPlayerNames = [];
+  List<String> allNotes = [];
+  List<List<String>> allLossAmount = [];
+
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
 
@@ -273,7 +281,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     return 0;
   }
 
-  int _startCalculation() {
+  Future _startCalculation() async {
     _lock();
     amounts.clear();
     _validateAmount();
@@ -283,6 +291,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
 
     if (isAmountValid) {
+      String? notes = _notesController.text;
       for (int i = 0; i < widget.playerNames.length; i++) {
         int initialPoints = int.parse(
           _individualInitialPointsController[i]
@@ -305,14 +314,59 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
             otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
 
         individualWinPoints[widget.playerNames[i]] = individualResult;
+
+        setState(() {
+          status = false;
+          lockButtonText = "Lock";
+        });
+      }
+      var individualCallBreakPointsBox =
+          await Hive.openBox('individualCallBreakPoints');
+      if (calculationRunCount == 4) {
+        var loosersAmountBox = await Hive.openBox("loosersAmount");
+        loosersAmountBox.put('loosersAmount', amounts);
+      }
+      var playerNamesBox = await Hive.openBox('playerNames');
+      var notesBox = await Hive.openBox('notes');
+      //Storing data
+      individualCallBreakPointsBox.put(
+          'individualCallBreakPoints$calculationRunCount', individualWinPoints);
+      playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
+      notesBox.put('notes$calculationRunCount', notes);
+      print("Is inside this ");
+
+      while (true) {
+        print("Inside true");
+        String individualWinPointsKey =
+            'individualCallBreakPoints$calculationRunCount';
+        String loosersAmountKey = 'pricePerPoint$calculationRunCount';
+        String playerNamesKey = 'playerNames$calculationRunCount';
+        String notesKey = 'notes$calculationRunCount';
+
+        // Retrieve values from the boxes
+        if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
+          print("inside box");
+          allIndividualWinPoints
+              .add(individualCallBreakPointsBox.get(individualWinPointsKey));
+          allPlayerNames.add(playerNamesBox.get(playerNamesKey));
+          if (calculationRunCount == 4) {
+            allLossAmount.add(playerNamesBox.get(loosersAmountKey));
+          }
+          allNotes.add(notesBox.get(notesKey));
+          setState(() {
+            calculationRunCount++;
+          });
+          print({allIndividualWinPoints, allPlayerNames, allNotes});
+        } else {
+          break;
+        }
       }
 
       status = true;
       clearControllers();
-
       return 0;
     } else {
-      showSnackBar("Something Went Wrong!");
+      showSnackBar("Amounts Cannot Be Empty!");
       return 1;
     }
   }
@@ -799,38 +853,47 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                 ),
                               ],
                             ),
-                            for (var i = 0;
-                                i < widget.playerNames.length - 1;
-                                i++)
-                              TableRow(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? i % 2 == 0
-                                          ? const Color.fromARGB(
-                                              255, 87, 87, 87)
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer
-                                      : i % 2 == 0
-                                          ? Colors.white
-                                          : const Color.fromARGB(
-                                              255, 79, 23, 135),
-                                ),
-                                children: [
-                                  ...widget.playerNames.map((controller) {
-                                    return const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextField(controller: null),
-                                    );
-                                  }).toList(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.edit),
-                                  )
-                                ],
-                              ),
                           ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 0, bottom: 10, right: 5, left: 5),
+                        child: SizedBox(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: allIndividualWinPoints.length,
+                            itemBuilder: (context, index) {
+                              return Dismissible(
+                                key: UniqueKey(),
+                                onDismissed: (direction) {
+                                  // Remove the dismissed item from all lists
+                                  setState(() {
+                                    allIndividualWinPoints.removeAt(index);
+                                    allPlayerNames.removeAt(index);
+                                    allNotes.removeAt(index);
+                                  });
+                                },
+                                child: ListTile(
+                                  tileColor:
+                                      index % 2 != 0 ? textColor : Colors.white,
+                                  title: Text("Item ${index + 1}"),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          "Individual Win Points: ${allIndividualWinPoints[index]}"),
+                                      Text(
+                                          "Player Names: ${allPlayerNames[index].join(', ')}"),
+                                      Text("Notes: ${allNotes[index]}"),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       Chart(

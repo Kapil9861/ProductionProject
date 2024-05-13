@@ -27,7 +27,6 @@ class MarriagePointsCalculator extends StatefulWidget {
 
 class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   final TextEditingController _notesController = TextEditingController();
-  List<List<TextEditingController>> _nameControllersList = [];
   List<TextEditingController> _individualPointsController = [];
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _fineController = TextEditingController();
@@ -36,6 +35,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   FocusNode amountNode = FocusNode();
   FocusNode fineNode = FocusNode();
   List<FocusNode> focusNodes = [];
+  int calculationRunCount = 0;
   final List<String> _playersResult = [];
   final List<String> _winOrLoss = [];
   final SpeechToText _speechToText = SpeechToText();
@@ -46,13 +46,13 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<bool> status = [];
   final List<double> pointsCollection = [];
   double totalPoints = 0;
-  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
   bool fine = false;
   int winnerCount = 0;
   bool breakOperation = false;
   final List<double> forWinnerWinning = [];
   double finePoint = 15;
   String foulPlayerName = "";
+  LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
   List<LinkedHashMap<String, num>> allIndividualWinPoints = [];
   List<double> allPricePerPoint = [];
   List<double> allFinePoint = [];
@@ -73,12 +73,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void _initializeNameControllers() {
-    _nameControllersList = List.generate(widget.playerNames.length, (index) {
-      return List.generate(
-        widget.playerNames.length,
-        (index) => TextEditingController(),
-      );
-    });
     _individualPointsController = List.generate(
       widget.playerNames.length,
       (index) => TextEditingController(),
@@ -246,7 +240,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void _startCalculation() async {
-    int calculationRunCount = 0;
     await Hive.initFlutter();
 
     double kidnapPoint = 0;
@@ -414,17 +407,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           allFinePoint.add(finePointBox.get(finePointKey));
           allPlayerNames.add(playerNamesBox.get(playerNamesKey));
           allNotes.add(notesBox.get(notesKey));
-          calculationRunCount++;
+          setState(() {
+            calculationRunCount++;
+            _clearInputFields();
+          });
         } else {
           break;
         }
       }
 
-      _clearInputFields();
       pointsCollection.clear();
       forWinnerWinning.clear();
       winnerCount = 0;
-      calculationRunCount++;
     }
     breakOperation = false;
   }
@@ -677,7 +671,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               ),
             ),
             Expanded(
-              flex: 8,
+              flex: 6,
               child: SingleChildScrollView(
                 child: SizedBox(
                   child: Column(
@@ -899,7 +893,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                             padding: const EdgeInsets.only(
                                                 left: 10, top: 6),
                                             child: Text(
-                                              "EDIT",
+                                              "NOTES",
                                               style: TextStyle(
                                                 fontSize: playerNameFont - 2,
                                                 color: Colors.white,
@@ -910,9 +904,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                         Center(
                                           child: Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 10, top: 6),
+                                                left: 0, top: 6, right: 10),
                                             child: Text(
-                                              "Notes",
+                                              "EDIT",
                                               style: TextStyle(
                                                 fontSize: playerNameFont - 2,
                                                 color: Colors.white,
@@ -922,50 +916,54 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                         ),
                                       ],
                                     ),
-                                    for (var i = 0;
-                                        i < widget.playerNames.length - 1;
-                                        i++)
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? i % 2 == 0
-                                                  ? const Color.fromARGB(
-                                                      255, 87, 87, 87)
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimaryContainer
-                                              : i % 2 == 0
-                                                  ? Colors.white
-                                                  : const Color.fromARGB(
-                                                      255, 79, 23, 135),
-                                        ),
-                                        children: [
-                                          ..._nameControllersList[i]
-                                              .map((controller) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: TextField(
-                                                  controller: controller),
-                                            );
-                                          }).toList(),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(Icons.edit),
-                                          ),
-                                          Text(
-                                            allNotes.toString(),
-                                            style: TextStyle(
-                                              fontSize: playerNameFont - 2,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                   ],
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 0, bottom: 10, right: 5, left: 5),
+                        child: SizedBox(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: allIndividualWinPoints.length,
+                            itemBuilder: (context, index) {
+                              return Dismissible(
+                                key: UniqueKey(),
+                                onDismissed: (direction) {
+                                  // Remove the dismissed item from all lists
+                                  setState(() {
+                                    allIndividualWinPoints.removeAt(index);
+                                    allPricePerPoint.removeAt(index);
+                                    allFinePoint.removeAt(index);
+                                    allPlayerNames.removeAt(index);
+                                    allNotes.removeAt(index);
+                                  });
+                                },
+                                child: ListTile(
+                                  title: Text("Item ${index + 1}"),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          "Individual Win Points: ${allIndividualWinPoints[index]}"),
+                                      Text(
+                                          "Price Per Point: ${allPricePerPoint[index]}"),
+                                      Text(
+                                          "Fine Point: ${allFinePoint[index]}"),
+                                      Text(
+                                          "Player Names: ${allPlayerNames[index].join(', ')}"),
+                                      Text("Notes: ${allNotes[index]}"),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -997,8 +995,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     for (int i = 0; i < _individualPointsController.length; i++) {
       _notesController.clear();
       _individualPointsController[i].clear();
-      _winOrLoss[i] == "Didn't Win";
-      _playersResult[i] == "Seen";
     }
   }
 }
