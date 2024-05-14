@@ -449,7 +449,15 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   Widget build(BuildContext context) {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
-        : kColorScheme.onPrimaryContainer;
+        : kColorScheme.onTertiaryContainer;
+    Color tileColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.inversePrimary;
+
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color.fromARGB(255, 27, 29, 27)
+        : Colors.white;
+
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -458,7 +466,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     double individualColumnWidth = (screenSize.width - 50) / 6;
 
     double textError = 14;
-    double playerNameFont = 17;
+    double playerNameFont = 16;
     double playerNameArea = 83;
     double pointsArea = 95;
     double padding = 10;
@@ -479,93 +487,105 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         body: Flex(
           direction: Axis.vertical,
           children: [
-            SizedBox(
-              height: buttonHeightPercentage * 3 - 20,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Container(
+              color: backgroundColor,
+              height: buttonHeightPercentage * 3 + 20,
+              child: Column(
                 children: [
-                  for (int i = 0; i < widget.playerNames.length - 1; i++)
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: screenSize.width > 400
-                              ? padding + 3
-                              : padding - 4,
-                          top: 10),
-                      child: SizedBox(
-                        height: 70,
-                        width: screenSize.width < 390 && screenSize.width > 350
-                            ? buttonWidthPercentage - 13
-                            : buttonWidthPercentage - 20,
-                        child: TextFormField(
-                          style: TextStyle(color: textColor),
-                          onChanged: (value) {
-                            _validAmount(value, i) == null
-                                ? showSnackBar("Amount Added!")
-                                : {
-                                    showSnackBar("Invalid Amount"),
-                                    setState(() {
-                                      buttonText = "Start ";
-                                    })
-                                  };
-                          },
-                          controller: _amountController[i],
-                          focusNode: amountNode[i],
-                          maxLength: 5,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "Amount",
-                            helperText: i == 0
-                                ? "2ND"
-                                : i == 1
-                                    ? "3RD"
-                                    : "4TH",
-                            helperStyle: TextStyle(fontSize: textError - 2.5),
-                            hintStyle: TextStyle(fontSize: textError - 2.5),
-                            errorText:
-                                _validAmount(_amountController[i].text, i),
-                            errorStyle: TextStyle(fontSize: textError - 2),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
-                              gapPadding: 4,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ), // Border radius
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        for (int i = 0; i < widget.playerNames.length - 1; i++)
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: screenSize.width > 400
+                                    ? padding + 3
+                                    : padding - 4,
+                                top: 10),
+                            child: SizedBox(
+                              height: 70,
+                              width: screenSize.width < 390 &&
+                                      screenSize.width > 350
+                                  ? buttonWidthPercentage - 13
+                                  : buttonWidthPercentage - 20,
+                              child: TextFormField(
+                                style: TextStyle(color: textColor),
+                                onChanged: (value) {
+                                  _validAmount(value, i) == null
+                                      ? showSnackBar("Amount Added!")
+                                      : {
+                                          showSnackBar("Invalid Amount"),
+                                          setState(() {
+                                            buttonText = "Start ";
+                                          })
+                                        };
+                                },
+                                controller: _amountController[i],
+                                focusNode: amountNode[i],
+                                maxLength: 5,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: "Amount",
+                                  helperText: i == 0
+                                      ? "2ND"
+                                      : i == 1
+                                          ? "3RD"
+                                          : "4TH",
+                                  helperStyle:
+                                      TextStyle(fontSize: textError - 2.5),
+                                  hintStyle:
+                                      TextStyle(fontSize: textError - 2.5),
+                                  errorText: _validAmount(
+                                      _amountController[i].text, i),
+                                  errorStyle:
+                                      TextStyle(fontSize: textError - 2),
+                                  border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                    gapPadding: 4,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ), // Border radius
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 0,
+                              bottom: 15,
+                              left: 5,
+                              right: screenSize.width < 390 &&
+                                      screenSize.width > 350
+                                  ? 5
+                                  : 10),
+                          child: CustomButton(
+                            onPressed: () {
+                              _validateAmount();
+                            },
+                            buttonText: buttonText,
+                            width: amountButtonWidth - 20,
+                            height: screenSize.height < 625
+                                ? amountButtonHeight - 20
+                                : amountButtonHeight - 7,
+                            fontSize: playerNameFont - 1.5,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: 0,
-                        bottom: 15,
-                        left: 5,
-                        right: screenSize.width < 390 && screenSize.width > 350
-                            ? 5
-                            : 10),
-                    child: CustomButton(
-                      onPressed: () {
-                        _validateAmount();
-                      },
-                      buttonText: buttonText,
-                      width: amountButtonWidth - 20,
-                      height: screenSize.height < 625
-                          ? amountButtonHeight - 20
-                          : amountButtonHeight - 7,
-                      fontSize: playerNameFont - 1.5,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 6, right: 11, left: 11),
+                    child: Text(
+                      "Amount For Players Those Lost! Min-5 Max-99999!",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 60, 125, 179),
+                      ),
                     ),
                   ),
                 ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 6),
-              child: Text(
-                "Amount For Players Those Lost! Min-5 Max-99999!",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 60, 125, 179),
-                ),
               ),
             ),
             Expanded(
@@ -803,7 +823,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(5),
                         child: Table(
                           columnWidths: {
                             for (var i = 0;
@@ -835,17 +855,22 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     )),
                                   );
                                 }).toList(),
-                                Center(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 10, top: 6),
-                                    child: Text(
-                                      "EDIT",
-                                      style: TextStyle(
-                                        fontSize: playerNameFont - 2,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, top: 8, right: 5),
+                                  child: StyledText(
+                                    text: "NOTES",
+                                    textSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, top: 8, right: 5),
+                                  child: StyledText(
+                                    text: "EDIT",
+                                    textSize: 15,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ],
@@ -897,27 +922,36 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   );
                                 },
                                 child: ListTile(
-                                  tileColor:
-                                      index % 2 != 0 ? textColor : Colors.white,
-                                  title: Text("Item ${index + 1}"),
+                                  tileColor: index % 2 != 0 ? tileColor : null,
                                   subtitle: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: individualColumnWidth,
-                                        child: Text(
-                                            "Individual Win Points: ${allIndividualWinPoints[index]}"),
-                                      ),
-                                      SizedBox(
-                                        width: individualColumnWidth,
-                                        child: Text(
-                                            "Player Names: ${allPlayerNames[index].join(', ')}"),
-                                      ),
-                                      SizedBox(
+                                      for (int i = 0;
+                                          i < widget.playerNames.length;
+                                          i++)
+                                        SizedBox(
                                           width: individualColumnWidth,
-                                          child: Text(
-                                              "Notes: ${allNotes[index]}")),
+                                          child: StyledText(
+                                              text: allIndividualWinPoints[
+                                                          index]
+                                                      [widget.playerNames[i]]
+                                                  .toString(),
+                                              color: index % 2 != 0
+                                                  ? Colors.black
+                                                  : Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white
+                                                      : Colors.black),
+                                        ),
+                                      SizedBox(
+                                        width: individualColumnWidth,
+                                        child: StyledText(
+                                          text: "Notes: ${allNotes[index]}",
+                                          textSize: 13,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),

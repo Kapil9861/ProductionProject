@@ -495,6 +495,13 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.onPrimaryContainer;
+    Color tileColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.inversePrimary;
+
+    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color.fromARGB(255, 27, 29, 27)
+        : Colors.white;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -520,6 +527,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     double padding = 10;
     int amountButtonWidth = 130;
     int amountButtonHeight = 55;
+    double individualColumnWidth =
+        (tableWidth - 50) / (widget.playerNames.length + 2);
 
     if (screenWidth < 375 && screenWidth > 350) {
       playerNameFont = 14;
@@ -577,7 +586,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         body: Flex(
           direction: Axis.vertical,
           children: [
-            SizedBox(
+            Container(
+              color: backgroundColor,
               height: buttonHeightPercentage * 3,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -937,6 +947,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                               itemBuilder: (context, index) {
                                 int tapCount = 0;
                                 return ListTile(
+                                  tileColor: index % 2 != 0 ? tileColor : null,
                                   onTap: () {
                                     tapCount++;
                                     Future.delayed(const Duration(seconds: 2),
@@ -994,15 +1005,37 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                            "Individual Win Points: ${allIndividualWinPoints[index]}"),
+                                        for (int i = 0;
+                                            i < widget.playerNames.length;
+                                            i++)
+                                          SizedBox(
+                                            width: individualColumnWidth,
+                                            child: StyledText(
+                                                text: allIndividualWinPoints[
+                                                            index]
+                                                        [widget.playerNames[i]]
+                                                    .toString(),
+                                                color: index % 2 != 0
+                                                    ? Colors.black
+                                                    : Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black),
+                                          ),
                                         Text(
                                             "Price Per Point: ${allPricePerPoint[index]}"),
                                         Text(
                                             "Fine Point: ${allFinePoint[index]}"),
                                         Text(
                                             "Player Names: ${allPlayerNames[index].join(', ')}"),
-                                        Text("Notes: ${allNotes[index]}"),
+                                        SizedBox(
+                                          width: individualColumnWidth,
+                                          child: StyledText(
+                                            text: "Notes: ${allNotes[index]}",
+                                            textSize: 13,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
