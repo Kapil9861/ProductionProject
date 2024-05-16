@@ -58,6 +58,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<double> allFinePoint = [];
   List<List<String>> allPlayerNames = [];
   List<String> allNotes = [];
+  double addedTotalPoints = 0;
+  List<num> finalTotalPoints = [];
 
   @override
   void initState() {
@@ -65,6 +67,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     _initializeNameControllers();
     _initializePlayerResults();
     _initSpeech();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    Hive.deleteFromDisk();
+    Hive.close();
+    super.dispose();
+    allIndividualWinPoints.clear();
+    allPricePerPoint.clear();
+    allFinePoint.clear();
+    allPlayerNames.clear();
+    allNotes.clear();
   }
 
   void _initSpeech() async {
@@ -169,13 +184,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     );
   }
 
-  @override
-  void dispose() {
-    _amountController.dispose();
-    Hive.close();
-    super.dispose();
-  }
-
   void _startListening() async {
     await _speechToText.listen(onResult: _onSpeechResult);
   }
@@ -239,9 +247,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     }
   }
 
-  void _startCalculation() async {
-    await Hive.initFlutter();
-
+  Future _startCalculation() async {
     double kidnapPoint = 0;
     _validateAmount();
     _hasWinner();
@@ -378,31 +384,34 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         }
       }
       //Defining Hive Boxes
-      var individualWinPointsBox = await Hive.openBox('individualWinPoints');
+      var individualWinPointsBox =
+          await Hive.openBox('individualMarriagePoints');
       var pricePerPointBox = await Hive.openBox('pricePerPoint');
       var finePointBox = await Hive.openBox('finePoint');
-      var playerNamesBox = await Hive.openBox('playerNames');
-      var notesBox = await Hive.openBox('notes');
+      var playerNamesBox = await Hive.openBox('marriagePlayerNames');
+      var notesBox = await Hive.openBox('marriageNotes');
       // Storing the data
       individualWinPointsBox.put(
-          'individualWinPoints$calculationRunCount', individualWinPoints);
+          'individualMarriagePoints$calculationRunCount', individualWinPoints);
       pricePerPointBox.put('pricePerPoint$calculationRunCount', pricePerPoint);
       finePointBox.put('finePoint$calculationRunCount', finePoint);
-      playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
-      notesBox.put('notes$calculationRunCount', notes);
+      playerNamesBox.put(
+          'marriagePlayerNames$calculationRunCount', widget.playerNames);
+      notesBox.put('marriageNotes$calculationRunCount', notes);
 
       while (true) {
         String individualWinPointsKey =
-            'individualWinPoints$calculationRunCount';
+            'individualMarriagePoints$calculationRunCount';
         String pricePerPointKey = 'pricePerPoint$calculationRunCount';
         String finePointKey = 'finePoint$calculationRunCount';
-        String playerNamesKey = 'playerNames$calculationRunCount';
-        String notesKey = 'notes$calculationRunCount';
+        String playerNamesKey = 'marriagePlayerNames$calculationRunCount';
+        String notesKey = 'marriageNotes$calculationRunCount';
 
-        // Retrieve values from the boxes
         if (individualWinPointsBox.containsKey(individualWinPointsKey)) {
-          allIndividualWinPoints
-              .add(individualWinPointsBox.get(individualWinPointsKey));
+          LinkedHashMap<String, num> individualWinPointsCopy =
+              LinkedHashMap<String, num>.from(individualWinPoints);
+
+          allIndividualWinPoints.add(individualWinPointsCopy);
           allPricePerPoint.add(pricePerPointBox.get(pricePerPointKey));
           allFinePoint.add(finePointBox.get(finePointKey));
           allPlayerNames.add(playerNamesBox.get(playerNamesKey));
@@ -414,6 +423,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         } else {
           break;
         }
+        print(allIndividualWinPoints);
+        print(calculationRunCount);
+        
       }
 
       pointsCollection.clear();
@@ -998,7 +1010,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                       );
                                     }
                                   },
-                                  title: Text("Item ${index + 1}"),
                                   subtitle: Padding(
                                     padding: const EdgeInsets.all(5.0),
                                     child: Row(
@@ -1023,12 +1034,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                         ? Colors.white
                                                         : Colors.black),
                                           ),
-                                        Text(
-                                            "Price Per Point: ${allPricePerPoint[index]}"),
-                                        Text(
-                                            "Fine Point: ${allFinePoint[index]}"),
-                                        Text(
-                                            "Player Names: ${allPlayerNames[index].join(', ')}"),
+                                        Text("${allPricePerPoint[index]}"),
+                                        Text("${allFinePoint[index]}"),
                                         SizedBox(
                                           width: individualColumnWidth,
                                           child: StyledText(

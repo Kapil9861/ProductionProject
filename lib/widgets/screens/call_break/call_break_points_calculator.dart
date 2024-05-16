@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:collection';
 import 'dart:io';
 
@@ -58,7 +60,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<LinkedHashMap<String, num>> allIndividualWinPoints = [];
   List<List<String>> allPlayerNames = [];
   List<String> allNotes = [];
-  List<List<String>> allLossAmount = [];
+  List<String> allLossAmount = [];
+  num totalsSemisPoints = 0;
+  List<num> semiFinalPoints = [];
+  List<num> finalPoints = [];
 
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
@@ -162,6 +167,17 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     _initSpeech();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    Hive.deleteFromDisk();
+    Hive.close();
+    allIndividualWinPoints.clear();
+    allLossAmount.clear();
+    allNotes.clear();
+    allPlayerNames.clear();
+  }
+
   void _initializeControllers() {
     _individualInitialPointsController = List.generate(
       widget.playerNames.length,
@@ -174,10 +190,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     _amountController = List.generate(
       widget.playerNames.length - 1,
       (index) => TextEditingController(),
-    );
-    pointsFocusNodes = List.generate(
-      widget.playerNames.length - 1,
-      (index) => FocusNode(),
     );
     amountNode = List.generate(
       widget.playerNames.length - 1,
@@ -314,50 +326,52 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
             otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
 
         individualWinPoints[widget.playerNames[i]] = individualResult;
-
-        setState(() {
-          status = false;
-          lockButtonText = "Lock";
-        });
       }
       var individualCallBreakPointsBox =
           await Hive.openBox('individualCallBreakPoints');
-      if (calculationRunCount == 4) {
-        var loosersAmountBox = await Hive.openBox("loosersAmount");
-        loosersAmountBox.put('loosersAmount', amounts);
-      }
+
       var playerNamesBox = await Hive.openBox('playerNames');
       var notesBox = await Hive.openBox('notes');
+      var loosersAmountBox = await Hive.openBox("loosersAmount");
       //Storing data
       individualCallBreakPointsBox.put(
           'individualCallBreakPoints$calculationRunCount', individualWinPoints);
       playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
       notesBox.put('notes$calculationRunCount', notes);
+      loosersAmountBox.put('loosersAmount', amounts);
+      print(amounts);
+      print(calculationRunCount);
+      String individualWinPointsKey =
+          'individualCallBreakPoints$calculationRunCount';
+      String playerNamesKey = 'playerNames$calculationRunCount';
+      String notesKey = 'notes$calculationRunCount';
+      String loosersAmountKey = 'loosersAmount';
 
-      while (true) {
-        String individualWinPointsKey =
-            'individualCallBreakPoints$calculationRunCount';
-        String loosersAmountKey = 'pricePerPoint$calculationRunCount';
-        String playerNamesKey = 'playerNames$calculationRunCount';
-        String notesKey = 'notes$calculationRunCount';
+      // Retrieve values from the boxes
+      if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
+        allIndividualWinPoints
+            .add(individualCallBreakPointsBox.get(individualWinPointsKey));
+        allPlayerNames.add(playerNamesBox.get(playerNamesKey));
 
-        // Retrieve values from the boxes
-        if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
-          allIndividualWinPoints
-              .add(individualCallBreakPointsBox.get(individualWinPointsKey));
-          allPlayerNames.add(playerNamesBox.get(playerNamesKey));
-          if (calculationRunCount == 4) {
-            allLossAmount.add(playerNamesBox.get(loosersAmountKey));
+        allNotes.add(notesBox.get(notesKey));
+        allLossAmount.add(notesBox.get(loosersAmountKey));
+
+        if (calculationRunCount == 3) {
+          for (int index = 0; index < calculationRunCount - 1; index++) {
+            for (int i = 0; i < widget.playerNames.length; i++) {
+              num semisTotal = allIndividualWinPoints[index][i] ?? 0.0;
+              totalsSemisPoints += semisTotal;
+            }
+            semiFinalPoints[index] = totalsSemisPoints;
           }
-          allNotes.add(notesBox.get(notesKey));
-          setState(() {
-            calculationRunCount++;
-          });
-        } else {
-          break;
+          print(semiFinalPoints);
         }
+        setState(() {
+          calculationRunCount++;
+        });
       }
-
+      print(allIndividualWinPoints);
+      print(calculationRunCount);
       status = true;
       clearControllers();
       return 0;
@@ -453,6 +467,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     Color tileColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
+    Color totalTileColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onPrimaryContainer
+        : kColorScheme.onPrimary;
 
     Color backgroundColor = Theme.of(context).brightness == Brightness.dark
         ? const Color.fromARGB(255, 27, 29, 27)
@@ -489,7 +506,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           children: [
             Container(
               color: backgroundColor,
-              height: buttonHeightPercentage * 3 + 20,
+              height: buttonHeightPercentage * 4 - 20,
               child: Column(
                 children: [
                   Expanded(
@@ -546,7 +563,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     gapPadding: 4,
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(10),
-                                    ), // Border radius
+                                    ),
                                   ),
                                 ),
                               ),
@@ -826,9 +843,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         padding: const EdgeInsets.all(5),
                         child: Table(
                           columnWidths: {
-                            for (var i = 0;
-                                i < widget.playerNames.length - 1;
-                                i++)
+                            for (var i = 0; i < widget.playerNames.length; i++)
                               i: const FlexColumnWidth(1),
                           },
                           border: TableBorder.all(),
@@ -887,74 +902,100 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: allIndividualWinPoints.length,
                             itemBuilder: (context, index) {
-                              return Dismissible(
-                                key: UniqueKey(),
-                                direction: DismissDirection.horizontal,
-                                onDismissed: (direction) {
-                                  AlertDialog(
-                                    title: const Text("Delete Item?"),
-                                    content: const Text(
-                                      "Are you sure?\n You want to delete this item?",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w300),
+                              return Column(
+                                children: [
+                                  Dismissible(
+                                    key: UniqueKey(),
+                                    direction: DismissDirection.horizontal,
+                                    onDismissed: (direction) {
+                                      AlertDialog(
+                                        title: const Text("Delete Item?"),
+                                        content: const Text(
+                                          "Are you sure?\n You want to delete this item?",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text("No"),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text("Yes"),
+                                            onPressed: () {
+                                              setState(() {
+                                                allIndividualWinPoints
+                                                    .removeAt(index);
+                                                allPlayerNames.removeAt(index);
+                                                allNotes.removeAt(index);
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          tileColor:
+                                              index % 2 != 0 ? tileColor : null,
+                                          subtitle: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              for (int i = 0;
+                                                  i < widget.playerNames.length;
+                                                  i++)
+                                                SizedBox(
+                                                  width: individualColumnWidth,
+                                                  child: StyledText(
+                                                      text: allIndividualWinPoints[
+                                                                  index][
+                                                              widget.playerNames[
+                                                                  i]]
+                                                          .toString(),
+                                                      color: index % 2 != 0
+                                                          ? Colors.black
+                                                          : Theme.of(context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .dark
+                                                              ? Colors.white
+                                                              : Colors.black),
+                                                ),
+                                              SizedBox(
+                                                width: individualColumnWidth,
+                                                child: StyledText(
+                                                  text: allNotes[index],
+                                                  textSize: 13,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text("No"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text("Yes"),
-                                        onPressed: () {
-                                          setState(() {
-                                            allIndividualWinPoints
-                                                .removeAt(index);
-                                            allPlayerNames.removeAt(index);
-                                            allNotes.removeAt(index);
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                                child: ListTile(
-                                  tileColor: index % 2 != 0 ? tileColor : null,
-                                  subtitle: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      for (int i = 0;
-                                          i < widget.playerNames.length;
-                                          i++)
-                                        SizedBox(
-                                          width: individualColumnWidth,
-                                          child: StyledText(
-                                              text: allIndividualWinPoints[
-                                                          index]
-                                                      [widget.playerNames[i]]
-                                                  .toString(),
-                                              color: index % 2 != 0
-                                                  ? Colors.black
-                                                  : Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                        ),
-                                      SizedBox(
-                                        width: individualColumnWidth,
-                                        child: StyledText(
-                                          text: "Notes: ${allNotes[index]}",
-                                          textSize: 13,
-                                        ),
-                                      ),
-                                    ],
                                   ),
-                                ),
+                                  if (index == 3)
+                                    ListTile(
+                                      tileColor: totalTileColor,
+                                      subtitle: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: individualColumnWidth,
+                                            child: StyledText(
+                                              text: semiFinalPoints.toString(),
+                                              textSize: 13,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                ],
                               );
                             },
                           ),
