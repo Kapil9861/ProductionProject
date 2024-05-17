@@ -60,10 +60,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<LinkedHashMap<String, num>> allIndividualWinPoints = [];
   List<List<String>> allPlayerNames = [];
   List<String> allNotes = [];
-  List<String> allLossAmount = [];
-  num totalsSemisPoints = 0;
-  List<num> semiFinalPoints = [];
-  List<num> finalPoints = [];
+  List<double> allLossAmount = [];
+  Map<String, num> semiFinalPoints = {};
+  Map<String, num> finalPoints = {};
 
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
@@ -341,6 +340,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       loosersAmountBox.put('loosersAmount', amounts);
       print(amounts);
       print(calculationRunCount);
+      individualCallBreakPointsBox
+          .get('individualCallBreakPoints$calculationRunCount');
       String individualWinPointsKey =
           'individualCallBreakPoints$calculationRunCount';
       String playerNamesKey = 'playerNames$calculationRunCount';
@@ -349,36 +350,50 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
       // Retrieve values from the boxes
       if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
+        print("is Inside");
         allIndividualWinPoints
             .add(individualCallBreakPointsBox.get(individualWinPointsKey));
         allPlayerNames.add(playerNamesBox.get(playerNamesKey));
 
         allNotes.add(notesBox.get(notesKey));
-        allLossAmount.add(notesBox.get(loosersAmountKey));
-
+        allLossAmount = loosersAmountBox.get(loosersAmountKey);
+        print(allIndividualWinPoints);
         if (calculationRunCount == 3) {
-          for (int index = 0; index < calculationRunCount - 1; index++) {
-            for (int i = 0; i < widget.playerNames.length; i++) {
-              num semisTotal = allIndividualWinPoints[index][i] ?? 0.0;
-              totalsSemisPoints += semisTotal;
-            }
-            semiFinalPoints[index] = totalsSemisPoints;
-          }
-          print(semiFinalPoints);
+          semiFinalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
         }
+        if (calculationRunCount == 4) {
+          finalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
+        }
+
         setState(() {
           calculationRunCount++;
+          lockButtonText = "Lock";
         });
       }
-      print(allIndividualWinPoints);
-      print(calculationRunCount);
       status = true;
-      clearControllers();
+      // clearControllers();
       return 0;
     } else {
       showSnackBar("Amounts Cannot Be Empty!");
       return 1;
     }
+  }
+
+  Map<String, num> aggregatePlayerWinnings(
+      List<Map<String, num>> allIndividualWinPoints) {
+    Map<String, num> totalWinnings = {};
+
+    for (var gameResults in allIndividualWinPoints) {
+      gameResults.forEach((playerName, winnings) {
+        if (totalWinnings.containsKey(playerName)) {
+          totalWinnings[playerName] = totalWinnings[playerName]! + winnings;
+        } else {
+          totalWinnings[playerName] = winnings;
+        }
+      });
+    }
+
+    return totalWinnings;
   }
 
   void clearControllers() {
@@ -468,8 +483,11 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
     Color totalTileColor = Theme.of(context).brightness == Brightness.dark
-        ? kDarkColorScheme.onPrimaryContainer
+        ? kDarkColorScheme.onTertiary
         : kColorScheme.onPrimary;
+    Color totalsColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
 
     Color backgroundColor = Theme.of(context).brightness == Brightness.dark
         ? const Color.fromARGB(255, 27, 29, 27)
@@ -480,7 +498,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;
     double notesArea = screenSize.width * 0.70;
-    double individualColumnWidth = (screenSize.width - 50) / 6;
+    double individualColumnWidth = (screenSize.width - 50) / 5;
 
     double textError = 14;
     double playerNameFont = 16;
@@ -879,15 +897,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, top: 8, right: 5),
-                                  child: StyledText(
-                                    text: "EDIT",
-                                    textSize: 15,
-                                    color: Colors.white,
-                                  ),
-                                ),
                               ],
                             ),
                           ],
@@ -964,7 +973,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                                                       .brightness ==
                                                                   Brightness
                                                                       .dark
-                                                              ? Colors.white
+                                                              ? Colors.white70
                                                               : Colors.black),
                                                 ),
                                               SizedBox(
@@ -985,11 +994,52 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                       tileColor: totalTileColor,
                                       subtitle: Row(
                                         children: [
-                                          SizedBox(
-                                            width: individualColumnWidth,
+                                          for (var i = 0; i < 4; i++)
+                                            SizedBox(
+                                              width: individualColumnWidth,
+                                              child: StyledText(
+                                                text: semiFinalPoints[
+                                                        widget.playerNames[i]]
+                                                    .toString(),
+                                                textSize: 18,
+                                                color: totalsColor,
+                                              ),
+                                            ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
                                             child: StyledText(
-                                              text: semiFinalPoints.toString(),
-                                              textSize: 13,
+                                              text: "TOTAL",
+                                              textSize: 16,
+                                              color: totalsColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (index == 4)
+                                    ListTile(
+                                      tileColor: totalTileColor,
+                                      subtitle: Row(
+                                        children: [
+                                          for (var i = 0; i < 4; i++)
+                                            SizedBox(
+                                              width: individualColumnWidth,
+                                              child: StyledText(
+                                                text: finalPoints[
+                                                        widget.playerNames[i]]
+                                                    .toString(),
+                                                textSize: 18,
+                                                color: totalsColor,
+                                              ),
+                                            ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
+                                            child: StyledText(
+                                              text: "TOTAL",
+                                              textSize: 16,
+                                              color: totalsColor,
                                             ),
                                           ),
                                         ],

@@ -60,6 +60,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   List<String> allNotes = [];
   double addedTotalPoints = 0;
   List<num> finalTotalPoints = [];
+  Map<String, num> totalWinnings = {};
 
   @override
   void initState() {
@@ -418,14 +419,15 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           allNotes.add(notesBox.get(notesKey));
           setState(() {
             calculationRunCount++;
-            _clearInputFields();
+            totalWinnings = aggregatePlayerWinnings(allIndividualWinPoints);
+            // _clearInputFields();
           });
         } else {
           break;
         }
+
         print(allIndividualWinPoints);
         print(calculationRunCount);
-        
       }
 
       pointsCollection.clear();
@@ -433,6 +435,23 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       winnerCount = 0;
     }
     breakOperation = false;
+  }
+
+  Map<String, num> aggregatePlayerWinnings(
+      List<Map<String, num>> allIndividualWinPoints) {
+    Map<String, num> totalWinnings = {};
+
+    for (var gameResults in allIndividualWinPoints) {
+      gameResults.forEach((playerName, winnings) {
+        if (totalWinnings.containsKey(playerName)) {
+          totalWinnings[playerName] = totalWinnings[playerName]! + winnings;
+        } else {
+          totalWinnings[playerName] = winnings;
+        }
+      });
+    }
+
+    return totalWinnings;
   }
 
   String? _validAmount(String? value) {
@@ -510,12 +529,17 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     Color tileColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
-
+    Color totalTileColor = Theme.of(context).brightness == Brightness.dark
+        ? kDarkColorScheme.onTertiary
+        : kColorScheme.onPrimary;
     Color backgroundColor = Theme.of(context).brightness == Brightness.dark
         ? const Color.fromARGB(255, 27, 29, 27)
         : Colors.white;
-    Size screenSize = MediaQuery.of(context).size;
+    Color totalsColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
 
+    Size screenSize = MediaQuery.of(context).size;
     double buttonWidthPercentage = screenSize.width * 0.245;
     double buttonHeightPercentage = screenSize.height * 0.05;
     double notesArea = screenSize.width * 0.70;
@@ -923,19 +947,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                             ),
                                           ),
                                         ),
-                                        Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 0, top: 6, right: 10),
-                                            child: Text(
-                                              "EDIT",
-                                              style: TextStyle(
-                                                fontSize: playerNameFont - 2,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                        // Center(
+                                        //   child: Padding(
+                                        //     padding: const EdgeInsets.only(
+                                        //         left: 0, top: 6, right: 10),
+                                        //     child: Text(
+                                        //       "EDIT",
+                                        //       style: TextStyle(
+                                        //         fontSize: playerNameFont - 2,
+                                        //         color: Colors.white,
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ],
@@ -952,102 +976,148 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
                             width: tableWidth,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: allIndividualWinPoints.length,
-                              itemBuilder: (context, index) {
-                                int tapCount = 0;
-                                return ListTile(
-                                  tileColor: index % 2 != 0 ? tileColor : null,
-                                  onTap: () {
-                                    tapCount++;
-                                    Future.delayed(const Duration(seconds: 2),
-                                        () {
-                                      setState(() {
-                                        tapCount = 0;
-                                      });
-                                    });
-                                    if (tapCount == 3) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text("Delete Item?"),
-                                            content: const Text(
-                                              "Are you sure?\n You want to delete this item?",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child: const Text("No"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton(
-                                                child: const Text("Yes"),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    allIndividualWinPoints
-                                                        .removeAt(index);
-                                                    allPricePerPoint
-                                                        .removeAt(index);
-                                                    allFinePoint
-                                                        .removeAt(index);
-                                                    allPlayerNames
-                                                        .removeAt(index);
-                                                    allNotes.removeAt(index);
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
+                            child: Column(
+                              children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: allIndividualWinPoints.length,
+                                  itemBuilder: (context, index) {
+                                    int tapCount = 0;
+                                    return ListTile(
+                                      tileColor:
+                                          index % 2 != 0 ? tileColor : null,
+                                      onTap: () {
+                                        tapCount++;
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          setState(() {
+                                            tapCount = 0;
+                                          });
+                                        });
+                                        if (tapCount == 3) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title:
+                                                    const Text("Delete Item?"),
+                                                content: const Text(
+                                                  "Are you sure?\n You want to delete this item?",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text("No"),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: const Text("Yes"),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        allIndividualWinPoints
+                                                            .removeAt(index);
+                                                        allPricePerPoint
+                                                            .removeAt(index);
+                                                        allFinePoint
+                                                            .removeAt(index);
+                                                        allPlayerNames
+                                                            .removeAt(index);
+                                                        allNotes
+                                                            .removeAt(index);
+                                                      });
+                                                      totalWinnings =
+                                                          aggregatePlayerWinnings(
+                                                              allIndividualWinPoints);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           );
-                                        },
-                                      );
-                                    }
+                                        }
+                                      },
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            for (int i = 0;
+                                                i < widget.playerNames.length;
+                                                i++)
+                                              SizedBox(
+                                                width: individualColumnWidth,
+                                                child: StyledText(
+                                                    text: allIndividualWinPoints[
+                                                                index][
+                                                            widget
+                                                                .playerNames[i]]
+                                                        .toString(),
+                                                    color: index % 2 != 0
+                                                        ? Colors.black
+                                                        : Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                              ),
+                                            Text("${allPricePerPoint[index]}"),
+                                            Text("${allFinePoint[index]}"),
+                                            SizedBox(
+                                              width: individualColumnWidth,
+                                              child: StyledText(
+                                                text:
+                                                    "Notes: ${allNotes[index]}",
+                                                textSize: 13,
+                                                color: totalsColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                ),
+                                if (totalWinnings.isNotEmpty)
+                                  ListTile(
+                                    tileColor: totalTileColor,
+                                    subtitle: Row(
                                       children: [
-                                        for (int i = 0;
+                                        for (var i = 0;
                                             i < widget.playerNames.length;
                                             i++)
                                           SizedBox(
                                             width: individualColumnWidth,
                                             child: StyledText(
-                                                text: allIndividualWinPoints[
-                                                            index]
-                                                        [widget.playerNames[i]]
-                                                    .toString(),
-                                                color: index % 2 != 0
-                                                    ? Colors.black
-                                                    : Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.white
-                                                        : Colors.black),
+                                              text: totalWinnings[
+                                                      widget.playerNames[i]]
+                                                  .toString(),
+                                              textSize: 18,
+                                              color: totalsColor,
+                                            ),
                                           ),
-                                        Text("${allPricePerPoint[index]}"),
-                                        Text("${allFinePoint[index]}"),
-                                        SizedBox(
-                                          width: individualColumnWidth,
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 20),
                                           child: StyledText(
-                                            text: "Notes: ${allNotes[index]}",
-                                            textSize: 13,
+                                            text: "TOTAL",
+                                            textSize: 16,
+                                            color: totalsColor,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                );
-                              },
+                              ],
                             ),
                           ),
                         ),
