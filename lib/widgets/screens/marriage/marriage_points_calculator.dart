@@ -14,9 +14,11 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class MarriagePointsCalculator extends StatefulWidget {
-  const MarriagePointsCalculator(
-      {Key? key, required this.playerNames, required this.conditions})
-      : super(key: key);
+  const MarriagePointsCalculator({
+    Key? key,
+    required this.playerNames,
+    required this.conditions,
+  }) : super(key: key);
   final List<String> playerNames;
   final List<bool> conditions;
 
@@ -249,6 +251,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   Future _startCalculation() async {
+    totalPoints = 0;
     double kidnapPoint = 0;
     _validateAmount();
     _hasWinner();
@@ -276,11 +279,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               .replaceAll(RegExp(r'[^0-9.]'), '')));
           pointsCollection.add(points);
         }
+        if (_playersResult[i] == "Dublee" &&
+            _winOrLoss[i] == "Winner" &&
+            widget.conditions[1] == true) {
+          totalPoints = 5;
+        }
       }
 
-      totalPoints = 3.0 +
+      totalPoints = totalPoints +
+          3.0 +
           pointsCollection.fold(
               0, (total, individualPoints) => total + individualPoints);
+
       for (int i = 0; i < widget.playerNames.length; i++) {
         double points = double.parse((_individualPointsController[i]
             .text
@@ -377,7 +387,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
               individualWinPoints[widget.playerNames[i]] = winnerResult;
               break;
             } else {
-              winnerResult = winnerResult + 5 + kidnapPoint;
+              winnerResult = winnerResult + kidnapPoint;
               individualWinPoints[widget.playerNames[i]] = winnerResult;
               break;
             }
@@ -399,32 +409,27 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       playerNamesBox.put(
           'marriagePlayerNames$calculationRunCount', widget.playerNames);
       notesBox.put('marriageNotes$calculationRunCount', notes);
+      String individualWinPointsKey =
+          'individualMarriagePoints$calculationRunCount';
+      String pricePerPointKey = 'pricePerPoint$calculationRunCount';
+      String finePointKey = 'finePoint$calculationRunCount';
+      String playerNamesKey = 'marriagePlayerNames$calculationRunCount';
+      String notesKey = 'marriageNotes$calculationRunCount';
 
-      while (true) {
-        String individualWinPointsKey =
-            'individualMarriagePoints$calculationRunCount';
-        String pricePerPointKey = 'pricePerPoint$calculationRunCount';
-        String finePointKey = 'finePoint$calculationRunCount';
-        String playerNamesKey = 'marriagePlayerNames$calculationRunCount';
-        String notesKey = 'marriageNotes$calculationRunCount';
+      if (individualWinPointsBox.containsKey(individualWinPointsKey)) {
+        LinkedHashMap<String, num> individualWinPointsCopy =
+            LinkedHashMap<String, num>.from(individualWinPoints);
 
-        if (individualWinPointsBox.containsKey(individualWinPointsKey)) {
-          LinkedHashMap<String, num> individualWinPointsCopy =
-              LinkedHashMap<String, num>.from(individualWinPoints);
-
-          allIndividualWinPoints.add(individualWinPointsCopy);
-          allPricePerPoint.add(pricePerPointBox.get(pricePerPointKey));
-          allFinePoint.add(finePointBox.get(finePointKey));
-          allPlayerNames.add(playerNamesBox.get(playerNamesKey));
-          allNotes.add(notesBox.get(notesKey));
-          setState(() {
-            calculationRunCount++;
-            totalWinnings = aggregatePlayerWinnings(allIndividualWinPoints);
-            _clearInputFields();
-          });
-        } else {
-          break;
-        }
+        allIndividualWinPoints.add(individualWinPointsCopy);
+        allPricePerPoint.add(pricePerPointBox.get(pricePerPointKey));
+        allFinePoint.add(finePointBox.get(finePointKey));
+        allPlayerNames.add(playerNamesBox.get(playerNamesKey));
+        allNotes.add(notesBox.get(notesKey));
+        setState(() {
+          calculationRunCount++;
+          totalWinnings = aggregatePlayerWinnings(allIndividualWinPoints);
+          _clearInputFields();
+        });
       }
 
       pointsCollection.clear();
@@ -944,19 +949,6 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                             ),
                                           ),
                                         ),
-                                        // Center(
-                                        //   child: Padding(
-                                        //     padding: const EdgeInsets.only(
-                                        //         left: 0, top: 6, right: 10),
-                                        //     child: Text(
-                                        //       "EDIT",
-                                        //       style: TextStyle(
-                                        //         fontSize: playerNameFont - 2,
-                                        //         color: Colors.white,
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                   ],
@@ -1028,10 +1020,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                             .removeAt(index);
                                                         allNotes
                                                             .removeAt(index);
+                                                        calculationRunCount--;
+                                                        totalWinnings =
+                                                            aggregatePlayerWinnings(
+                                                                allIndividualWinPoints);
                                                       });
-                                                      totalWinnings =
-                                                          aggregatePlayerWinnings(
-                                                              allIndividualWinPoints);
+
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
@@ -1100,7 +1094,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                             width: individualColumnWidth,
                                             child: StyledText(
                                               text:
-                                                  "${totalWinnings[widget.playerNames[i]]!.round()} * ${allPricePerPoint[calculationRunCount - 1]} = ${totalWinnings[widget.playerNames[i]]! * (allPricePerPoint[calculationRunCount - 1])}",
+                                                  "${totalWinnings[widget.playerNames[i]]!.round()} * ${allPricePerPoint[calculationRunCount - 1]} = ${(totalWinnings[widget.playerNames[i]]! * (allPricePerPoint[calculationRunCount - 1])).toStringAsFixed(1)}",
                                               textSize: 18,
                                               color: totalsColor,
                                             ),

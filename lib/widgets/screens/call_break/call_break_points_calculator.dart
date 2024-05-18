@@ -52,6 +52,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   bool status = true;
   int initialPointsStatus = 0;
   bool isAmountValid = false;
+  String calculateButtonText = "Calculate";
 
   int calculationRunCount = 0;
   LinkedHashMap<String, num> individualWinPoints = LinkedHashMap<String, num>();
@@ -65,6 +66,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
 
+  String dialogBoxText = 'Sorry';
   void showSnackBar(String message) {
     Color color;
     if (message == "Amount Added!" || message == "Started Game!") {
@@ -290,7 +292,19 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     return 0;
   }
 
+  void endGame() {}
+
   Future _startCalculation() async {
+    if (calculateButtonText == "Continue Playing") {
+      setState(() {
+        calculateButtonText = "Calculate";
+      });
+      allIndividualWinPoints.clear();
+      allLossAmount.clear();
+      allNotes.clear();
+      allPlayerNames.clear();
+      Hive.deleteFromDisk();
+    }
     _lock();
     amounts.clear();
     _validateAmount();
@@ -300,6 +314,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
 
     if (isAmountValid) {
+      if (calculateButtonText == "Continue Playing") {}
       String? notes = _notesController.text;
       int sumOftotal = 0;
       for (int i = 0; i < widget.playerNames.length; i++) {
@@ -324,9 +339,18 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
             otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
 
         individualWinPoints[widget.playerNames[i]] = individualResult;
+        if (individualResult >= 8 && widget.conditions[3] == true) {
+          dialogBoxText = "Game Complete By ${widget.playerNames[i]}";
+          showDialogBox(
+              "            Congratulations!\nPlayer ${widget.playerNames[i].toUpperCase()} successfully completed the game by achieving $individualResult points.");
+          setState(() {
+            calculateButtonText = "Continue Playing";
+          });
+        }
         sumOftotal = initialPointsStatus;
       }
-      if (sumOftotal <= 9) {}
+      if (sumOftotal <= 9 && widget.conditions[2] == true) {}
+
       var individualCallBreakPointsBox =
           await Hive.openBox('individualCallBreakPoints');
 
@@ -360,7 +384,11 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           semiFinalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
         }
         if (calculationRunCount == 4) {
+          setState(() {
+            calculateButtonText = "Continue Playing";
+          });
           finalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
+          calculationRunCount = -1;
         }
 
         setState(() {
@@ -368,8 +396,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           lockButtonText = "Lock";
         });
       }
+
       status = true;
-      // clearControllers();
+      clearControllers();
       return 0;
     } else {
       showSnackBar("Amounts Cannot Be Empty!");
@@ -421,18 +450,24 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   }
 
   void showDialogBox(String information) {
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
-            title: const StyledText(
-              text: 'Sorry',
+            title: StyledText(
+              text: dialogBoxText,
               textSize: 20,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             content: StyledText(
               text: information,
               textSize: 14,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             actions: <Widget>[
               CupertinoDialogAction(
@@ -450,16 +485,22 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const StyledText(
-              text: "Sorry",
+            title: StyledText(
+              text: dialogBoxText,
               textSize: 20,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             content: StyledText(
               text: information,
               textSize: 14,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
             actions: <Widget>[
-              TextButton(
+              CupertinoDialogAction(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -843,7 +884,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             const EdgeInsets.only(left: 10, right: 10, top: 20),
                         child: CustomButton(
                           onPressed: _startCalculation,
-                          buttonText: "Calulate",
+                          buttonText: calculateButtonText,
                           fontSize: playerNameFont,
                         ),
                       ),
@@ -948,6 +989,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                                     allNotes.removeAt(index);
                                                     allLossAmount.clear();
                                                     calculationRunCount--;
+                                                    semiFinalPoints =
+                                                        aggregatePlayerWinnings(
+                                                            allIndividualWinPoints);
                                                   });
                                                   Navigator.of(context)
                                                       .pop(true);
@@ -1010,8 +1054,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                               width: individualColumnWidth,
                                               child: StyledText(
                                                 text: semiFinalPoints[
-                                                        widget.playerNames[i]]
-                                                    .toString(),
+                                                        widget.playerNames[i]]!
+                                                    .toStringAsFixed(1),
                                                 textSize: 18,
                                                 color: totalsColor,
                                               ),
@@ -1038,8 +1082,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                               width: individualColumnWidth,
                                               child: StyledText(
                                                 text: finalPoints[
-                                                        widget.playerNames[i]]
-                                                    .toString(),
+                                                        widget.playerNames[i]]!
+                                                    .toStringAsFixed(1),
                                                 textSize: 18,
                                                 color: totalsColor,
                                               ),
