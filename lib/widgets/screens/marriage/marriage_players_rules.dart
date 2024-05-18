@@ -1,8 +1,10 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_home.dart';
 import 'package:sajilo_hisab/widgets/screens/marriage/marriage_rules.dart';
+import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class MarriagePlayerRules extends StatefulWidget {
   const MarriagePlayerRules({super.key});
@@ -37,6 +39,9 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
     if (Theme.of(context).brightness == Brightness.dark) {
       color = Theme.of(context).colorScheme.onPrimary;
     }
+    Color buttonColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : kColorScheme.onPrimaryContainer;
     String getTitle(int index) {
       if (index == 0) {
         return title = "Murder";
@@ -147,6 +152,11 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                       width: screenSize.width - 340,
                                     ),
                                     Switch(
+                                      activeTrackColor: Theme.of(context)
+                                                  .brightness ==
+                                              Brightness.dark
+                                          ? kDarkColorScheme.onPrimaryContainer
+                                          : kColorScheme.onPrimaryContainer,
                                       value: isSwitched[index],
                                       onChanged: (newValue) {
                                         _toggleSwitch(newValue, index);
@@ -168,7 +178,10 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                   ),
                                 );
                               },
-                              child: const Text("Proceed"),
+                              child: StyledText(
+                                text: "Proceed",
+                                color: buttonColor,
+                              ),
                             ),
                           )
                         ],

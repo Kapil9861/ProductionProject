@@ -420,14 +420,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           setState(() {
             calculationRunCount++;
             totalWinnings = aggregatePlayerWinnings(allIndividualWinPoints);
-            // _clearInputFields();
+            _clearInputFields();
           });
         } else {
           break;
         }
-
-        print(allIndividualWinPoints);
-        print(calculationRunCount);
       }
 
       pointsCollection.clear();
@@ -1003,7 +1000,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                 title:
                                                     const Text("Delete Item?"),
                                                 content: const Text(
-                                                  "Are you sure?\n You want to delete this item?",
+                                                  "              Are you sure?\n You want to delete this item?",
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
@@ -1059,8 +1056,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                 child: StyledText(
                                                     text: allIndividualWinPoints[
                                                                 index][
-                                                            widget
-                                                                .playerNames[i]]
+                                                            widget.playerNames[
+                                                                i]]!
+                                                        .round()
                                                         .toString(),
                                                     color: index % 2 != 0
                                                         ? Colors.black
@@ -1070,15 +1068,18 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                             ? Colors.white
                                                             : Colors.black),
                                               ),
-                                            Text("${allPricePerPoint[index]}"),
-                                            Text("${allFinePoint[index]}"),
                                             SizedBox(
                                               width: individualColumnWidth,
                                               child: StyledText(
-                                                text:
-                                                    "Notes: ${allNotes[index]}",
+                                                text: allNotes[index],
                                                 textSize: 13,
-                                                color: totalsColor,
+                                                color: index % 2 != 0
+                                                    ? Colors.black
+                                                    : Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black,
                                               ),
                                             ),
                                           ],
@@ -1098,9 +1099,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                           SizedBox(
                                             width: individualColumnWidth,
                                             child: StyledText(
-                                              text: totalWinnings[
-                                                      widget.playerNames[i]]
-                                                  .toString(),
+                                              text:
+                                                  "${totalWinnings[widget.playerNames[i]]!.round()} * ${allPricePerPoint[calculationRunCount - 1]} = ${totalWinnings[widget.playerNames[i]]! * (allPricePerPoint[calculationRunCount - 1])}",
                                               textSize: 18,
                                               color: totalsColor,
                                             ),

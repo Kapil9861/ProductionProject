@@ -99,6 +99,9 @@ class _CallBreakHomeState extends State<CallBreakHome> {
     Color textColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.onPrimaryContainer;
+    Color buttonColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : kColorScheme.onPrimaryContainer;
     return Scaffold(
       appBar: AppBar(
         title: const Padding(
@@ -136,7 +139,10 @@ class _CallBreakHomeState extends State<CallBreakHome> {
                 padding: const EdgeInsets.only(right: 10),
                 child: ElevatedButton(
                   onPressed: _proceedToCalculator,
-                  child: const Text('Start Calculator'),
+                  child: Text(
+                    'Start Calculator',
+                    style: TextStyle(color: buttonColor),
+                  ),
                 ),
               ),
             ],

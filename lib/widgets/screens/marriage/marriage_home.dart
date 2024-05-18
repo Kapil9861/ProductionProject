@@ -163,6 +163,9 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
     double screenWidth = screenSize.width;
     double textSize = 16.5;
     double padding = 10;
+    Color buttonColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : kColorScheme.onPrimaryContainer;
 
     if (screenWidth < 350 && screenWidth > 321) {
       textSize = 10;
@@ -241,7 +244,10 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                         });
                       }
                     },
-                    child: const Text('Submit'),
+                    child: StyledText(
+                      text: "Submit",
+                      color: buttonColor,
+                    ),
                   ),
                 ),
               ],
@@ -276,7 +282,10 @@ class _MarriageHomeScreenState extends State<MarriageHomeScreen> {
                 padding: const EdgeInsets.only(right: 10),
                 child: ElevatedButton(
                   onPressed: _startCalculation,
-                  child: const Text('Start Calculator'),
+                  child: StyledText(
+                    text: "Start Calulator",
+                    color: buttonColor,
+                  ),
                 ),
               ),
             ),

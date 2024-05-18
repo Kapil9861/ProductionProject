@@ -1,8 +1,10 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
+import 'package:sajilo_hisab/main.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_home.dart';
 import 'package:sajilo_hisab/widgets/screens/call_break/call_break_rules.dart';
+import 'package:sajilo_hisab/widgets/styled_text.dart';
 
 class CallBreakPlayerRules extends StatefulWidget {
   const CallBreakPlayerRules({super.key});
@@ -32,6 +34,9 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
     if (Theme.of(context).brightness == Brightness.dark) {
       color = Theme.of(context).colorScheme.onPrimary;
     }
+    Color buttonColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : kColorScheme.onPrimaryContainer;
 
     String getTitle(int index) {
       if (index == 0) {
@@ -134,6 +139,11 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                       width: screenSize.width - 340,
                                     ),
                                     Switch(
+                                      activeTrackColor: Theme.of(context)
+                                                  .brightness ==
+                                              Brightness.dark
+                                          ? kDarkColorScheme.onPrimaryContainer
+                                          : kColorScheme.onPrimaryContainer,
                                       value: isSwitched[index],
                                       onChanged: (newValue) {
                                         _toggleSwitch(newValue, index);
@@ -155,7 +165,10 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                   ),
                                 );
                               },
-                              child: const Text("Proceed"),
+                              child: StyledText(
+                                text: "Proceed",
+                                color: buttonColor,
+                              ),
                             ),
                           ),
                         ],

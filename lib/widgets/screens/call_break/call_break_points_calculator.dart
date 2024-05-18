@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'dart:collection';
 import 'dart:io';
 
@@ -303,6 +301,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
     if (isAmountValid) {
       String? notes = _notesController.text;
+      int sumOftotal = 0;
       for (int i = 0; i < widget.playerNames.length; i++) {
         int initialPoints = int.parse(
           _individualInitialPointsController[i]
@@ -325,7 +324,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
             otti < 0 ? -initialPoints : double.parse("$initialPoints.$otti");
 
         individualWinPoints[widget.playerNames[i]] = individualResult;
+        sumOftotal = initialPointsStatus;
       }
+      if (sumOftotal <= 9) {}
       var individualCallBreakPointsBox =
           await Hive.openBox('individualCallBreakPoints');
 
@@ -338,8 +339,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       playerNamesBox.put('playerNames$calculationRunCount', widget.playerNames);
       notesBox.put('notes$calculationRunCount', notes);
       loosersAmountBox.put('loosersAmount', amounts);
-      print(amounts);
-      print(calculationRunCount);
       individualCallBreakPointsBox
           .get('individualCallBreakPoints$calculationRunCount');
       String individualWinPointsKey =
@@ -350,14 +349,13 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
       // Retrieve values from the boxes
       if (individualCallBreakPointsBox.containsKey(individualWinPointsKey)) {
-        print("is Inside");
-        allIndividualWinPoints
-            .add(individualCallBreakPointsBox.get(individualWinPointsKey));
+        LinkedHashMap<String, num> individualWinPointsCopy =
+            LinkedHashMap<String, num>.from(individualWinPoints);
+        allIndividualWinPoints.add(individualWinPointsCopy);
         allPlayerNames.add(playerNamesBox.get(playerNamesKey));
 
         allNotes.add(notesBox.get(notesKey));
         allLossAmount = loosersAmountBox.get(loosersAmountKey);
-        print(allIndividualWinPoints);
         if (calculationRunCount == 3) {
           semiFinalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
         }
@@ -916,35 +914,48 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   Dismissible(
                                     key: UniqueKey(),
                                     direction: DismissDirection.horizontal,
-                                    onDismissed: (direction) {
-                                      AlertDialog(
-                                        title: const Text("Delete Item?"),
-                                        content: const Text(
-                                          "Are you sure?\n You want to delete this item?",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: const Text("No"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: const Text("Yes"),
-                                            onPressed: () {
-                                              setState(() {
-                                                allIndividualWinPoints
-                                                    .removeAt(index);
-                                                allPlayerNames.removeAt(index);
-                                                allNotes.removeAt(index);
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
+                                    confirmDismiss: (direction) async {
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: StyledText(
+                                              text: "Delete Item",
+                                              color: textColor,
+                                            ),
+                                            content: const Text(
+                                              "              Are you sure?\n You want to delete this item?",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text("No"),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(false);
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: const Text("Yes"),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    allIndividualWinPoints
+                                                        .removeAt(index);
+                                                    allPlayerNames
+                                                        .removeAt(index);
+                                                    allNotes.removeAt(index);
+                                                    allLossAmount.clear();
+                                                    calculationRunCount--;
+                                                  });
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
                                     child: Column(
@@ -1039,7 +1050,13 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                             child: StyledText(
                                               text: "TOTAL",
                                               textSize: 16,
-                                              color: totalsColor,
+                                              color: index % 2 != 0
+                                                  ? Colors.black
+                                                  : Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.white
+                                                      : Colors.black,
                                             ),
                                           ),
                                         ],
