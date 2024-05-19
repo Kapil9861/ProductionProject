@@ -65,6 +65,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<double> allLossAmount = [];
   Map<String, num> semiFinalPoints = {};
   Map<String, num> finalPoints = {};
+  Map<String, int> playerRanks = {};
 
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
@@ -393,6 +394,16 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           });
           finalPoints = aggregatePlayerWinnings(allIndividualWinPoints);
           calculationRunCount = -1;
+          var sortedEntries = finalPoints.entries.toList()
+            ..sort((a, b) => b.value.compareTo(a.value));
+          int rank = 1;
+          for (int i = 0; i < sortedEntries.length; i++) {
+            if (i > 0 && sortedEntries[i].value != sortedEntries[i - 1].value) {
+              rank = i + 1;
+            }
+            playerRanks[sortedEntries[i].key] = rank;
+          }
+          print(playerRanks);
         }
 
         setState(() {
@@ -760,7 +771,44 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   ),
                                 ],
                               ),
-                            )
+                            ),
+                          if (index == 4)
+                            ListTile(
+                              tileColor: totalTileColor,
+                              subtitle: Row(
+                                children: [
+                                  for (var i = 0; i < 4; i++)
+                                    SizedBox(
+                                      width: individualColumnWidth,
+                                      child: StyledText(
+                                        text: playerRanks[
+                                                    widget.playerNames[i]] ==
+                                                1
+                                            ? "Winner"
+                                            : playerRanks[widget
+                                                        .playerNames[i]] ==
+                                                    2
+                                                ? "2ND (${allLossAmount[0]})"
+                                                : playerRanks[widget
+                                                            .playerNames[i]] ==
+                                                        3
+                                                    ? "3RD (${allLossAmount[1]})"
+                                                    : "4TH (${allLossAmount[2]})",
+                                        textSize: 14,
+                                        color: totalsColor,
+                                      ),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: StyledText(
+                                      text: "Results",
+                                      textSize: 14,
+                                      color: totalsColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                         ],
                       );
                     },
