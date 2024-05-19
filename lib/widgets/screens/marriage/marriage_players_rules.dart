@@ -156,7 +156,8 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
                                                   .brightness ==
                                               Brightness.dark
                                           ? kDarkColorScheme.onPrimaryContainer
-                                          : kColorScheme.onPrimaryContainer,
+                                          : kColorScheme.onPrimaryContainer
+                                              .withOpacity(0.6),
                                       value: isSwitched[index],
                                       onChanged: (newValue) {
                                         _toggleSwitch(newValue, index);

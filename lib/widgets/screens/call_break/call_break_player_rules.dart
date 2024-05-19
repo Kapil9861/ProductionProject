@@ -68,6 +68,7 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
+            width: screenSize.width - 10,
             height: screenSize.height + 180,
             child: Center(
               child: Padding(
@@ -143,7 +144,8 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                                   .brightness ==
                                               Brightness.dark
                                           ? kDarkColorScheme.onPrimaryContainer
-                                          : kColorScheme.onPrimaryContainer,
+                                          : kColorScheme.onPrimaryContainer
+                                              .withOpacity(0.6),
                                       value: isSwitched[index],
                                       onChanged: (newValue) {
                                         _toggleSwitch(newValue, index);

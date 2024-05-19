@@ -9,6 +9,8 @@ import 'package:sajilo_hisab/widgets/buttons/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sajilo_hisab/widgets/chart/chart.dart';
 import 'package:sajilo_hisab/widgets/styled_text.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -32,6 +34,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<TextEditingController> _amountController = [];
   final TextEditingController _notesController = TextEditingController();
   final List<num> _individualResults = [];
+  final ScreenshotController screenshotController = ScreenshotController();
   Color? textColor;
   bool isCalculation = false;
   String lockButtonText = "Lock";
@@ -304,6 +307,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       allNotes.clear();
       allPlayerNames.clear();
       Hive.deleteFromDisk();
+      return 0;
     }
     _lock();
     amounts.clear();
@@ -398,7 +402,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       }
 
       status = true;
-      clearControllers();
+      // clearControllers();
       return 0;
     } else {
       showSnackBar("Amounts Cannot Be Empty!");
@@ -523,14 +527,13 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         : kColorScheme.inversePrimary;
     Color totalTileColor = Theme.of(context).brightness == Brightness.dark
         ? kDarkColorScheme.onTertiary
-        : kColorScheme.onPrimary;
-    Color totalsColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black;
+        : kColorScheme.onPrimaryContainer;
+    Color totalsColor = Colors.white;
 
     Color backgroundColor = Theme.of(context).brightness == Brightness.dark
         ? const Color.fromARGB(255, 27, 29, 27)
         : Colors.white;
+    bool isShareOn = false;
 
     Size screenSize = MediaQuery.of(context).size;
 
@@ -548,6 +551,226 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     int amountButtonHeight = 55;
     if (screenSize.width > 400) {
       textError = 15;
+    }
+    Widget toShareWidget(BuildContext context) {
+      return Screenshot(
+        controller: screenshotController,
+        child: SizedBox(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 10, right: 10, left: 10),
+                child: Text(
+                  'Game Results:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: Table(
+                  columnWidths: {
+                    for (var i = 0; i < widget.playerNames.length; i++)
+                      i: const FlexColumnWidth(1),
+                  },
+                  border: TableBorder.all(),
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      children: [
+                        ...widget.playerNames.map((name) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                                child: Text(
+                              name.toUpperCase(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: playerNameFont - 1),
+                            )),
+                          );
+                        }).toList(),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 5, top: 8, right: 5),
+                          child: StyledText(
+                            text: "NOTES",
+                            textSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 0, bottom: 10, right: 5, left: 5),
+                child: SizedBox(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: allIndividualWinPoints.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Dismissible(
+                            key: UniqueKey(),
+                            direction: DismissDirection.horizontal,
+                            confirmDismiss: (direction) async {
+                              return await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: StyledText(
+                                      text: "Delete Item",
+                                      color: textColor,
+                                    ),
+                                    content: const Text(
+                                      "              Are you sure?\n You want to delete this item?",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text("No"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text("Yes"),
+                                        onPressed: () {
+                                          setState(() {
+                                            allIndividualWinPoints
+                                                .removeAt(index);
+                                            allPlayerNames.removeAt(index);
+                                            allNotes.removeAt(index);
+                                            allLossAmount.clear();
+                                            calculationRunCount--;
+                                            semiFinalPoints =
+                                                aggregatePlayerWinnings(
+                                                    allIndividualWinPoints);
+                                          });
+                                          Navigator.of(context).pop(true);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  tileColor: index % 2 != 0 ? tileColor : null,
+                                  subtitle: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      for (int i = 0;
+                                          i < widget.playerNames.length;
+                                          i++)
+                                        SizedBox(
+                                          width: individualColumnWidth,
+                                          child: StyledText(
+                                            text: allIndividualWinPoints[index]
+                                                    [widget.playerNames[i]]
+                                                .toString(),
+                                            color: isShareOn == true
+                                                ? Colors.white
+                                                : index % 2 != 0
+                                                    ? Colors.black
+                                                    : Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white70
+                                                        : Colors.black,
+                                          ),
+                                        ),
+                                      SizedBox(
+                                        width: individualColumnWidth,
+                                        child: StyledText(
+                                          text: allNotes[index],
+                                          textSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (index == 3)
+                            ListTile(
+                              tileColor: totalTileColor,
+                              subtitle: Row(
+                                children: [
+                                  for (var i = 0; i < 4; i++)
+                                    SizedBox(
+                                      width: individualColumnWidth,
+                                      child: StyledText(
+                                        text: semiFinalPoints[
+                                                widget.playerNames[i]]!
+                                            .toStringAsFixed(1),
+                                        textSize: 18,
+                                        color: totalsColor,
+                                      ),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: StyledText(
+                                      text: "TOTAL",
+                                      textSize: 16,
+                                      color: totalsColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (index == 4)
+                            ListTile(
+                              tileColor: totalTileColor,
+                              subtitle: Row(
+                                children: [
+                                  for (var i = 0; i < 4; i++)
+                                    SizedBox(
+                                      width: individualColumnWidth,
+                                      child: StyledText(
+                                        text:
+                                            finalPoints[widget.playerNames[i]]!
+                                                .toStringAsFixed(1),
+                                        textSize: 18,
+                                        color: totalsColor,
+                                      ),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: StyledText(
+                                      text: "TOTAL",
+                                      textSize: 16,
+                                      color: index % 2 != 0
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     return SafeArea(
@@ -888,227 +1111,63 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           fontSize: playerNameFont,
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10, right: 10, left: 10),
-                        child: Text(
-                          'Game Results:',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                      toShareWidget(context),
+                      Container(
+                        height: 40,
+                        width: 180,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? kDarkColorScheme.onTertiary.withOpacity(0.6)
+                              : kColorScheme.onPrimaryContainer
+                                  .withOpacity(0.6),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(50)),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Table(
-                          columnWidths: {
-                            for (var i = 0; i < widget.playerNames.length; i++)
-                              i: const FlexColumnWidth(1),
-                          },
-                          border: TableBorder.all(),
-                          children: [
-                            TableRow(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                              ),
-                              children: [
-                                ...widget.playerNames.map((name) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(
-                                        child: Text(
-                                      name.toUpperCase(),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: playerNameFont - 1),
-                                    )),
-                                  );
-                                }).toList(),
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, top: 8, right: 5),
-                                  child: StyledText(
-                                    text: "NOTES",
-                                    textSize: 15,
-                                    color: Colors.white,
+                        child: Center(
+                          child: InkWell(
+                            onTap: () async {
+                              isShareOn = true;
+                              if (allIndividualWinPoints.isNotEmpty) {
+                                Uint8List? image =
+                                    await screenshotController.capture();
+                                Share.shareXFiles([
+                                  XFile.fromData(
+                                    image!,
+                                    mimeType: "png",
+                                    name: "CallBreak Points Report",
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 0, bottom: 10, right: 5, left: 5),
-                        child: SizedBox(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: allIndividualWinPoints.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Dismissible(
-                                    key: UniqueKey(),
-                                    direction: DismissDirection.horizontal,
-                                    confirmDismiss: (direction) async {
-                                      return await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: StyledText(
-                                              text: "Delete Item",
-                                              color: textColor,
-                                            ),
-                                            content: const Text(
-                                              "              Are you sure?\n You want to delete this item?",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w300),
-                                            ),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child: const Text("No"),
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(false);
-                                                },
-                                              ),
-                                              TextButton(
-                                                child: const Text("Yes"),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    allIndividualWinPoints
-                                                        .removeAt(index);
-                                                    allPlayerNames
-                                                        .removeAt(index);
-                                                    allNotes.removeAt(index);
-                                                    allLossAmount.clear();
-                                                    calculationRunCount--;
-                                                    semiFinalPoints =
-                                                        aggregatePlayerWinnings(
-                                                            allIndividualWinPoints);
-                                                  });
-                                                  Navigator.of(context)
-                                                      .pop(true);
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          tileColor:
-                                              index % 2 != 0 ? tileColor : null,
-                                          subtitle: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              for (int i = 0;
-                                                  i < widget.playerNames.length;
-                                                  i++)
-                                                SizedBox(
-                                                  width: individualColumnWidth,
-                                                  child: StyledText(
-                                                      text: allIndividualWinPoints[
-                                                                  index][
-                                                              widget.playerNames[
-                                                                  i]]
-                                                          .toString(),
-                                                      color: index % 2 != 0
-                                                          ? Colors.black
-                                                          : Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .dark
-                                                              ? Colors.white70
-                                                              : Colors.black),
-                                                ),
-                                              SizedBox(
-                                                width: individualColumnWidth,
-                                                child: StyledText(
-                                                  text: allNotes[index],
-                                                  textSize: 13,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (index == 3)
-                                    ListTile(
-                                      tileColor: totalTileColor,
-                                      subtitle: Row(
-                                        children: [
-                                          for (var i = 0; i < 4; i++)
-                                            SizedBox(
-                                              width: individualColumnWidth,
-                                              child: StyledText(
-                                                text: semiFinalPoints[
-                                                        widget.playerNames[i]]!
-                                                    .toStringAsFixed(1),
-                                                textSize: 18,
-                                                color: totalsColor,
-                                              ),
-                                            ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: StyledText(
-                                              text: "TOTAL",
-                                              textSize: 16,
-                                              color: totalsColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  if (index == 4)
-                                    ListTile(
-                                      tileColor: totalTileColor,
-                                      subtitle: Row(
-                                        children: [
-                                          for (var i = 0; i < 4; i++)
-                                            SizedBox(
-                                              width: individualColumnWidth,
-                                              child: StyledText(
-                                                text: finalPoints[
-                                                        widget.playerNames[i]]!
-                                                    .toStringAsFixed(1),
-                                                textSize: 18,
-                                                color: totalsColor,
-                                              ),
-                                            ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            child: StyledText(
-                                              text: "TOTAL",
-                                              textSize: 16,
-                                              color: index % 2 != 0
-                                                  ? Colors.black
-                                                  : Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ],
-                              );
+                                ]);
+                                isShareOn = false;
+                              } else {
+                                showSnackBar("Nothing To Share");
+                              }
                             },
+                            child: Container(
+                              height: 30,
+                              width: 167,
+                              decoration: const BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                              ),
+                              child: const Center(
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 10.0, right: 5),
+                                      child: Icon(Icons.mobile_screen_share),
+                                    ),
+                                    Text(
+                                      'Share Results',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
