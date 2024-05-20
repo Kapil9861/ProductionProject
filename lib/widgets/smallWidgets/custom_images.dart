@@ -4,8 +4,8 @@ class CustomImages extends StatelessWidget {
   const CustomImages({
     super.key,
     required this.image,
-    this.height = 280,
-    this.width = 220,
+    this.height = 220,
+    this.width = 110,
   });
   final AssetImage image;
   final double width;
@@ -14,11 +14,14 @@ class CustomImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.only(top: 5, bottom: 5, left: 5),
         child: SizedBox(
-          height: width,
-          width: height,
-          child: Image(image: image),
+          height: height,
+          width: width,
+          child: Image(
+            image: image,
+            fit: BoxFit.fitWidth,
+          ),
         ),
       ),
     );

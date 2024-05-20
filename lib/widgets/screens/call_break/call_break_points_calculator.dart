@@ -542,8 +542,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     Color totalsColor = Colors.white;
     bool isShareOn = false;
 
-    Color backgroundColor =
-        isDarkMode ? const Color.fromARGB(255, 27, 29, 27) : Colors.black;
+    Color backgroundColor = isDarkMode
+        ? const Color.fromARGB(255, 27, 29, 27)
+        : Colors.white;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;

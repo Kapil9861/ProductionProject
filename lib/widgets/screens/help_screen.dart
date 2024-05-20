@@ -125,18 +125,23 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: CustomImages(
-                      image: AssetImage('assets/images/screenshots/6-min.png'),
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/6-min.png'),
+                      ),
                     ),
-                  ),
-                  CustomImages(
-                    image: AssetImage('assets/images/screenshots/7-min.png'),
-                  ),
-                ],
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/7-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -182,7 +187,46 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Now you will see the points updated on the table below, here you can update the points of previous games and also can delete the row if the game was cancelled after the game was completed in mutual understanding! \n\n Below the table you can see the chart in which you can see who is winning the more than another. Remember if you have negative points your bar will be at 0 meaning you have not won anything may be have lost instead. ",
+                    "Now you will see the points updated on the table below, here you cannot update the points of previous games but you can delete the row if the game was cancelled after the game was completed in mutual understanding, by clicking on the data 3 times! And can provide entry if points are entered incorrectly.",
+                textSize: 20,
+              ),
+            ),
+            SizedBox(
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/11-min.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/12-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Below the table you can see the chart in which you can see who is winning the more than another.",
+                textSize: 20,
+              ),
+            ),
+            CustomImages(
+              image: AssetImage('assets/images/screenshots/2-min.png'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: StyledText(
+                text:
+                    "Remember if you have negative points your bar will be at 0 meaning you have not won anything may be have lost instead.",
                 textSize: 20,
               ),
             ),
@@ -283,26 +327,49 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: CustomImages(
-                      image: AssetImage('assets/images/screenshots/11-min.png'),
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/11-min.png'),
+                      ),
                     ),
-                  ),
-                  CustomImages(
-                    image: AssetImage('assets/images/screenshots/12-min.png'),
-                  ),
-                ],
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/12-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "As in the marriage points calculator you cannot change the points in here as there will be almost no way to make mistake while entering the points and you can change the initial points once locked clicking in the same button once again. However, you can delete the game info if agreed between the players or you can just change the initial and final points without calculating the points.",
+                    "As in the marriage points calculator you cannot change the points in here after entering the points and you can change the initial points once locked clicking in the same button once again. However, you can delete the game info if agreed between the players by swiping the data row right or left or you can just change the initial and final points without calculating the points.",
                 textSize: 20,
+              ),
+            ),
+            SizedBox(
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/-min.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -337,21 +404,62 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: CustomImages(
-                      image: AssetImage('assets/images/screenshots/13-min.png'),
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/13-min.png'),
+                      ),
                     ),
-                  ),
-                  CustomImages(
-                    image: AssetImage('assets/images/screenshots/14-min.png'),
-                  ),
-                  CustomImages(
-                    image: AssetImage('assets/images/screenshots/15-min.png'),
-                  ),
-                ],
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/14-min.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image:
+                            AssetImage('assets/images/screenshots/15-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8),
+              child: Text(
+                "\n**Finally : You can share the results of the both marriage card game or call-break points calculator with your friends on different platforms, clicking the button below the Results table.",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(
+              child: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/-min.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/-min.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/-min.png'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
