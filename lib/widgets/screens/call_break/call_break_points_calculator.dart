@@ -403,7 +403,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
             }
             playerRanks[sortedEntries[i].key] = rank;
           }
-          print(playerRanks);
         }
 
         setState(() {
@@ -530,22 +529,21 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = Theme.of(context).brightness == Brightness.dark
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color textColor = isDarkMode
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.onTertiaryContainer;
-    Color tileColor = Theme.of(context).brightness == Brightness.dark
+    Color tileColor = isDarkMode
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
-    Color totalTileColor = Theme.of(context).brightness == Brightness.dark
+    Color totalTileColor = isDarkMode
         ? kDarkColorScheme.onTertiary
         : kColorScheme.onPrimaryContainer;
     Color totalsColor = Colors.white;
-
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
-        ? const Color.fromARGB(255, 27, 29, 27)
-        : Colors.white;
     bool isShareOn = false;
 
+    Color backgroundColor =
+        isDarkMode ? const Color.fromARGB(255, 27, 29, 27) : Colors.black;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -563,6 +561,49 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     if (screenSize.width > 400) {
       textError = 15;
     }
+
+    Future<void> shareScreenshot() async {
+      setState(() {
+        isShareOn = true;
+      });
+      if (allIndividualWinPoints.isNotEmpty) {
+        Future.delayed(const Duration(seconds: 2));
+        Uint8List? image = await screenshotController.capture();
+        Share.shareXFiles([
+          XFile.fromData(
+            image!,
+            mimeType: "png",
+            name: "CallBreak Points Report",
+          ),
+        ]);
+      } else {
+        showSnackBar("Nothing To Share");
+      }
+      setState(() {
+        isShareOn = false;
+      });
+    }
+
+    Color? checkTileColor(int index) {
+      if (isShareOn == true) {
+        return totalTileColor;
+      } else {
+        return index % 2 != 0 ? tileColor : null;
+      }
+    }
+
+    Color checkColor(int index) {
+      if (isShareOn == true) {
+        return totalsColor;
+      } else {
+        return index % 2 != 0
+            ? Colors.black
+            : isDarkMode
+                ? Colors.white70
+                : Colors.black;
+      }
+    }
+
     Widget toShareWidget(BuildContext context) {
       return Screenshot(
         controller: screenshotController,
@@ -587,7 +628,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                   children: [
                     TableRow(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
+                        color: isDarkMode
                             ? Theme.of(context).colorScheme.onPrimary
                             : Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
@@ -678,7 +719,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             child: Column(
                               children: [
                                 ListTile(
-                                  tileColor: index % 2 != 0 ? tileColor : null,
+                                  tileColor: checkTileColor(index),
                                   subtitle: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -692,15 +733,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                             text: allIndividualWinPoints[index]
                                                     [widget.playerNames[i]]
                                                 .toString(),
-                                            color: isShareOn == true
-                                                ? Colors.white
-                                                : index % 2 != 0
-                                                    ? Colors.black
-                                                    : Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.white70
-                                                        : Colors.black,
+                                            color: checkColor(index),
                                           ),
                                         ),
                                       SizedBox(
@@ -788,12 +821,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                             : playerRanks[widget
                                                         .playerNames[i]] ==
                                                     2
-                                                ? "2ND (${allLossAmount[0]})"
+                                                ? "2ND (-${allLossAmount[0]})"
                                                 : playerRanks[widget
                                                             .playerNames[i]] ==
                                                         3
-                                                    ? "3RD (${allLossAmount[1]})"
-                                                    : "4TH (${allLossAmount[2]})",
+                                                    ? "3RD (-${allLossAmount[1]})"
+                                                    : "4TH (-${allLossAmount[2]})",
                                         textSize: 14,
                                         color: totalsColor,
                                       ),
@@ -1164,7 +1197,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         height: 40,
                         width: 180,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
+                          color: isDarkMode
                               ? kDarkColorScheme.onTertiary.withOpacity(0.6)
                               : kColorScheme.onPrimaryContainer
                                   .withOpacity(0.6),
@@ -1173,23 +1206,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                         ),
                         child: Center(
                           child: InkWell(
-                            onTap: () async {
-                              isShareOn = true;
-                              if (allIndividualWinPoints.isNotEmpty) {
-                                Uint8List? image =
-                                    await screenshotController.capture();
-                                Share.shareXFiles([
-                                  XFile.fromData(
-                                    image!,
-                                    mimeType: "png",
-                                    name: "CallBreak Points Report",
-                                  ),
-                                ]);
-                                isShareOn = false;
-                              } else {
-                                showSnackBar("Nothing To Share");
-                              }
-                            },
+                            onTap: shareScreenshot,
                             child: Container(
                               height: 30,
                               width: 167,
