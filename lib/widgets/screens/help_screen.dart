@@ -466,7 +466,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Congratulations!\n You have completed the tutorial, you are fully capable to use the Sajilo Hisab app for while playing the game.",
+                    "Congratulations!\n You have completed the tutorial, you are fully capable to use the Sajilo Hisab app while playing the game.",
                 textSize: 22,
               ),
             ),
