@@ -121,7 +121,7 @@ class GamesRules extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               subtitle: Text(
-                  "The game is scaped by giving the total points committed before starting the game (BOLEKO HAAT), and every players are awarded a Otti(Additional point/s than the committed point)."),
+                  "This will help you to notify if the sum of all the players initial points(HAAT) is less than 10. Generally in this situation the rounded is ended providing every player 1 Otti. "),
             ),
             ListTile(
               leading: Icon(Icons.circle),

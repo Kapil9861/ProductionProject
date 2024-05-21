@@ -531,21 +531,20 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = Theme.of(context).brightness == Brightness.dark
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color textColor = isDarkMode
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.onPrimaryContainer;
-    Color tileColor = Theme.of(context).brightness == Brightness.dark
+    Color tileColor = isDarkMode
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
-    Color totalTileColor = Theme.of(context).brightness == Brightness.dark
-        ? kDarkColorScheme.onPrimary
-        : kColorScheme.onPrimaryContainer;
-    Color backgroundColor = Theme.of(context).brightness == Brightness.dark
-        ? const Color.fromARGB(255, 27, 29, 27)
-        : Colors.white;
-    Color totalsColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
-        : Colors.white;
+
+    Color totalTileColor = isDarkMode
+        ? kDarkColorScheme.onPrimary.withGreen(70)
+        : kColorScheme.onPrimaryContainer.withBlue(110);
+    Color backgroundColor =
+        isDarkMode ? const Color.fromARGB(255, 27, 29, 27) : Colors.white;
+    Color totalsColor = Colors.white;
 
     Size screenSize = MediaQuery.of(context).size;
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -648,8 +647,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         children: [
                           TableRow(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
+                              color: isDarkMode
                                   ? Theme.of(context).colorScheme.onPrimary
                                   : Theme.of(context)
                                       .colorScheme

@@ -36,7 +36,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   final List<num> _individualResults = [];
   final ScreenshotController screenshotController = ScreenshotController();
   Color? textColor;
-  bool isCalculation = false;
   String lockButtonText = "Lock";
 
   List<FocusNode> pointsFocusNodes = [];
@@ -123,7 +122,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
   }
 
-  void _validateAmount() {
+  void _validateAmount(int calculationCount) {
     bool success = false;
     for (int i = 0; i < widget.playerNames.length - 1; i++) {
       String? value = _amountController[i].text;
@@ -152,7 +151,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
               firstValue < 100000 &&
               thirdValue > 4 &&
               thirdValue < 100000) {
-            isCalculation ? null : showSnackBar("Started Game!");
+            (calculationCount == -1) ? showSnackBar("Started Game!") : null;
 
             success = true;
 
@@ -303,8 +302,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     return 0;
   }
 
-  void endGame() {}
-
   Future _startCalculation() async {
     if (calculateButtonText == "Continue Playing") {
       setState(() {
@@ -319,7 +316,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
     _lock();
     amounts.clear();
-    _validateAmount();
+    _validateAmount(calculationRunCount);
 
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
       return 1;
@@ -361,7 +358,49 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         }
         sumOftotal = initialPointsStatus;
       }
-      if (sumOftotal <= 9 && widget.conditions[2] == true) {}
+      if (sumOftotal < 10 && widget.conditions[2] == true) {
+        bool isOkClicked = false;
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: StyledText(
+                text: dialogBoxText,
+                textSize: 20,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              content: StyledText(
+                text: information,
+                textSize: 14,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    isOkClicked = false;
+                  },
+                  child: const Text('Continue'),
+                ),
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    isOkClicked = true;
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        if (isOkClicked == true) {
+          return 1;
+        }
+      }
 
       var individualCallBreakPointsBox =
           await Hive.openBox('individualCallBreakPoints');
@@ -409,6 +448,23 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
               rank = i + 1;
             }
             playerRanks[sortedEntries[i].key] = rank;
+          }
+          num maxPoints = finalPoints.values.reduce((a, b) => a > b ? a : b);
+          if (widget.conditions[1] == true && maxPoints >= 20) {
+            setState(() {
+              for (int i = 0; i < allLossAmount.length; i++) {
+                allLossAmount[i] *= 2;
+              }
+            });
+          } else if (widget.conditions[0] == true) {
+            for (String key in finalPoints.keys) {
+              if (playerRanks.containsKey(key) && finalPoints[key]! < 0) {
+                if (playerRanks[key] != 1) {
+                  int index = playerRanks[key]!;
+                  allLossAmount[index - 2] *= 2;
+                }
+              }
+            }
           }
           showSnackBar("Game Completed! Please See Results!");
         } else {
@@ -935,7 +991,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   : 10),
                           child: CustomButton(
                             onPressed: () {
-                              _validateAmount();
+                              _validateAmount(-1);
                             },
                             buttonText: buttonText,
                             width: amountButtonWidth - 20,
@@ -1230,9 +1286,18 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                           ),
                         ),
                       ),
-                      Chart(
-                        individualWinPoints: individualWinPoints,
-                        playerNames: widget.playerNames,
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: screenSize.height * 0.01,
+                          right: screenSize.height * 0.01,
+                        ),
+                        child: SizedBox(
+                          height: screenSize.height * 0.40,
+                          width: screenSize.width * 0.95,
+                          child: Chart(
+                              playerNames: widget.playerNames,
+                              individualWinPoints: individualWinPoints),
+                        ),
                       )
                     ],
                   ),

@@ -57,7 +57,7 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
         return infoText = "Receive Double When You Cross Total of 20 Points.";
       } else if (index == 2) {
         return infoText =
-            "Skip the particular game and move to next if total initial points is less than 10)";
+            "This will help you to notify if the sum of all the players initial points(HAAT) is less than 10.";
       } else {
         return infoText =
             "Finish the complete round (whole game) if player receives 8 or more successful points(HAAT)";
