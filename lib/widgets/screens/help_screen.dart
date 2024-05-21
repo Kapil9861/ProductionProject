@@ -432,7 +432,7 @@ class HelpScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: Text(
-                "\n**Finally : You can share the results of the both marriage card game or call-break points calculator with your friends on different platforms, clicking the button below the Results table.",
+                "\n**Finally: You can share the results of the both marriage card game or call-break points calculator with your friends on different platforms, clicking the button below the Results table.",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
