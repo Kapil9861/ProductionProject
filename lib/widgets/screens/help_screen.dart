@@ -166,7 +166,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Now, press on the button to change the winner as shown in Seocnd Image of Step: 5, remember there can be only one winner and if the player has not seen, is on hold or has committed foul in the same game he/she cannot win the game and after that input the win points by individual player and remember 3 points will be counted by the calculator itself so you must not add 3 points if you win! Then change if the player has seen, seen with dublee, is on hold, unseen or has committed foul then press the calculate button!",
+                    "Now, press on the button to change the winner as shown in Second Image of Step: 5, remember there can be only one winner and if the player has not seen, is on hold or has committed foul in the same game he/she cannot win the game and after that input the win points by individual player and remember 3 points will be counted by the calculator itself so you must not add 3 points if you win! Then change if the player has seen, seen with dublee, is on hold, unseen or has committed foul then press the calculate button!",
                 textSize: 20,
               ),
             ),
@@ -181,7 +181,7 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             CustomImages(
-              image: AssetImage('assets/images/screenshots/7-min.png'),
+              image: AssetImage('assets/images/screenshots/table.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),

@@ -36,7 +36,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   final List<num> _individualResults = [];
   final ScreenshotController screenshotController = ScreenshotController();
   Color? textColor;
-  bool isCalculation = false;
   String lockButtonText = "Lock";
 
   List<FocusNode> pointsFocusNodes = [];
@@ -66,6 +65,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   Map<String, num> semiFinalPoints = {};
   Map<String, num> finalPoints = {};
   Map<String, int> playerRanks = {};
+  bool isCalculating = false;
+  bool amountEnabled = true;
 
   String information =
       "The individual players commit point (BOLEKO HAAT) must be greater than 0 and less than 13! \n ALso the same for result points (HAAT) and the TOTAL POINTS should not exceed 13!";
@@ -118,45 +119,56 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
 
   void _validateAmount() {
     bool success = false;
-    for (int i = 0; i < widget.playerNames.length - 1; i++) {
-      String? value = _amountController[i].text;
-      if (value.isEmpty) {
-        FocusScope.of(context).requestFocus(amountNode[i]);
-      } else {
-        double amount = double.parse(
-          value.replaceAll(RegExp(r'[^0-9.]'), ''),
-        );
-        if (amount < 5 || amount > 100000) {
-          showSnackBar("Amount for looser $i is Invalid!");
+    if (buttonText == "Running") {
+      setState(() {
+        buttonText = "Start";
+        amountEnabled = true;
+      });
+    } else {
+      setState(() {
+        amountEnabled = false;
+        buttonText = "Running";
+      });
+      for (int i = 0; i < widget.playerNames.length - 1; i++) {
+        String? value = _amountController[i].text;
+        if (value.isEmpty) {
+          FocusScope.of(context).requestFocus(amountNode[i]);
         } else {
-          double secondValue = double.parse(
-            _amountController[1].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+          double amount = double.parse(
+            value.replaceAll(RegExp(r'[^0-9.]'), ''),
           );
-          double firstValue = double.parse(
-            _amountController[0].text.replaceAll(RegExp(r'[^0-9.]'), ''),
-          );
-          double thirdValue = double.parse(
-            _amountController[2].text.replaceAll(RegExp(r'[^0-9.]'), ''),
-          );
-          if (i == 2 &&
-              secondValue > 4 &&
-              secondValue < 100000 &&
-              firstValue > 4 &&
-              firstValue < 100000 &&
-              thirdValue > 4 &&
-              thirdValue < 100000) {
-            isCalculation ? null : showSnackBar("Started Game!");
+          if (amount < 5 || amount > 100000) {
+            showSnackBar("Amount for looser ${i + 1} is Invalid!");
+          } else {
+            double secondValue = double.parse(
+              _amountController[1].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
+            double firstValue = double.parse(
+              _amountController[0].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
+            double thirdValue = double.parse(
+              _amountController[2].text.replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
+            if (i == 2 &&
+                secondValue > 4 &&
+                secondValue < 100000 &&
+                firstValue > 4 &&
+                firstValue < 100000 &&
+                thirdValue > 4 &&
+                thirdValue < 100000) {
+              isCalculating ? null : showSnackBar("Started Game!");
 
-            success = true;
+              success = true;
 
-            setState(() {
-              buttonText = "Running";
-            });
-          }
-          if (success) {
-            amounts.add(firstValue);
-            amounts.add(secondValue);
-            amounts.add(thirdValue);
+              setState(() {
+                buttonText = "Running";
+              });
+            }
+            if (success) {
+              amounts.add(firstValue);
+              amounts.add(secondValue);
+              amounts.add(thirdValue);
+            }
           }
         }
       }
@@ -299,6 +311,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   void endGame() {}
 
   Future _startCalculation() async {
+    if (buttonText == "Running") {}
     if (calculateButtonText == "Continue Playing") {
       setState(() {
         calculateButtonText = "Calculate";
@@ -542,9 +555,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     Color totalsColor = Colors.white;
     bool isShareOn = false;
 
-    Color backgroundColor = isDarkMode
-        ? const Color.fromARGB(255, 27, 29, 27)
-        : Colors.white;
+    Color backgroundColor =
+        isDarkMode ? const Color.fromARGB(255, 27, 29, 27) : Colors.white;
     Size screenSize = MediaQuery.of(context).size;
 
     double buttonWidthPercentage = screenSize.width * 0.245;
@@ -890,6 +902,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                   ? buttonWidthPercentage - 13
                                   : buttonWidthPercentage - 20,
                               child: TextFormField(
+                                enabled: amountEnabled,
                                 style: TextStyle(color: textColor),
                                 onChanged: (value) {
                                   _validAmount(value, i) == null
