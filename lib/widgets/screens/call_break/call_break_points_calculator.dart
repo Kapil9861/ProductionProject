@@ -81,7 +81,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     } else if (message == "Succcessfully Added In Results Table!") {
       color = const Color.fromARGB(255, 24, 225, 31);
     } else if (message == "Entered Final Round!") {
-      color = const Color.fromARGB(255, 218, 252, 0);
+      color = const Color.fromARGB(255, 223, 216, 12);
     } else {
       color = Colors.red;
     }
@@ -546,10 +546,9 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         ? kDarkColorScheme.onPrimaryContainer
         : kColorScheme.inversePrimary;
     Color totalTileColor = isDarkMode
-        ? kDarkColorScheme.onTertiary
-        : kColorScheme.onPrimaryContainer;
+        ? kDarkColorScheme.onPrimary.withGreen(70)
+        : kColorScheme.onPrimaryContainer.withBlue(110);
     Color totalsColor = Colors.white;
-    bool isShareOn = false;
 
     Color backgroundColor =
         isDarkMode ? const Color.fromARGB(255, 27, 29, 27) : Colors.white;
@@ -572,9 +571,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
 
     Future<void> shareScreenshot() async {
-      setState(() {
-        isShareOn = true;
-      });
       if (allIndividualWinPoints.isNotEmpty) {
         Future.delayed(const Duration(seconds: 2));
         Uint8List? image = await screenshotController.capture();
@@ -587,29 +583,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         ]);
       } else {
         showSnackBar("Nothing To Share");
-      }
-      setState(() {
-        isShareOn = false;
-      });
-    }
-
-    Color? checkTileColor(int index) {
-      if (isShareOn == true) {
-        return totalTileColor;
-      } else {
-        return index % 2 != 0 ? tileColor : null;
-      }
-    }
-
-    Color checkColor(int index) {
-      if (isShareOn == true) {
-        return totalsColor;
-      } else {
-        return index % 2 != 0
-            ? Colors.black
-            : isDarkMode
-                ? Colors.white70
-                : Colors.black;
       }
     }
 
@@ -728,7 +701,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                             child: Column(
                               children: [
                                 ListTile(
-                                  tileColor: checkTileColor(index),
+                                  tileColor: index % 2 != 0 ? tileColor : null,
                                   subtitle: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -742,7 +715,13 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                             text: allIndividualWinPoints[index]
                                                     [widget.playerNames[i]]
                                                 .toString(),
-                                            color: checkColor(index),
+                                            color: index % 2 != 0
+                                                ? kColorScheme.inverseSurface
+                                                : isDarkMode
+                                                    ? kDarkColorScheme
+                                                        .inversePrimary
+                                                    : kColorScheme
+                                                        .inverseSurface,
                                           ),
                                         ),
                                       SizedBox(
@@ -750,6 +729,12 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                                         child: StyledText(
                                           text: allNotes[index],
                                           textSize: 13,
+                                          color: index % 2 != 0
+                                              ? kColorScheme.inverseSurface
+                                              : isDarkMode
+                                                  ? kDarkColorScheme
+                                                      .inversePrimary
+                                                  : kColorScheme.inverseSurface,
                                         ),
                                       ),
                                     ],

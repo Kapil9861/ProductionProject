@@ -775,12 +775,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                                 [widget.playerNames[i]]!
                                             .round()
                                             .toString(),
-                                        color: index % 2 != 0
-                                            ? Colors.black
-                                            : Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary,
                                       ),
                                     ),
                                   SizedBox(
@@ -788,12 +785,9 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                     child: StyledText(
                                       text: allNotes[index],
                                       textSize: 13,
-                                      color: index % 2 != 0
-                                          ? Colors.black
-                                          : Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary,
                                     ),
                                   ),
                                 ],
