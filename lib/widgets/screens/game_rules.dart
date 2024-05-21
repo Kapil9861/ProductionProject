@@ -15,7 +15,7 @@ class GamesRules extends StatelessWidget {
         child: ListView(
           children: const [
             SizedBox(
-              height: 200,
+              height: 230,
               // ignore: prefer_interpolation_to_compose_strings
               child: Text(
                   "Marriage (Also called as Myarrich or 21 Patti or 21 Rummy Card Game) and Call Break (13 Patti or Otti) are the two famous card games played all over Nepal and in India and Bhutan by the people of the Nepalese Origin. Additionally, all around the world by Nepalsese and few Indian descendents. The games are widely played on the festivals and or some occasional gatherings and all over the year by the admirers."),
@@ -149,13 +149,6 @@ class GamesRules extends StatelessWidget {
                   "https://firstgames.in/blog/how-to-play-call-break-call-break-rules-in-detail",
             ),
             Text("Also a blog by Suraj Jayaswal on: Jun 2, 2021 (Last Seen)"),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text("Also visit the official website of Sajilo Hisab:"),
-            ),
-            CustomLink(
-              link: "https://sajilohisab-production.up.railway.app/",
-            ),
             MyFooter()
           ],
         ),

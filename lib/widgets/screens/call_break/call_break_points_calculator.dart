@@ -52,7 +52,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
   List<FocusNode> focusNodes = [];
   List<FocusNode> focusNodes1 = [];
   bool status = true;
-  int initialPointsStatus = 0;
   bool isAmountValid = false;
   String calculateButtonText = "Calculate";
 
@@ -321,6 +320,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     if (_checkFinalPoints() != 0 || _checkInitialPoints() != 0) {
       return 1;
     }
+    int initialPointsStatus = 0;
 
     if (isAmountValid) {
       if (calculateButtonText == "Continue Playing") {}
@@ -332,6 +332,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
               .text
               .replaceAll(RegExp(r'[^0-9.]'), ''),
         );
+        initialPointsStatus += initialPoints;
 
         int finalPoints = int.parse(
           _individualResultPointsController[i]
@@ -365,14 +366,15 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: StyledText(
-                text: dialogBoxText,
+                text: "Warning!",
                 textSize: 20,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
                     : Colors.black,
               ),
               content: StyledText(
-                text: information,
+                text:
+                    "Your initial points is less than 10\n Please provide points again or continue like this.",
                 textSize: 14,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white

@@ -104,13 +104,13 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
                                           Text(
                                             getTitle(index),
                                             style: const TextStyle(
-                                                fontSize: 22,
+                                                fontSize: 20,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
                                             getInfoText(index),
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ],
