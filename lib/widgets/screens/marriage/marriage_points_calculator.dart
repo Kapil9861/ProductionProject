@@ -557,11 +557,11 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
 
     double tableWidth = screenSize.width;
     if (widget.playerNames.length == 4) {
-      tableWidth = screenSize.width * 1.2;
+      tableWidth = screenSize.width * 1.12;
     } else if (widget.playerNames.length == 5) {
-      tableWidth = screenSize.width * 1.4;
+      tableWidth = screenSize.width * 1.3;
     } else if (widget.playerNames.length == 6) {
-      tableWidth = screenSize.width * 1.6;
+      tableWidth = screenSize.width * 1.45;
     }
     double textError = 14;
     double playerNameFont = 17;
@@ -571,7 +571,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     int amountButtonWidth = 130;
     int amountButtonHeight = 55;
     double individualColumnWidth =
-        (tableWidth - 50) / (widget.playerNames.length + 2);
+        (tableWidth - 50) / (widget.playerNames.length + 1);
 
     if (screenWidth < 375 && screenWidth > 350) {
       playerNameFont = 14;
@@ -641,7 +641,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                         columnWidths: {
                           for (var i = 0; i < widget.playerNames.length; i++)
                             i: FixedColumnWidth((tableWidth - 50) /
-                                (widget.playerNames.length + 2)),
+                                (widget.playerNames.length + 1)),
                         },
                         border: TableBorder.all(),
                         children: [
