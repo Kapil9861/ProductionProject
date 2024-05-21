@@ -479,7 +479,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
       }
 
       status = true;
-      // clearControllers();
+      clearControllers();
       return 0;
     } else {
       showSnackBar("Amounts Cannot Be Empty!");

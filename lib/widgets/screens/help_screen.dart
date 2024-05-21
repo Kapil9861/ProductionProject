@@ -180,9 +180,6 @@ class HelpScreen extends StatelessWidget {
                 ),
               ),
             ),
-            CustomImages(
-              image: AssetImage('assets/images/screenshots/table.png'),
-            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
@@ -197,14 +194,12 @@ class HelpScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomImages(
-                        image:
-                            AssetImage('assets/images/screenshots/11-min.png'),
+                        image: AssetImage('assets/images/screenshots/26.png'),
                       ),
                     ),
                     Expanded(
                       child: CustomImages(
-                        image:
-                            AssetImage('assets/images/screenshots/12-min.png'),
+                        image: AssetImage('assets/images/screenshots/27.png'),
                       ),
                     ),
                   ],
@@ -220,7 +215,7 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             CustomImages(
-              image: AssetImage('assets/images/screenshots/2-min.png'),
+              image: AssetImage('assets/images/screenshots/31.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -360,12 +355,17 @@ class HelpScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomImages(
-                        image: AssetImage('assets/images/screenshots/-min.png'),
+                        image: AssetImage('assets/images/screenshots/24.png'),
                       ),
                     ),
                     Expanded(
                       child: CustomImages(
-                        image: AssetImage('assets/images/screenshots/-min.png'),
+                        image: AssetImage('assets/images/screenshots/28.png'),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomImages(
+                        image: AssetImage('assets/images/screenshots/29.png'),
                       ),
                     ),
                   ],
@@ -383,7 +383,7 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             CustomImages(
-              image: AssetImage('assets/images/screenshots/-min.png'),
+              image: AssetImage('assets/images/screenshots/32.png'),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
@@ -445,17 +445,17 @@ class HelpScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomImages(
-                        image: AssetImage('assets/images/screenshots/-min.png'),
+                        image: AssetImage('assets/images/screenshots/20.png'),
                       ),
                     ),
                     Expanded(
                       child: CustomImages(
-                        image: AssetImage('assets/images/screenshots/-min.png'),
+                        image: AssetImage('assets/images/screenshots/22.png'),
                       ),
                     ),
                     Expanded(
                       child: CustomImages(
-                        image: AssetImage('assets/images/screenshots/-min.png'),
+                        image: AssetImage('assets/images/screenshots/23.png'),
                       ),
                     ),
                   ],

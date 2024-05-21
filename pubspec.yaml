@@ -104,6 +104,19 @@ flutter:
     - assets/images/screenshots/13-min.png
     - assets/images/screenshots/14-min.png
     - assets/images/screenshots/15-min.png
+    - assets/images/screenshots/20.png
+    - assets/images/screenshots/21.png
+    - assets/images/screenshots/22.png
+    - assets/images/screenshots/23.png
+    - assets/images/screenshots/24.png
+    - assets/images/screenshots/25.png
+    - assets/images/screenshots/26.png
+    - assets/images/screenshots/27.png
+    - assets/images/screenshots/28.png
+    - assets/images/screenshots/30.png
+    - assets/images/screenshots/29.png
+    - assets/images/screenshots/31.png
+    - assets/images/screenshots/32.png
     - assets/sounds/speech_to_text_stop.m4r
     - assets/sounds/speech_to_text_cancel.m4r
     - assets/sounds/speech_to_text_listening.m4r
