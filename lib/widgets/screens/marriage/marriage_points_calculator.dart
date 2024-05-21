@@ -177,6 +177,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
     Color color;
     if (message == "Amount Added!") {
       color = Colors.green;
+    } else if (message == "Succcessfully Added In Results Table!") {
+      color = const Color.fromARGB(255, 24, 225, 31);
     } else {
       color = Colors.red;
     }
@@ -431,6 +433,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         setState(() {
           calculationRunCount++;
           totalWinnings = aggregatePlayerWinnings(allIndividualWinPoints);
+          showSnackBar("Succcessfully Added In Results Table!");
           _clearInputFields();
         });
       }
