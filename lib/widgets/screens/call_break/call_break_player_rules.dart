@@ -64,123 +64,112 @@ class _CallBreakPlayerRulesState extends State<CallBreakPlayerRules> {
       }
     }
 
+    double width = screenSize.width;
+
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            width: screenSize.width - 10,
-            height: screenSize.height + 180,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Text(
+                "Marriage Players Rule",
+                style: TextStyle(fontSize: width < 340 ? 26 : 30),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                itemCount: isSwitched.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SizedBox(
+                      height: width < 340 ? 160 : 115,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              "CallBreak Players Rule",
-                              style: TextStyle(fontSize: 32),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  getTitle(index),
+                                  style: TextStyle(
+                                      fontSize: width < 340 ? 18 : 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  getInfoText(index),
+                                  style: TextStyle(
+                                      fontSize: width < 340 ? 11 : 14),
+                                ),
+                              ],
                             ),
                           ),
-                          for (int index = 0;
-                              index < isSwitched.length;
-                              index++)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: SizedBox(
-                                height: 125,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            getTitle(index),
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            getInfoText(index),
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color:
-                                            color, // Background color of the circle
-                                      ),
-                                      child: IconButton(
-                                        onPressed: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const CallBreakRules(),
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(
-                                            Icons.question_mark_outlined,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: screenSize.width - 340,
-                                    ),
-                                    Switch(
-                                      activeTrackColor: Theme.of(context)
-                                                  .brightness ==
-                                              Brightness.dark
-                                          ? kDarkColorScheme.onPrimaryContainer
-                                          : kColorScheme.onPrimaryContainer
-                                              .withOpacity(0.6),
-                                      value: isSwitched[index],
-                                      onChanged: (newValue) {
-                                        _toggleSwitch(newValue, index);
-                                      },
-                                      activeColor: color,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: color,
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: ElevatedButton(
+                            child: IconButton(
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        CallBreakHome(conditions: isSwitched),
+                                        const CallBreakRules(),
                                   ),
                                 );
                               },
-                              child: StyledText(
-                                text: "Proceed",
-                                color: buttonColor,
+                              icon: const Icon(
+                                Icons.question_mark_outlined,
+                                color: Colors.white,
                               ),
                             ),
                           ),
+                          SizedBox(
+                            width: screenSize.width > 340
+                                ? screenSize.width - 340
+                                : 0,
+                          ),
+                          Switch(
+                            activeTrackColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? kDarkColorScheme.onPrimaryContainer
+                                    : kColorScheme.onPrimaryContainer
+                                        .withOpacity(0.6),
+                            value: isSwitched[index],
+                            onChanged: (newValue) {
+                              _toggleSwitch(newValue, index);
+                            },
+                            activeColor: color,
+                          ),
                         ],
                       ),
-                    )
-                  ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CallBreakHome(conditions: isSwitched),
+                    ),
+                  );
+                },
+                child: StyledText(
+                  text: "Proceed",
+                  color: buttonColor,
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
