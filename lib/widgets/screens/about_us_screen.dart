@@ -97,6 +97,17 @@ class AboutUsScreen extends StatelessWidget {
                         "Our app features an intuitive design that's easy to navigate, allowing you to focus on the game without distractions. Whether you're playing with friends or family, Sajilo Hisab keeps the fun flowing.",
                         style: TextStyle(fontSize: 16)),
                   ),
+                  ListTile(
+                    leading: Icon(Icons.circle),
+                    title: Text(
+                      'Share Game Results',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    subtitle: Text(
+                        "You will see the results of your game records you can share these data across multiple social platforms and also from drives and e-mails.",
+                        style: TextStyle(fontSize: 16)),
+                  ),
                 ],
               ),
             ),
