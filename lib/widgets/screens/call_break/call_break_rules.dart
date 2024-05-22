@@ -12,7 +12,7 @@ class CallBreakRules extends StatelessWidget {
         title: const Padding(
           padding: EdgeInsets.only(left: 40),
           child: Text(
-            "Marriage Game Rules",
+            "Call Break Game Rules",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 21),
           ),

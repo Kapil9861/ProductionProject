@@ -68,7 +68,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Select the rules as per the your decisions and comfortablility and click on proceed.",
+                    "Select the rules as per your decisions and comfortability and click on proceed.",
                 textSize: 20,
               ),
             ),
@@ -148,7 +148,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Bravo!\n you have reached the calculator now! Now put the points per amount that you want to play with your friends and do not forget to input the fine amount and remember it will be the same if you pay the fine on the same game or another! Do not forget that you have minimum and maximum limit on both price per amount and fine amount. In price per point it must be between 0.01 to 99999 and in fine points it must be between 5 and 100! Click at the Start button, to know that the game is running this will also ensure that there is not any invalid values entered in the fine points and per per amount section. However, it will also be checked once clicked the calculate button.",
+                    "Bravo!\n you have reached the calculator now! Now put the points per amount that you want to play with your friends and do not forget to input the fine amount and remember it will be the same if you pay the fine on the same game or another! Do not forget that you have minimum and maximum limit on both price per amount and fine amount. In price per point, it must be between 0.01 to 99999 and in fine points it must be between 5 and 100! Click at the Start button, to know that the game is running this will also ensure that there are not any invalid values entered in the fine points and per amount section. However, it will also be checked once clicked the calculate button.",
                 textSize: 20,
               ),
             ),
@@ -184,7 +184,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Now you will see the points updated on the table below, here you cannot update the points of previous games but you can delete the row if the game was cancelled after the game was completed in mutual understanding, by clicking on the data 3 times! And can provide entry if points are entered incorrectly.",
+                    "Now you will see the points updated on the table below, here you cannot update the points of previous games, but you can delete the row if the game was cancelled after the game was completed in mutual understanding, by clicking on the data 3 times! And can provide entry if points are entered incorrectly.",
                 textSize: 20,
               ),
             ),
@@ -221,7 +221,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Remember if you have negative points your bar will be at 0 meaning you have not won anything may be have lost instead.",
+                    "Remember if you have negative points your bar will be at 0 meaning you have not won anything may have lost instead.",
                 textSize: 20,
               ),
             ),
@@ -286,7 +286,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "In this screen you have to provide the individual players' name and if two players have same name don't forget to provide with some number or any characters you want so that you can identify the players. Now, click on the start calculator to move to the calculator screen.",
+                    "In this screen you must provide the individual players' name and if two players have same name don't forget to provide with some number or any characters you want so that you can identify the players. Now, click on the start calculator to move to the calculator screen.",
                 textSize: 20,
               ),
             ),
@@ -307,7 +307,7 @@ class HelpScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: StyledText(
                 text:
-                    "Good Job!\n Now you are in the call break points calculator. Here you must provide the amount that must be paid by the loosers. The amount should be for the 2nd, 3rd and the 4th players respectively. The amount must be greater than 5 and must be less than 100000! Click at the Start button, to know that the game is running this will also ensure that there is not any invalid values entered in the amount section for the players that comes 2nd, 3rd and 4th respectively. However, it will also be checked once clicked the calculate button. Then you should provide the initial haat(Haat Bolnu), before starting the game after distributing the cards. Then you should lock the initial haat so that the points can not be changed while the game is running and after the game. Then provide the final points after the game is finished. Then you can calculate the points clicking on the calculate button and all the tasks will be handled by the calculator itself. Remember! you can directly calculate points without clicking the lock button however, if done so the points can be changed by any player unknowingly.",
+                    "Good Job!\n Now you are in the call break points calculator. Here you must provide the amount that must be paid by the losers. The amount should be for the 2nd, 3rd and the 4th players respectively. The amount must be greater than 5 and must be less than 100000! Click at the Start button, to know that the game is running this will also ensure that there is not any invalid values entered in the amount section for the players that comes 2nd, 3rd and 4th respectively. However, it will also be checked once clicked the calculate button. Then you should provide the initial haat(Haat Bolnu), before starting the game after distributing the cards. Then you should lock the initial haat so that the points cannot be changed while the game is running and after the game. Then provide the final points after the game is finished. Then you can calculate the points clicking on the calculate button and all the tasks will be handled by the calculator itself. Remember! you can directly calculate points without clicking the lock button however, if done so the points can be changed by any player unknowingly.",
                 textSize: 20,
               ),
             ),
@@ -396,7 +396,7 @@ class HelpScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: Text(
-                "**Note : You will be assisted by some dialog box with informations to guide you if you make some major errors. Also, for minor errors or for some valid informations you will be guided by the form controls and snackbars as given below:",
+                "**Note: You will be assisted by some dialog box with information to guide you if you make some major errors. Also, for minor errors or for some valid information you will be guided by the form controls and snackbars as given below:",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
@@ -432,7 +432,7 @@ class HelpScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
               child: Text(
-                "\n**Finally: You can share the results of the both marriage card game or call-break points calculator with your friends on different platforms, clicking the button below the Results table.",
+                "\n**Finally: You can share the results of the both marriage card game and call-break points calculator with your friends on different platforms, clicking the button below the Results table.",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w400,
