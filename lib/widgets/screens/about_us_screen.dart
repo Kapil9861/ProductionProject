@@ -38,7 +38,7 @@ class AboutUsScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 700,
+              height: 1050,
               child: ListView(
                 physics: const NeverScrollableScrollPhysics(),
                 children: const [
