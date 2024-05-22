@@ -72,7 +72,6 @@ class _MarriagePlayerRulesState extends State<MarriagePlayerRules> {
       }
     }
 
-    FocusManager.instance.primaryFocus?.unfocus();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

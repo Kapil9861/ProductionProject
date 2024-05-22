@@ -34,7 +34,6 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     double width = size.width;
-    FocusManager.instance.primaryFocus?.unfocus();
     Widget home = Center(
       child: SingleChildScrollView(
         child: Column(
