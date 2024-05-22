@@ -32,6 +32,8 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    double width = size.width;
     FocusManager.instance.primaryFocus?.unfocus();
     Widget home = Center(
       child: SingleChildScrollView(
@@ -55,7 +57,7 @@ class _StartScreenState extends State<StartScreen> {
               },
               buttonText: "Marriage Points Calculator",
               height: 40,
-              fontSize: 19,
+              fontSize: width < 350 ? 14 : 19,
             ),
             const SizedBox(
               height: 20,
@@ -66,7 +68,7 @@ class _StartScreenState extends State<StartScreen> {
               },
               buttonText: "CallBreak Points Calculator",
               height: 40,
-              fontSize: 19,
+              fontSize: width < 350 ? 14 : 19,
             ),
             const SizedBox(
               height: 20,
@@ -76,7 +78,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Help (Tutorial)");
               },
               buttonText: "Help (Tutorial)",
-              fontSize: 20,
+              fontSize: width < 350 ? 14 : 20,
             ),
             const SizedBox(
               height: 20,
@@ -86,7 +88,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("Games Rules");
               },
               buttonText: "Games Rules",
-              fontSize: 20,
+              fontSize: width < 350 ? 14 : 20,
             ),
             const SizedBox(
               height: 20,
@@ -96,7 +98,7 @@ class _StartScreenState extends State<StartScreen> {
                 selectScreen("About Us");
               },
               buttonText: "About Us",
-              fontSize: 20,
+              fontSize: width < 350 ? 14 : 20,
             ),
             const SizedBox(
               height: 20,
@@ -106,7 +108,7 @@ class _StartScreenState extends State<StartScreen> {
                 exit(0);
               },
               buttonText: "Exit",
-              fontSize: 20,
+              fontSize: width < 350 ? 14 : 20,
             ),
             const MyFooter()
           ],
@@ -138,13 +140,27 @@ class _StartScreenState extends State<StartScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Padding(
-            padding:
-                EdgeInsets.only(left: appBarTitle == "Sajilo Hisab" ? 70 : 40),
+            padding: EdgeInsets.only(
+              left: appBarTitle == "Sajilo Hisab"
+                  ? size.width < 350
+                      ? 18
+                      : 70
+                  : size.width < 350
+                      ? 6
+                      : 40,
+            ),
             child: Text(
               appBarTitle,
               textAlign: TextAlign.center,
-              style:
-                  TextStyle(fontSize: appBarTitle == "Sajilo Hisab" ? 24 : 21),
+              style: TextStyle(
+                fontSize: appBarTitle == "Sajilo Hisab"
+                    ? size.width < 350
+                        ? 16
+                        : 24
+                    : size.width < 350
+                        ? 15
+                        : 21,
+              ),
             ),
           ),
           leading: Padding(

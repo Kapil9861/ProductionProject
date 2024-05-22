@@ -11,6 +11,8 @@ class HomeScreen extends StatelessWidget {
   final Function(String buttonName) selectScreen;
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    double width = size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,7 +34,7 @@ class HomeScreen extends StatelessWidget {
           buttonText: "Marriage Points Calculator",
           width: 300,
           height: 40,
-          fontSize: 19,
+          fontSize: width < 350 ? 16 : 19,
         ),
         const SizedBox(
           height: 20,
