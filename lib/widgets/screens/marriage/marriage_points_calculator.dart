@@ -854,6 +854,73 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
       );
     }
 
+    Future<bool?> showBackDialog() {
+      if (allIndividualWinPoints.isNotEmpty) {
+        return showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return Platform.isAndroid
+                ? AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text(
+                      'Are you sure you want to leave this page?',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Nevermind'),
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Leave'),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                      ),
+                    ],
+                  )
+                : AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Center(
+                      child: Text(
+                        'Are you sure you?\n Your game data will be removed!',
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Nevermind'),
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Leave'),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                      ),
+                    ],
+                  );
+          },
+        );
+      } else {
+        return Future.value(true);
+      }
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -865,6 +932,27 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         body: Flex(
           direction: Axis.vertical,
           children: [
+            PopScope(
+              canPop: false,
+              onPopInvoked: (bool didPop) async {
+                if (didPop) {
+                  return;
+                }
+                final bool shouldPop = await showBackDialog() ?? false;
+                if (context.mounted && shouldPop) {
+                  Navigator.pop(context);
+                }
+              },
+              child: TextButton(
+                onPressed: () async {
+                  final bool shouldPop = await showBackDialog() ?? false;
+                  if (context.mounted && shouldPop) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Go back'),
+              ),
+            ),
             Container(
               color: backgroundColor,
               height: buttonHeightPercentage * 3,
