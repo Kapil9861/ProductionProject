@@ -974,427 +974,445 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
     }
 
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Call Break Points Calculator',
-            style: TextStyle(fontSize: playerNameFont + 4),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          if (didPop) {
+            return;
+          }
+          final bool shouldPop = await showBackDialog() ?? false;
+          if (context.mounted && shouldPop) {
+            Navigator.pop(context);
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Call Break Points Calculator',
+              style: TextStyle(fontSize: playerNameFont + 4),
+            ),
           ),
-        ),
-        body: Flex(
-          direction: Axis.vertical,
-          children: [
-            PopScope(
-              canPop: false,
-              onPopInvoked: (bool didPop) async {
-                if (didPop) {
-                  return;
-                }
-                final bool shouldPop = await showBackDialog() ?? false;
-                if (context.mounted && shouldPop) {
-                  Navigator.pop(context);
-                }
-              },
-              child: TextButton(
-                onPressed: () async {
+          body: Flex(
+            direction: Axis.vertical,
+            children: [
+              PopScope(
+                canPop: false,
+                onPopInvoked: (bool didPop) async {
+                  if (didPop) {
+                    return;
+                  }
                   final bool shouldPop = await showBackDialog() ?? false;
                   if (context.mounted && shouldPop) {
                     Navigator.pop(context);
                   }
                 },
-                child: const Text('Go back'),
+                child: TextButton(
+                  onPressed: () async {
+                    final bool shouldPop = await showBackDialog() ?? false;
+                    if (context.mounted && shouldPop) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Go back'),
+                ),
               ),
-            ),
-            Container(
-              color: backgroundColor,
-              height: buttonHeightPercentage * 4 - 20,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        for (int i = 0; i < widget.playerNames.length - 1; i++)
+              Container(
+                color: backgroundColor,
+                height: buttonHeightPercentage * 4 - 20,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          for (int i = 0;
+                              i < widget.playerNames.length - 1;
+                              i++)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: screenSize.width > 400
+                                      ? padding + 3
+                                      : padding - 4,
+                                  top: 10),
+                              child: SizedBox(
+                                height: 70,
+                                width: screenSize.width < 390 &&
+                                        screenSize.width > 350
+                                    ? buttonWidthPercentage - 13
+                                    : buttonWidthPercentage - 20,
+                                child: TextFormField(
+                                  style: TextStyle(color: textColor),
+                                  onChanged: (value) {
+                                    _validAmount(value, i) == null
+                                        ? showSnackBar("Amount Added!")
+                                        : {
+                                            showSnackBar("Invalid Amount"),
+                                            setState(() {
+                                              buttonText = "Start ";
+                                            })
+                                          };
+                                  },
+                                  controller: _amountController[i],
+                                  focusNode: amountNode[i],
+                                  maxLength: 5,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: "Amount",
+                                    helperText: i == 0
+                                        ? "2ND"
+                                        : i == 1
+                                            ? "3RD"
+                                            : "4TH",
+                                    helperStyle:
+                                        TextStyle(fontSize: textError - 2.5),
+                                    hintStyle:
+                                        TextStyle(fontSize: textError - 2.5),
+                                    errorText: _validAmount(
+                                        _amountController[i].text, i),
+                                    errorStyle:
+                                        TextStyle(fontSize: textError - 2),
+                                    border: const OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                      gapPadding: 4,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: screenSize.width > 400
-                                    ? padding + 3
-                                    : padding - 4,
-                                top: 10),
-                            child: SizedBox(
-                              height: 70,
-                              width: screenSize.width < 390 &&
-                                      screenSize.width > 350
-                                  ? buttonWidthPercentage - 13
-                                  : buttonWidthPercentage - 20,
-                              child: TextFormField(
-                                style: TextStyle(color: textColor),
-                                onChanged: (value) {
-                                  _validAmount(value, i) == null
-                                      ? showSnackBar("Amount Added!")
-                                      : {
-                                          showSnackBar("Invalid Amount"),
-                                          setState(() {
-                                            buttonText = "Start ";
-                                          })
-                                        };
-                                },
-                                controller: _amountController[i],
-                                focusNode: amountNode[i],
-                                maxLength: 5,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: "Amount",
-                                  helperText: i == 0
-                                      ? "2ND"
-                                      : i == 1
-                                          ? "3RD"
-                                          : "4TH",
-                                  helperStyle:
-                                      TextStyle(fontSize: textError - 2.5),
-                                  hintStyle:
-                                      TextStyle(fontSize: textError - 2.5),
-                                  errorText: _validAmount(
-                                      _amountController[i].text, i),
-                                  errorStyle:
-                                      TextStyle(fontSize: textError - 2),
-                                  border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                    gapPadding: 4,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                top: 0,
+                                bottom: 15,
+                                left: 5,
+                                right: screenSize.width < 390 &&
+                                        screenSize.width > 350
+                                    ? 5
+                                    : 10),
+                            child: CustomButton(
+                              onPressed: () {
+                                _validateAmount(-1);
+                              },
+                              buttonText: buttonText,
+                              width: amountButtonWidth - 20,
+                              height: screenSize.height < 625
+                                  ? amountButtonHeight - 20
+                                  : amountButtonHeight - 7,
+                              fontSize: playerNameFont - 1.5,
                             ),
                           ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: 0,
-                              bottom: 15,
-                              left: 5,
-                              right: screenSize.width < 390 &&
-                                      screenSize.width > 350
-                                  ? 5
-                                  : 10),
-                          child: CustomButton(
-                            onPressed: () {
-                              _validateAmount(-1);
-                            },
-                            buttonText: buttonText,
-                            width: amountButtonWidth - 20,
-                            height: screenSize.height < 625
-                                ? amountButtonHeight - 20
-                                : amountButtonHeight - 7,
-                            fontSize: playerNameFont - 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 6, right: 11, left: 11),
-                    child: Text(
-                      "Amount For Players Those Lost! Min-5 Max-99999!",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 60, 125, 179),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 6, right: 11, left: 11),
+                      child: Text(
+                        "Amount For Players Those Lost! Min-5 Max-99999!",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 60, 125, 179),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              flex: 8,
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5.0, bottom: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: screenSize.width > 400
-                                  ? 10
-                                  : screenSize.height < 625
-                                      ? 55
-                                      : 26,
-                            ),
-                            Text(
-                              "INITIAL POINTS",
-                              style: TextStyle(
-                                  fontSize: playerNameFont - 4,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                            Text(
-                              "FINAL POINTS",
-                              style: TextStyle(
-                                  fontSize: playerNameFont - 4,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      for (int i = 0; i < widget.playerNames.length; i++)
+              Expanded(
+                flex: 8,
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    child: Column(
+                      children: [
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(top: 5.0, bottom: 5),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(right: 10, left: 10),
-                                child: SizedBox(
-                                  width: playerNameArea,
-                                  child: Text(
-                                    widget.playerNames[i].toUpperCase(),
-                                    style: TextStyle(fontSize: playerNameFont),
-                                  ),
-                                ),
+                              SizedBox(
+                                width: screenSize.width > 400
+                                    ? 10
+                                    : screenSize.height < 625
+                                        ? 55
+                                        : 26,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 0, left: 7, right: 7),
-                                child: SizedBox(
-                                  width: pointsArea,
-                                  child: TextFormField(
-                                    style: TextStyle(color: textColor),
-                                    enabled: status,
-                                    focusNode: focusNodes[i],
-                                    controller:
-                                        _individualInitialPointsController[i],
-                                    decoration: InputDecoration(
-                                      helperText: "MAX-13",
-                                      hintText: "MIN-1",
-                                      hintStyle: TextStyle(
-                                          fontSize: playerNameFont - 4),
-                                      helperStyle: TextStyle(
-                                          fontSize: playerNameFont - 5),
-                                      border: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey),
-                                        gapPadding: 4,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(6),
-                                        ), // Border radius
-                                      ),
-                                    ),
-                                    maxLength: 3,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^[0-9]*$')),
-                                    ],
-                                  ),
-                                ),
+                              Text(
+                                "INITIAL POINTS",
+                                style: TextStyle(
+                                    fontSize: playerNameFont - 4,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 0, left: 7, right: 7),
-                                child: SizedBox(
-                                  width: pointsArea,
-                                  child: TextFormField(
-                                    style: TextStyle(color: textColor),
-                                    focusNode: focusNodes1[i],
-                                    controller:
-                                        _individualResultPointsController[i],
-                                    decoration: InputDecoration(
-                                      helperText: "MAX-13",
-                                      hintText: "MIN-0",
-                                      hintStyle: TextStyle(
-                                          fontSize: playerNameFont - 4),
-                                      helperStyle: TextStyle(
-                                          fontSize: playerNameFont - 5),
-                                      border: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey),
-                                        gapPadding: 4,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(6),
-                                        ), // Border radius
-                                      ),
-                                    ),
-                                    maxLength: 3,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^[0-9]*$')),
-                                    ],
-                                  ),
-                                ),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                              Text(
+                                "FINAL POINTS",
+                                style: TextStyle(
+                                    fontSize: playerNameFont - 4,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                         ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            right: screenSize.height < 625 ? 45 : 75),
-                        child: CustomButton(
-                          onPressed: () {
-                            lockButtonText == "Locked" ? _unlock() : _lock();
-                          },
-                          buttonText: lockButtonText,
-                          width: 105,
-                          fontSize: playerNameFont - 1.5,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 6, right: 6),
-                              child: Text(
-                                "NOTES: ",
-                                style: TextStyle(
-                                    fontSize: playerNameFont,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            Column(
+                        for (int i = 0; i < widget.playerNames.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(right: padding),
+                                  padding: const EdgeInsets.only(
+                                      right: 10, left: 10),
                                   child: SizedBox(
-                                    height: 150,
-                                    width: notesArea,
-                                    child: TextFormField(
-                                      style: TextStyle(
-                                          fontSize: playerNameFont - 1,
-                                          color: textColor),
-                                      controller: _notesController,
-                                      maxLength: 150,
-                                      maxLines: 6,
-                                      onTap: () {
-                                        _startListening();
-                                      },
-                                      decoration: InputDecoration(
-                                        border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                          borderSide: BorderSide(
-                                              width: 2, color: Colors.grey),
-                                        ),
-                                        hintText: _speechToText.isListening
-                                            ? "Listening..."
-                                            : _speechEnabled
-                                                ? "Please tap on the microphone to start the voice assistant"
-                                                : "Permission denied for the microphone",
-                                        hintStyle: TextStyle(
-                                            fontSize: playerNameFont - 3),
-                                        helperText:
-                                            "Incomplete Transaction or Foul Play",
-                                        helperStyle: TextStyle(
-                                            fontSize: playerNameFont - 5),
-                                      ),
+                                    width: playerNameArea,
+                                    child: Text(
+                                      widget.playerNames[i].toUpperCase(),
+                                      style:
+                                          TextStyle(fontSize: playerNameFont),
                                     ),
                                   ),
                                 ),
-                                if (_speechToText.isNotListening &&
-                                    _confidenceLevel > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, left: 7, right: 7),
+                                  child: SizedBox(
+                                    width: pointsArea,
+                                    child: TextFormField(
+                                      style: TextStyle(color: textColor),
+                                      enabled: status,
+                                      focusNode: focusNodes[i],
+                                      controller:
+                                          _individualInitialPointsController[i],
+                                      decoration: InputDecoration(
+                                        helperText: "MAX-13",
+                                        hintText: "MIN-1",
+                                        hintStyle: TextStyle(
+                                            fontSize: playerNameFont - 4),
+                                        helperStyle: TextStyle(
+                                            fontSize: playerNameFont - 5),
+                                        border: const OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.grey),
+                                          gapPadding: 4,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(6),
+                                          ), // Border radius
+                                        ),
+                                      ),
+                                      maxLength: 3,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^[0-9]*$')),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 0, left: 7, right: 7),
+                                  child: SizedBox(
+                                    width: pointsArea,
+                                    child: TextFormField(
+                                      style: TextStyle(color: textColor),
+                                      focusNode: focusNodes1[i],
+                                      controller:
+                                          _individualResultPointsController[i],
+                                      decoration: InputDecoration(
+                                        helperText: "MAX-13",
+                                        hintText: "MIN-0",
+                                        hintStyle: TextStyle(
+                                            fontSize: playerNameFont - 4),
+                                        helperStyle: TextStyle(
+                                            fontSize: playerNameFont - 5),
+                                        border: const OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.grey),
+                                          gapPadding: 4,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(6),
+                                          ), // Border radius
+                                        ),
+                                      ),
+                                      maxLength: 3,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^[0-9]*$')),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              right: screenSize.height < 625 ? 45 : 75),
+                          child: CustomButton(
+                            onPressed: () {
+                              lockButtonText == "Locked" ? _unlock() : _lock();
+                            },
+                            buttonText: lockButtonText,
+                            width: 105,
+                            fontSize: playerNameFont - 1.5,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 6, right: 6),
+                                child: Text(
+                                  "NOTES: ",
+                                  style: TextStyle(
+                                      fontSize: playerNameFont,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                              Column(
+                                children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    child: Text(
-                                      "Confidence : ${(_confidenceLevel * 100).toStringAsFixed(1)}%",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
+                                    padding: EdgeInsets.only(right: padding),
+                                    child: SizedBox(
+                                      height: 150,
+                                      width: notesArea,
+                                      child: TextFormField(
+                                        style: TextStyle(
+                                            fontSize: playerNameFont - 1,
+                                            color: textColor),
+                                        controller: _notesController,
+                                        maxLength: 150,
+                                        maxLines: 6,
+                                        onTap: () {
+                                          _startListening();
+                                        },
+                                        decoration: InputDecoration(
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            borderSide: BorderSide(
+                                                width: 2, color: Colors.grey),
+                                          ),
+                                          hintText: _speechToText.isListening
+                                              ? "Listening..."
+                                              : _speechEnabled
+                                                  ? "Please tap on the microphone to start the voice assistant"
+                                                  : "Permission denied for the microphone",
+                                          hintStyle: TextStyle(
+                                              fontSize: playerNameFont - 3),
+                                          helperText:
+                                              "Incomplete Transaction or Foul Play",
+                                          helperStyle: TextStyle(
+                                              fontSize: playerNameFont - 5),
+                                        ),
                                       ),
                                     ),
                                   ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      FloatingActionButton(
-                        tooltip: 'Listen',
-                        onPressed: _speechToText.isListening
-                            ? _stopListening
-                            : _startListening,
-                        child: Icon(_speechToText.isNotListening
-                            ? Icons.mic_off
-                            : Icons.mic),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 10, right: 10, top: 20),
-                        child: CustomButton(
-                          onPressed: _startCalculation,
-                          buttonText: calculateButtonText,
-                          fontSize: playerNameFont,
-                        ),
-                      ),
-                      toShareWidget(context),
-                      Container(
-                        height: 40,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? kDarkColorScheme.onTertiary.withOpacity(0.6)
-                              : kColorScheme.onPrimaryContainer
-                                  .withOpacity(0.6),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(50)),
-                        ),
-                        child: Center(
-                          child: InkWell(
-                            onTap: shareScreenshot,
-                            child: Container(
-                              height: 30,
-                              width: 167,
-                              decoration: const BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
-                              ),
-                              child: const Center(
-                                child: Row(
-                                  children: [
+                                  if (_speechToText.isNotListening &&
+                                      _confidenceLevel > 0)
                                     Padding(
                                       padding:
-                                          EdgeInsets.only(left: 10.0, right: 5),
-                                      child: Icon(Icons.mobile_screen_share),
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: Text(
+                                        "Confidence : ${(_confidenceLevel * 100).toStringAsFixed(1)}%",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
                                     ),
-                                    Text(
-                                      'Share Results',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        FloatingActionButton(
+                          tooltip: 'Listen',
+                          onPressed: _speechToText.isListening
+                              ? _stopListening
+                              : _startListening,
+                          child: Icon(_speechToText.isNotListening
+                              ? Icons.mic_off
+                              : Icons.mic),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: CustomButton(
+                            onPressed: _startCalculation,
+                            buttonText: calculateButtonText,
+                            fontSize: playerNameFont,
+                          ),
+                        ),
+                        toShareWidget(context),
+                        Container(
+                          height: 40,
+                          width: 180,
+                          decoration: BoxDecoration(
+                            color: isDarkMode
+                                ? kDarkColorScheme.onTertiary.withOpacity(0.6)
+                                : kColorScheme.onPrimaryContainer
+                                    .withOpacity(0.6),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                          ),
+                          child: Center(
+                            child: InkWell(
+                              onTap: shareScreenshot,
+                              child: Container(
+                                height: 30,
+                                width: 167,
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(50)),
+                                ),
+                                child: const Center(
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10.0, right: 5),
+                                        child: Icon(Icons.mobile_screen_share),
+                                      ),
+                                      Text(
+                                        'Share Results',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: screenSize.height * 0.01,
-                          right: screenSize.height * 0.01,
-                        ),
-                        child: SizedBox(
-                          height: screenSize.height * 0.40,
-                          width: screenSize.width * 0.95,
-                          child: Chart(
-                              playerNames: widget.playerNames,
-                              individualWinPoints: individualWinPoints),
-                        ),
-                      )
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: screenSize.height * 0.01,
+                            right: screenSize.height * 0.01,
+                          ),
+                          child: SizedBox(
+                            height: screenSize.height * 0.40,
+                            width: screenSize.width * 0.95,
+                            child: Chart(
+                                playerNames: widget.playerNames,
+                                individualWinPoints: individualWinPoints),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
