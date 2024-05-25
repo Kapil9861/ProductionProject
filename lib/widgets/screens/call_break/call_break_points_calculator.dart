@@ -1001,27 +1001,6 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           body: Flex(
             direction: Axis.vertical,
             children: [
-              PopScope(
-                canPop: false,
-                onPopInvoked: (bool didPop) async {
-                  if (didPop) {
-                    return;
-                  }
-                  final bool shouldPop = await showBackDialog() ?? false;
-                  if (context.mounted && shouldPop) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: TextButton(
-                  onPressed: () async {
-                    final bool shouldPop = await showBackDialog() ?? false;
-                    if (context.mounted && shouldPop) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Go back'),
-                ),
-              ),
               Container(
                 color: backgroundColor,
                 height: buttonHeightPercentage * 4 - 20,
