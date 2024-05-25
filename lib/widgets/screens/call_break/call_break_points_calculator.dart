@@ -678,7 +678,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                       ),
                     ],
                   )
-                : AlertDialog(
+                : CupertinoAlertDialog(
                     title: const Text('Are you sure?'),
                     content: const Text(
                       'Are you sure you want to leave this page?',

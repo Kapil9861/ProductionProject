@@ -886,7 +886,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       ),
                     ],
                   )
-                : AlertDialog(
+                : CupertinoAlertDialog(
                     title: const Text('Are you sure?'),
                     content: const Center(
                       child: Text(
@@ -1250,15 +1250,19 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(50)),
                               ),
-                              child: const Center(
+                              child: Center(
                                 child: Row(
                                   children: [
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 10.0, right: 5),
-                                      child: Icon(Icons.mobile_screen_share),
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, right: 5),
+                                      child: Icon(
+                                        Platform.isIOS
+                                            ? CupertinoIcons.share
+                                            : Icons.mobile_screen_share,
+                                      ),
                                     ),
-                                    Text(
+                                    const Text(
                                       'Share Results',
                                       style: TextStyle(
                                           fontSize: 18,
