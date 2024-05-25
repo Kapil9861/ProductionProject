@@ -651,7 +651,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
           builder: (BuildContext context) {
             return Platform.isAndroid
                 ? AlertDialog(
-                    title: const Text('Are you sure?'),
+                    title: StyledText(
+                      text: 'Are you sure?',
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     content: const Center(
                       child: Text(
                         'Are you sure you?\n Your game data will be removed!',
@@ -679,7 +682,10 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                     ],
                   )
                 : CupertinoAlertDialog(
-                    title: const Text('Are you sure?'),
+                    title: StyledText(
+                      text: 'Are you sure?',
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     content: const Text(
                       'Are you sure you want to leave this page?',
                     ),

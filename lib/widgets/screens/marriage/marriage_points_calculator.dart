@@ -861,7 +861,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
           builder: (BuildContext context) {
             return Platform.isAndroid
                 ? AlertDialog(
-                    title: const Text('Are you sure?'),
+                    title: StyledText(
+                      text: 'Are you sure?',
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     content: const Text(
                       'Are you sure you want to leave this page?',
                     ),
@@ -887,7 +890,10 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                     ],
                   )
                 : CupertinoAlertDialog(
-                    title: const Text('Are you sure?'),
+                    title: StyledText(
+                      text: 'Are you sure?',
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     content: const Center(
                       child: Text(
                         'Are you sure you?\n Your game data will be removed!',
