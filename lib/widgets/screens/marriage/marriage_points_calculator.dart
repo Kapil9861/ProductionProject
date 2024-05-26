@@ -476,7 +476,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void showDialogBox() {
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -859,8 +859,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         return showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
-            return Platform.isAndroid
-                ? AlertDialog(
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -889,7 +889,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       ),
                     ],
                   )
-                : CupertinoAlertDialog(
+                : AlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -1254,19 +1254,17 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50)),
                                 ),
-                                child: Center(
+                                child: const Center(
                                   child: Row(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(
+                                        padding: EdgeInsets.only(
                                             left: 10.0, right: 5),
                                         child: Icon(
-                                          Platform.isIOS
-                                              ? CupertinoIcons.share
-                                              : Icons.mobile_screen_share,
+                                          Icons.mobile_screen_share,
                                         ),
                                       ),
-                                      const Text(
+                                      Text(
                                         'Share Results',
                                         style: TextStyle(
                                             fontSize: 18,

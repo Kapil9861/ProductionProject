@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -649,8 +650,8 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
         return showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
-            return Platform.isAndroid
-                ? AlertDialog(
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -681,7 +682,7 @@ class _CallBreakPointsCalculatorState extends State<CallBreakPointsCalculator> {
                       ),
                     ],
                   )
-                : CupertinoAlertDialog(
+                : AlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
