@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -476,7 +476,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
   }
 
   void showDialogBox() {
-    if (Platform.isIOS) {
+    if (Platform.isAndroid) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -859,8 +859,8 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
         return showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
-            return Platform.isIOS
-                ? CupertinoAlertDialog(
+            return Platform.isAndroid
+                ? AlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -889,7 +889,7 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                       ),
                     ],
                   )
-                : AlertDialog(
+                : CupertinoAlertDialog(
                     title: StyledText(
                       text: 'Are you sure?',
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -1254,17 +1254,21 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(50)),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: Row(
                                     children: [
                                       Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 10.0, right: 5),
                                         child: Icon(
-                                          Icons.mobile_screen_share,
+                                          (kIsWeb)
+                                              ? Icons.mobile_screen_share
+                                              : Platform.isIOS
+                                                  ? CupertinoIcons.share
+                                                  : Icons.share,
                                         ),
                                       ),
-                                      Text(
+                                      const Text(
                                         'Share Results',
                                         style: TextStyle(
                                             fontSize: 18,
