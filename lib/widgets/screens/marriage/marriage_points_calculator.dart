@@ -312,10 +312,12 @@ class _MarriagePointsCalculatorState extends State<MarriagePointsCalculator> {
             } else if (widget.conditions[3] == true) {
               kidnapPoint = individualPoints;
               individualWinPoints[widget.playerNames[i]] = 0;
+
             } else {
               individualWinning = -totalPoints - 7;
               toAdd = -1 * individualWinning;
               forWinnerWinning.add(toAdd);
+              individualWinPoints[widget.playerNames[i]] = individualWinning;
             }
           } else if (_playersResult[i] == "Hold") {
             if (foulPlayerName == widget.playerNames[i] &&
